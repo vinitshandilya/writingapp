@@ -19,7 +19,7 @@
     <div class="d-flex" id="wrapper">
         <!-- Sidebar-->
         <div class="border-end bg-white" id="sidebar-wrapper">
-            <div class="sidebar-heading border-bottom bg-light"><%= user %> </div>
+            <div class="sidebar-heading border-bottom bg-light"><%= user.username %> </div>
             <div class="list-group list-group-flush">
                 <% blogs.forEach(blog => { %>
                     <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/index/blogs/<%= blog._id %>" data-blog-id="<%= blog._id %>"><%= blog.title %></a>

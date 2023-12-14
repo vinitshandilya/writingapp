@@ -80,6 +80,8 @@ app.post('/login', passport.authenticate('local', {
 
 app.get('/set-username-and-redirect', (req, res) => {
     // Set the username in the session
+    // console.log(req.user);
+    req.session.user = req.user;
     req.session.username = req.user.username;
     // Redirect to /index
     res.redirect('/index');
@@ -104,11 +106,12 @@ const isLoggedIn = (req, res, next) => {
 
 // Logged-in user lands here
 app.get('/index', isLoggedIn, async (req, res) => {
-    const username = req.session.username;
+    const user = req.session.user;
+    // const username = req.session.username;
     try {
         // Retrieve blogs from MongoDB
-        const blogs = await Blog.find();
-        res.status(200).render('index', { blogs, user: username });
+        const blogs = await Blog.find( { userid: user._id });
+        res.status(200).render('index', { blogs, user: user });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -116,15 +119,22 @@ app.get('/index', isLoggedIn, async (req, res) => {
 
 // render blog writing page
 app.get('/index/createnew', isLoggedIn, async (req, res) => {
-    res.status(200).render('createnewblog');
+    res.status(200).render('createnewblog', { blog: null });
 });
 
 
 // save new blog
 app.post('/index/saveblog', isLoggedIn, async (req, res) => {
     try {
-        console.log(req.body);
-        const newBlog = new Blog(req.body);
+        //console.log(req.body);
+        //const newBlog = new Blog(req.body);
+        const newBlog = new Blog({
+            userid: req.session.user._id,
+            title: req.body.title,
+            subtitle: req.body.subtitle,
+            body: req.body.body
+        });
+
         const savedBlog = await newBlog.save();
         res.redirect(`/index?highlight=${savedBlog._id}`);
         
@@ -155,7 +165,9 @@ app.get('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
         if (!blog) {
             return res.status(404).send('Blog not found');
         }
-        res.render('editBlog', { blog, editing: true });
+        // res.render('editBlog', { blog, editing: true });
+        console.log(blog);
+        res.status(200).render('createnewblog', { blog: blog });
 
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -166,8 +178,9 @@ app.get('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
 app.post('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
     try {
         const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, {
-            title: req.body.editTitle,
-            body: req.body.editBody,
+            title: req.body.title,
+            subtitle: req.body.subtitle,
+            body: req.body.body,
         }, { new: true });
 
         // res.redirect(`/index/blogs/${updatedBlog._id}`);
