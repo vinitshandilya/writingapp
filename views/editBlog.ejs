@@ -1,0 +1,22 @@
+<!-- views/editBlog.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Blog - <%= blog.title %></title>
+</head>
+<body>
+    <h1>Edit Blog - <%= blog.title %></h1>
+
+    <form action="/index/blogs/<%= blog._id %>/edit" method="post">
+        <label for="editTitle">Title:</label>
+        <input type="text" id="editTitle" name="editTitle" value="<%= blog.title %>" required>
+
+        <label for="editBody">Body:</label>
+        <textarea id="editBody" name="editBody" rows="4" required><%= blog.body %></textarea>
+
+        <button type="submit">Save Changes</button>
+    </form>
+</body>
+</html>

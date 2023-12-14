@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Markdown Editor with Placeholder</title>
+</head>
+<body>
+
+<div class="container mt-4">
+    <form action="/index/saveblog" method="post">
+
+        <div class="mb-3">
+            <textarea class="form-control" id="title" name="title" rows="1" placeholder="Title"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <textarea class="form-control" id="subtitle" name="subtitle" rows="1" placeholder="Subtitle"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <textarea class="form-control" id="author" name="author" rows="1" placeholder="Author"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <textarea class="form-control" id="images" name="images" rows="1" placeholder="Images"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <textarea class="form-control" id="footnotes" name="footnotes" rows="1" placeholder="Footnotes"></textarea>
+        </div>
+
+        <div class="mb-3">
+            <!-- Add a name attribute for HTTP POST -->
+            <textarea class="form-control" id="body" name="body" rows="10" placeholder="Write something..."></textarea>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="previewMarkdown()">Preview</button>
+
+        <!-- Stylized "Save" button -->
+        <button type="submit" class="btn btn-success">Save</button>
+    </form>
+
+    <div class="mt-4">
+        <h2>Preview:</h2>
+        <div id="preview"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked@3.0.2/marked.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Initialize SimpleMDE after the page has loaded
+        var simplemde = new SimpleMDE({ element: document.getElementById("body") });
+        
+        // Optional: You can store the SimpleMDE instance in a global variable for further use
+        window.simplemde = simplemde;
+    });
+
+    function previewMarkdown() {
+        // Get the content from the SimpleMDE instance
+        var markdownContent = window.simplemde.value();
+
+        // Convert Markdown to HTML and display in the preview area
+        var previewContainer = document.getElementById("preview");
+        previewContainer.innerHTML = marked(markdownContent);
+    }
+</script>
+
+</body>
+</html>
