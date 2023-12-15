@@ -14,11 +14,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Afacad&family=EB+Garamond&family=Kalnia&family=Rethink+Sans&display=swap" rel="stylesheet">
-
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap" rel="stylesheet">
 
     <style>
+
         .footnote {
           position: relative;
           cursor: help;
@@ -54,24 +54,21 @@
         #footnoteList li {
             padding-left: 0px;
             font-size: 15px;
-            font-style: italic;
             font-family: 'Times New Roman', Times, serif;
-            color: #000000;
+            color: #585858;
         }
 
         figcaption {
             padding-left: 0px;
             padding-top: 15px;
             font-size: 15px;
-            color: #0D6EFD;
+            font-family: 'Times New Roman', Times, serif;
+            color: #585858;
         }
 
-        /* body {
-            font-family: 'Afacad', sans-serif;
-            font-family: 'EB Garamond', serif;
-            font-family: 'Kalnia', serif;
-            font-family: 'Rethink Sans', sans-serif;
-        } */
+        .canvas {
+            font-family: 'Hedvig Letters Serif', serif;
+        }
 
     </style>
 </head>
@@ -199,19 +196,22 @@
             var blogDetailsContainer = document.getElementById('blogDetailsContainer');
             console.log(blogDetails.blog.timestamp);
             const dateObj = new Date(blogDetails.blog.timestamp);
-            const formatString = { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
+            const formatString = { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true };
             const formattedTime = dateObj.toLocaleString("en-US", formatString);
             console.log(formattedTime);
+
+            var timeToread = calculateReadingTime(blogDetails.blog.body, 250);
 
             var htmlContent = marked(blogDetails.blog.body);
             blogDetailsContainer.innerHTML = `
                 <h1 class="mt-4">${blogDetails.blog.title}</h1>
                 <p style="font-size: 22px; color: #686868">${blogDetails.blog.subtitle}</p>
                 <div>
-                    <p style="font-size: smaller; color: #0d6efd; display: inline-block;"><i class="fa-regular fa-pen-to-square"></i> ${blogDetails.blog.author}</p>
-                    <p style="font-size: smaller; color: #0d6efd; display: inline-block; margin-left: 10px;"><i class="far fa-clock"></i> ${formattedTime}</p>
+                    <p style="font-size: smaller; color: #0d6efd; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-pen-to-square"></i> ${blogDetails.blog.author}</p>
+                    <p style="font-size: smaller; color: #0d6efd; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-calendar"></i> ${formattedTime}</p>
+                    <p style="font-size: smaller; color: #0d6efd; display: inline-block; margin-right: 10px;"><i class="far fa-clock"></i> ${timeToread} min read</p>
                 </div>
-                <p>${htmlContent}</p>
+                <div class="canvas"><p>${htmlContent}</p></div>
                 <!-- TODO: Add more content as needed -->
             `;
             var editLink = document.getElementById('editLink');
@@ -256,6 +256,16 @@
         function clearFootnoteArea() {
             var footnoteList = document.getElementById('footnoteList');
             footnoteList.innerHTML = '';
+        }
+
+        function calculateReadingTime(paragraph, wordsPerMinute) {
+            // Assuming an average of 200 words per minute
+            const defaultWordsPerMinute = 200;
+            const wpm = wordsPerMinute || defaultWordsPerMinute;
+            const wordCount = paragraph.split(/\s+/).length;
+            const readingTime = Math.ceil(wordCount / wpm);
+
+            return readingTime;
         }
 
     </script>

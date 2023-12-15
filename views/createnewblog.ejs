@@ -12,6 +12,10 @@
             height: 470px; /* Set your desired height */
             max-height: 100%;
         }
+
+        #popup {
+            display: none;
+        }
         
     </style>
 </head>
@@ -142,7 +146,7 @@
         if (selectedText && popuptext) {
           var count = getFootnoteCount();
           console.log('number of footnotes: ' + count);
-          var replacement = `<span class="footnote" data-content="${popuptext}">${selectedText}[${count}]</span>`;
+          var replacement = `<span class="footnote" data-content="${popuptext}">${selectedText}<sup>[${count}]</sup></span>`;
           cm.replaceSelection(replacement);
         }
     }
