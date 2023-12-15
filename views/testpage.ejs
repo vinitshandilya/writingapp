@@ -3,88 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SimpleMDE Custom Attributes</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-
+  <title>Dynamic Input Box</title>
   <style>
-    .footnote {
-      position: relative;
-      cursor: help;
-      border-bottom: 1px dashed #000;
-    }
-
-    .footnote:hover::after {
-      content: attr(data-content);
-      display: block;
-      position: absolute;
-      left: 100%;
-      top: 0;
-      width: 200px;
-      padding: 0.5em;
-      background: #ffffff;
-      border: 1px solid #d7d0d0;
-      box-shadow: 2px 2px 5px rgba(41, 41, 41, 0.2);
-      z-index: 1;
-      border-radius: 15px 15px 15px 15px;
-    }
-    #popup {
+    /* Add some basic styling to the input box */
+    #inputBox {
       display: none;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      z-index: 1000;
     }
   </style>
-
 </head>
 <body>
 
-  <textarea id="body"></textarea>
+<button onclick="showInputBox()">Show Input Box</button>
 
-  <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var simplemde = new SimpleMDE({
-        element: document.getElementById('body'),
-        autofocus: true,
-      });
+<div id="inputBox">
+  <input type="text" id="userInput" placeholder="Enter text">
+</div>
 
-      // Add footnote to the selected word.
-      function addAttributesToSelection(popuptext) {
-        var cm = simplemde.codemirror;
-        var selectedText = cm.getSelection();
-        if (selectedText) {
-          var replacement = `<span class="footnote" data-content="${popuptext}">${selectedText}</span>`;
-          cm.replaceSelection(replacement);
-        }
-      }
+<script>
+  function showInputBox() {
+    var inputBox = document.getElementById('inputBox');
+    inputBox.style.display = 'block';
 
-      document.getElementById('footnotebutton').addEventListener('click', function () {
-        // show footnote popup
-        document.getElementById('popup').style.display = 'block';
-        document.getElementById('footnote-input').focus();
-        // addAttributesToSelection('This is just a small reference to the annotated text.');
-      });
+    // Add a click event listener to the document
+    document.addEventListener('click', function handleClickOutside(e) {
+      // Check if the clicked element is not the input box
+      if (!inputBox.contains(e.target) && e.target.id !== 'userInput') {
+        // Get the user input text
+        var userInput = document.getElementById('userInput').value;
 
-    document.addEventListener('click', function (event) {
-      var popup = document.getElementById('popup');
-      if (!popup.contains(event.target) && event.target !== document.getElementById('footnotebutton')) {
-        popup.style.display = 'none';
-        var footnoteText = document.getElementById('footnote-input').value;
-        addAttributesToSelection(footnoteText);
-        document.getElementById('footnote-input').value = '';
+        // Print the user input text to the console
+        console.log('User input:', userInput);
+
+        // Hide the input box
+        inputBox.style.display = 'none';
+
+        // Remove the click event listener after handling one click outside
+        document.removeEventListener('click', handleClickOutside);
       }
     });
-
-    });
-
-  </script>
-
-  <button id="footnotebutton">Add footnote</button>
-  <div id="popup">
-    <input type="text" id="footnote-input" placeholder="Enter footnote text">
-  </div>
+  }
+</script>
 
 </body>
 </html>
