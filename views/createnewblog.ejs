@@ -5,7 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Markdown Editor with Placeholder</title>
+    <title>The writing app</title>
+    <style>
+        #popup {
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+    }
+    </style>
 </head>
 <body>
 
@@ -34,6 +44,10 @@
         <div class="mt-4">
             <h2>Preview</h2>
             <div id="preview"></div>
+        </div>
+        <button id="footnotebutton">Add footnote</button>
+        <div id="popup">
+            <input type="text" id="footnote-input" placeholder="Enter footnote text">
         </div>
     </div>
     
@@ -65,30 +79,56 @@
             <h2>Preview</h2>
             <div id="preview"></div>
         </div>
+        <button id="footnotebutton">Add footnote</button>
+        <div id="popup">
+            <input type="text" id="footnote-input" placeholder="Enter footnote text">
+        </div>
+
     </div>
 <% } %>
 
 <script src="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/marked@3.0.2/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
 <script>
+    // var cancelledblog = '<%- JSON.stringify(blog) %>';
     var simplemde;
 
     document.addEventListener('DOMContentLoaded', function () {
-        // Initialize SimpleMDE after the page has loaded
-        simplemde = new SimpleMDE({ element: document.getElementById("body") });
-        console.log(simplemde);
-        console.log(document.getElementById("body"));
+        simplemde = new SimpleMDE({ element: document.getElementById("body"), autofocus: true,});
+    });
+
+    function addAttributesToSelection(popuptext) {
+        var cm = simplemde.codemirror;
+        var selectedText = cm.getSelection();
+        if (selectedText && popuptext) {
+          var count = getFootnoteCount();
+          console.log('number of footnotes: ' + count);
+          var replacement = `<span class="footnote" data-content="${popuptext}">${selectedText}[${count}]</span>`;
+          cm.replaceSelection(replacement);
+        }
+    }
+
+    document.getElementById('footnotebutton').addEventListener('click', function () {
+       document.getElementById('popup').style.display = 'block';
+       document.getElementById('footnote-input').focus();
+    });
+
+    document.addEventListener('click', function (event) {
+      var popup = document.getElementById('popup');
+      if (!popup.contains(event.target) && event.target !== document.getElementById('footnotebutton')) {
+        popup.style.display = 'none';
+        var footnoteText = document.getElementById('footnote-input').value;
+        addAttributesToSelection(footnoteText);
+        document.getElementById('footnote-input').value = '';
+      }
     });
 
     function previewMarkdown() {
-        // Check if SimpleMDE is defined
         if (simplemde) {
-            // Get the content from the SimpleMDE instance
             var markdownContent = simplemde.value();
-
-            // Convert Markdown to HTML and display in the preview area
             var previewContainer = document.getElementById("preview");
             previewContainer.innerHTML = marked(markdownContent);
         } else {
@@ -97,11 +137,23 @@
     }
 
     function cancel() {
-        // Redirect to '/index'
         window.location.href = '/index';
     }
-</script>
 
+    function getFootnoteCount() {
+        var elements = document.getElementsByClassName('cm-attribute');
+
+        // Count occurrences
+        var count = 0;
+        for (var i = 0; i < elements.length; i++) {
+            if (elements[i].innerHTML === 'data-content') {
+                count++;
+            }
+        }
+        return count+1;
+    }
+
+</script>
 
 </body>
 </html>

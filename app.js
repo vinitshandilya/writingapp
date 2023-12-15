@@ -132,7 +132,8 @@ app.post('/index/saveblog', isLoggedIn, async (req, res) => {
             userid: req.session.user._id,
             title: req.body.title,
             subtitle: req.body.subtitle,
-            body: req.body.body
+            body: req.body.body,
+            author: req.session.user.username
         });
 
         const savedBlog = await newBlog.save();
@@ -181,6 +182,7 @@ app.post('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
             title: req.body.title,
             subtitle: req.body.subtitle,
             body: req.body.body,
+            author: req.session.user.username,
         }, { new: true });
 
         // res.redirect(`/index/blogs/${updatedBlog._id}`);
