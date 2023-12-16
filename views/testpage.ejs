@@ -1,52 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dynamic Input Box</title>
-  <style>
-    /* Add some basic styling to the input box */
-    #inputBox {
-      display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Black Button with White Text Example</title>
+
+    <style>
+      /* Custom class for fully rounded edges */
+      .btn-rounded {
+          border-radius: 50px; /* Adjust the radius as needed */
+      }
   </style>
+
 </head>
 <body>
+    <div class="container mt-5">
+        <button type="button" class="btn btn-dark text-white btn-rounded">Black Button with White Text</button>
+    </div>
 
-<button onclick="showInputBox()">Show Input Box</button>
-
-<div id="inputBox">
-  <input type="text" id="userInput" placeholder="Enter text">
-</div>
-
-<script>
-  function showInputBox() {
-    var inputBox = document.getElementById('inputBox');
-    inputBox.style.display = 'block';
-
-    // Add a click event listener to the document
-    document.addEventListener('click', function handleClickOutside(e) {
-      // Check if the clicked element is not the input box
-      if (!inputBox.contains(e.target) && e.target.id !== 'userInput') {
-        // Get the user input text
-        var userInput = document.getElementById('userInput').value;
-
-        // Print the user input text to the console
-        console.log('User input:', userInput);
-
-        // Hide the input box
-        inputBox.style.display = 'none';
-
-        // Remove the click event listener after handling one click outside
-        document.removeEventListener('click', handleClickOutside);
-      }
-    });
-  }
-</script>
-
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

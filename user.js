@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     password: String,
     firstname: String,
     lastname: String,
+    bio: String,
 });
 
 userSchema.methods.authenticate = function(password) {

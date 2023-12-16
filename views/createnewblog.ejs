@@ -16,6 +16,25 @@
         #popup {
             display: none;
         }
+
+        .custom-textarea {
+            border: none; /* Remove the border */
+            border-radius: 0; /* Optional: Remove border-radius */
+            resize: none; /* Optional: Disable textarea resizing */
+        }
+
+        /* Custom style for the placeholder text */
+        .custom-textarea::placeholder {
+            color: #999; /* Placeholder text color */
+            font-size: large;
+            font-weight: bold;
+        }
+
+        /* Custom style for the input text */
+        form .custom-textarea:focus {
+            outline: none; /* Remove the focus outline */
+            /* Additional styles for focused state if needed */
+        }
         
     </style>
 </head>
@@ -26,18 +45,22 @@
         <form action="/index/blogs/<%= blog._id %>/edit" method="post">
     
             <div class="mb-3">
-                <textarea class="form-control" id="title" name="title" rows="1" placeholder="Title"><%= blog.title %></textarea>
+                <textarea class="form-control custom-textarea" id="title" name="title" rows="1" placeholder="Title" style="font-size: large;"><%= blog.title %></textarea>
             </div>
     
             <div class="mb-3">
-                <textarea class="form-control" id="subtitle" name="subtitle" rows="1" placeholder="Subtitle"><%= blog.subtitle %></textarea>
+                <textarea class="form-control custom-textarea" id="subtitle" name="subtitle" rows="1" placeholder="Subtitle"><%= blog.subtitle %></textarea>
             </div>
     
             <div class="mb-3">
                 <textarea class="form-control" id="body" name="body" rows="10" placeholder="Write something..."><%= blog.body %></textarea>
             </div>
-            <button type="button" class="btn btn-primary" onclick="previewMarkdown()">Preview</button>
 
+            <div class="mb-3">
+                <textarea class="form-control custom-textarea" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"></textarea>
+            </div>
+            
+            <button type="button" class="btn btn-primary" onclick="previewMarkdown()">Preview</button>
             <button type="submit" class="btn btn-success">Save Changes</button>
             <button type="button" class="btn btn-secondary" onclick="cancel()">Cancel</button>
             <button type="button" class="btn btn-secondary" id="footnotebutton">Add footnote</button>
@@ -59,16 +82,19 @@
         <form action="/index/saveblog" method="post">
     
             <div class="mb-3">
-                <textarea class="form-control" id="title" name="title" rows="1" placeholder="Title"></textarea>
+                <textarea class="form-control custom-textarea" id="title" name="title" rows="1" placeholder="Title"></textarea>
             </div>
     
             <div class="mb-3">
-                <textarea class="form-control" id="subtitle" name="subtitle" rows="1" placeholder="Subtitle"></textarea>
+                <textarea class="form-control custom-textarea" id="subtitle" name="subtitle" rows="1" placeholder="Subtitle"></textarea>
             </div>
     
             <div class="mb-3">
-                <!-- Add a name attribute for HTTP POST -->
                 <textarea class="form-control" id="body" name="body" rows="10" placeholder="Write something..."></textarea>
+            </div>
+
+            <div class="mb-3">
+                <textarea class="form-control custom-textarea" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"></textarea>
             </div>
             <button type="button" class="btn btn-primary" onclick="previewMarkdown()">Preview</button>
             <button type="submit" class="btn btn-success">Save</button>
@@ -179,7 +205,7 @@
     }
 
     function cancel() {
-        window.location.href = '/index';
+        window.location.href = '/homepage';
     }
 
     function getFootnoteCount() {

@@ -6,7 +6,11 @@ const blogSchema = new mongoose.Schema({
     subtitle: String,
     author: { type: String, default: 'Anonymous' },
     timestamp: { type: Date, default: Date.now },
+    formatteddate: String,
     body: String,
+    previewtext: String,
+    timetoread: String,
+    tags: [String],
     // images: [String],
     // footnotes: [String],
 });

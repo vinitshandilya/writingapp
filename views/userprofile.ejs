@@ -5,38 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>User Profile Settings</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
 </head>
+
+<style>
+  .navbar {
+      padding-left: 20px;
+      padding-right: 20px;
+      font-weight: bold;
+  }
+</style>
+
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">User Settings</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav ml-auto">
-      <li class="nav-item active">
-        <a class="nav-link" href="#">Home</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Profile</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Settings</a>
-      </li>
-    </ul>
-  </div>
+  <% var displayName = user.firstname ? user.firstname : user.username; %>
+
+  <nav class="navbar navbar navbar-expand-lg navbar-light" style="background-color: transparent;">
+    <a class="navbar-brand" href="/homepage"><i class="fa-solid fa-angle-left"></i></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+            <li class="nav-item"><a class="nav-link" style="margin-right: 15px;" href="/index/createnew" id="createNewLink"><i class="fa-solid fa-plus"></i></a></li>
+            <li class="nav-item"><a class="nav-link" style="margin-right: 15px;" href="#!" id="editLink"><i class="fa-regular fa-pen-to-square"></i></a></li>
+            <li class="nav-item"><a class="nav-link"style="margin-right: 15px;" href="#!" id="deleteLink" onclick="return confirm('Are you sure you want to delete this blog?')"><i class="fa-regular fa-trash-can"></i></a></li>
+            <li class="nav-item active"><a class="nav-link" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+            <li class="nav-item active"><a class="nav-link" href="/index/profile"> <%= displayName %></a></li>
+        </ul>
+    </div>
 </nav>
 
 <div class="container mt-4">
   <h2>User Profile Settings</h2>
   <form action="/index/updateuser" method="post">
     <div class="form-group">
-      <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First name">
+      <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First name" value="<%= user.firstname %>">
     </div>
     <div class="form-group">
-        <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Last name">
-      </div>
+        <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Last name" value="<%= user.lastname %>">
+    </div>
+    <div class="form-group">
+      <input type="text" class="form-control" id="bio" name="bio" placeholder="Tell us about yourself" value="<%= user.bio %>">
+    </div>
     <button type="submit" class="btn btn-primary">Save Changes</button>
   </form>
 </div>

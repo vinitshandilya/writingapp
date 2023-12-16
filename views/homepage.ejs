@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>The writing app</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+
+</head>
+
+<style>
+    .left-section {
+        padding: 15px;
+        height: 100vh;
+    }
+
+    .right-section {
+        /* background-color: #f2f2f2; */
+        height: 100vh;
+        padding: 15px;
+    }
+
+    .list-group-item {
+        border: none !important;
+        border-top: 0px solid rgba(0, 0, 0, 0.125) !important;
+        background-color: transparent !important;
+        font-weight: bold;
+    }
+
+    .big-list-item {
+        border: none !important;
+        line-height: 2.5;
+        border-top: 1px solid rgba(0, 0, 0, 0.125) !important;
+        background-color: transparent !important;
+        font-weight: bold;
+    }
+
+    /* .blog-list-title {
+        color: rgb(25, 24, 24);
+    }
+
+    .blog-list-subtitle {
+        color: rgb(25, 24, 24);
+    } */
+
+    .vertical-line {
+        border-left: 1px solid #ccc;
+        height: 100%;
+    }
+
+    .btn-rounded {
+        display: inline-block;
+        border-radius: 15px;
+        background-color: #bfbfbf;
+        color: #fff;
+        border: none;
+        box-shadow: none;
+        font-size: smaller;
+        height: 30px;
+        padding: 0 10px;
+        margin-right: 5px;
+        line-height: 30px;
+    }
+    
+</style>
+
+<body>
+
+    <% var displayName = loggedinuser.firstname ? loggedinuser.firstname : loggedinuser.username; %>
+
+
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: transparent;">
+        <a class="navbar-brand" href="#">My App</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                <li class="nav-item"><a class="nav-link" style="margin-right: 15px;" href="/index/createnew" id="createNewLink"><i class="fa-solid fa-plus"></i></a></li>
+                <li class="nav-item active"><a class="nav-link" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+                <li class="nav-item active"><a class="nav-link" href="/index/profile"> <%= displayName %></a></li>
+            </ul>
+        </div>
+    </nav>
+    
+
+<div class="container-fluid">
+    <div class="row">
+
+        <!-- Left Section -->
+        <div class="col-md-2 right-section">
+            <h6>Discover</h6>
+            <ul class="list-group">
+                <% communityusers.forEach(communityuser => { %>
+                 <% var displayName = communityuser.firstname ? communityuser.firstname + ' ' + communityuser.lastname + ' (@' + communityuser.username + ')' : communityuser.username; %>
+                    <li class="list-group-item"><%= displayName %></li>
+                <% }); %>
+            </ul>
+        </div>
+
+        <!-- Middle Section -->
+        <div class="col-md-7 vertical-line">
+            <h3 class="mt-4">For You</h3>
+            <div class="list-group">
+                <% personalblogs.forEach(personalblog => { %>
+                    <a href="/index?id=<%= personalblog._id %>" data-blog-id="<%= personalblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
+                        <small class="text-muted"><%= personalblog.author %> &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %></small>
+                        <div class="d-flex w-100 justify-content-between">
+                          <h5 class="mb-1 blog-list-title"><%= personalblog.title %></h5>
+                          <small class="text-muted">3 days ago</small>
+                        </div>
+                        <p class="mb-1 blog-list-subtitle"><%= personalblog.subtitle %></p>
+                        <% personalblog.tags.forEach(tag => { %>
+                            <button type="button" class="btn-rounded" disabled><%= tag %></button>
+                        <% }) %>
+                      </a>
+                <% }); %>
+            </div>
+        </div>
+        
+
+        <!-- Right Section-->
+        <div class="col-md-3 right-section">
+            
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS and dependencies (popper.js, jQuery) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+</body>
+</html>

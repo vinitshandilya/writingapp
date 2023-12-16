@@ -1,7 +1,6 @@
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const Blog = require('./blogModel');
 const ejs = require('ejs');
 const session = require('express-session');
@@ -86,7 +85,7 @@ app.get('/set-username-and-redirect', (req, res) => {
     req.session.user = req.user;
     req.session.username = req.user.username;
     // Redirect to /index
-    res.redirect('/index');
+    res.redirect('/homepage');
 });
 
 
@@ -107,38 +106,66 @@ const isLoggedIn = (req, res, next) => {
 };
 
 // Logged-in user lands here
-app.get('/index', isLoggedIn, async (req, res) => {
-    const user = req.session.user;
+app.get('/homepage', isLoggedIn, async (req, res) => {
+    const loggedinuser = req.session.user;
     try {
-        // Retrieve blogs from MongoDB
-        const blogs = await Blog.find( { userid: user._id });
-        res.status(200).render('index', { blogs, user: user });
+        const personalblogs = await Blog.find( { userid: loggedinuser._id });
+        const communityusers = await User.find( { });
+        res.status(200).render('homepage', { personalblogs, loggedinuser, communityusers });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-// render blog writing page
+
+app.get('/index', isLoggedIn, async (req, res) => {
+    const user = req.session.user;
+    try {
+        const blogs = await Blog.find( { userid: user._id });
+        const communityusers = await User.find( { });
+        res.status(200).render('index', { blogs, user: user, communityusers });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// render new blog writing page
 app.get('/index/createnew', isLoggedIn, async (req, res) => {
-    res.status(200).render('createnewblog', { blog: null });
+    const loggedinuser = req.session.user;
+    if(loggedinuser.firstname === null || loggedinuser.firstname === undefined || loggedinuser.firstname.trim() === '') {
+        // Redirect to user profile page to complete user profile
+        return res.status(200).render('userprofile', { user: loggedinuser });
+    } else {
+        return res.status(200).render('createnewblog', { blog: null });
+    }
 });
 
 
 // save new blog
 app.post('/index/saveblog', isLoggedIn, async (req, res) => {
+    const today = new Date();
+        const options = {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        };
+    const formattedDate = today.toLocaleDateString('en-US', options);
+
     try {
-        //console.log(req.body);
-        //const newBlog = new Blog(req.body);
         const newBlog = new Blog({
             userid: req.session.user._id,
             title: req.body.title,
             subtitle: req.body.subtitle,
             body: req.body.body,
-            author: req.session.user.username
+            author: req.session.user.firstname.toUpperCase() + ' ' + req.session.user.lastname.toUpperCase(),
+            timestamp: Date.now(),
+            formatteddate: formattedDate.toUpperCase(), 
+            timetoread: calculateReadingTime(req.body.body, 250) + ' MIN READ',
+            tags: getTagsListFromString(req.body.tags)
         });
 
         const savedBlog = await newBlog.save();
-        res.redirect(`/index?highlight=${savedBlog._id}`);
+        res.redirect(`/index?id=${savedBlog._id}`);
         
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -167,7 +194,7 @@ app.get('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
         if (!blog) {
             return res.status(404).send('Blog not found');
         }
-        // res.render('editBlog', { blog, editing: true });
+        
         console.log(blog);
         res.status(200).render('createnewblog', { blog: blog });
 
@@ -178,16 +205,27 @@ app.get('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
 
 // save edited blog
 app.post('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
+    const today = new Date();
+    const options = {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        };
+    const formattedDate = today.toLocaleDateString('en-US', options);
     try {
         const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, {
             title: req.body.title,
             subtitle: req.body.subtitle,
             body: req.body.body,
-            author: req.session.user.username,
+            author: req.session.user.firstname.toUpperCase() + ' ' + req.session.user.lastname.toUpperCase(),
+            timestamp: Date.now(),
+            formatteddate: formattedDate.toUpperCase(),
+            timetoread: calculateReadingTime(req.body.body, 250) + ' MIN READ',
+            tags: getTagsListFromString(req.body.tags)
         }, { new: true });
 
         // res.redirect(`/index/blogs/${updatedBlog._id}`);
-        res.redirect(`/index?highlight=${updatedBlog._id}`);
+        res.redirect(`/index?id=${updatedBlog._id}`);
 
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -208,11 +246,20 @@ app.get('/index/blogs/:id/delete', isLoggedIn, async (req, res) => {
     }
 });
 
-app.get('/index/profile', isLoggedIn, (req, res) => {
-    return res.status(200).render('userprofile');
+app.get('/index/profile', isLoggedIn, async (req, res) => {
+    var userid = req.user._id;
+    try {
+        const user = await User.findById(userid);
+        if(user) {
+            return res.status(200).render('userprofile', { user });
+        }
+    } catch(err) {
+        res.status(500).send('Internal Server Error');
+    }
 
 });
 
+// Update user
 app.post('/index/updateuser', isLoggedIn, async (req, res) => {
     console.log(req.body);
     var userid = req.user._id;
@@ -222,6 +269,7 @@ app.post('/index/updateuser', isLoggedIn, async (req, res) => {
         if(user) {
             user.firstname = req.body.firstname;
             user.lastname = req.body.lastname;
+            user.bio = req.body.bio;
             await user.save();
             console.log('user updated!');
         }
@@ -233,6 +281,21 @@ app.post('/index/updateuser', isLoggedIn, async (req, res) => {
     res.redirect('/index');
 
 })
+
+function calculateReadingTime(paragraph, wordsPerMinute) {
+    // Assuming an average of 200 words per minute
+    const defaultWordsPerMinute = 200;
+    const wpm = wordsPerMinute || defaultWordsPerMinute;
+    const wordCount = paragraph.split(/\s+/).length;
+    const readingTime = Math.ceil(wordCount / wpm);
+
+    return readingTime;
+}
+
+function getTagsListFromString(tagString) {
+    const tags = tagString.split(',').map(item => item.trim());
+    return tags;
+}
 
 app.get('/test', (req, res) => {
     res.render('testpage');
