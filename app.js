@@ -31,16 +31,18 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Landing page
+// Landing page for user login
 app.get('/', (req, res) => {
     const message = req.query.message || null;
     res.render('landingpage', { message }); // Create landingpage.ejs in your views folder
 });
 
+// Render user registration page
 app.get('/register', (req, res) => {
     res.status(200).render('registerpage');
 });
 
+// Register new user
 app.post('/register', async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -71,7 +73,7 @@ app.post('/register', async (req, res) => {
     }
 });
 
-
+// Log in existing user
 app.post('/login', passport.authenticate('local', {
     successRedirect: '/set-username-and-redirect',
     failureRedirect: '/?message=Invalid credentials.',
@@ -107,7 +109,6 @@ const isLoggedIn = (req, res, next) => {
 // Logged-in user lands here
 app.get('/index', isLoggedIn, async (req, res) => {
     const user = req.session.user;
-    // const username = req.session.username;
     try {
         // Retrieve blogs from MongoDB
         const blogs = await Blog.find( { userid: user._id });
@@ -207,9 +208,34 @@ app.get('/index/blogs/:id/delete', isLoggedIn, async (req, res) => {
     }
 });
 
+app.get('/index/profile', isLoggedIn, (req, res) => {
+    return res.status(200).render('userprofile');
+
+});
+
+app.post('/index/updateuser', isLoggedIn, async (req, res) => {
+    console.log(req.body);
+    var userid = req.user._id;
+
+    try {
+        const user = await User.findById(userid);
+        if(user) {
+            user.firstname = req.body.firstname;
+            user.lastname = req.body.lastname;
+            await user.save();
+            console.log('user updated!');
+        }
+    } catch(err) {
+        res.status(500).send('Internal Server Error');
+    }
+
+    console.log(userid);
+    res.redirect('/index');
+
+})
+
 app.get('/test', (req, res) => {
     res.render('testpage');
-
 });
 
 

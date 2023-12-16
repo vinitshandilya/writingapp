@@ -6,6 +6,8 @@ const userSchema = new mongoose.Schema({
     username: String,
     email: String,
     password: String,
+    firstname: String,
+    lastname: String,
 });
 
 userSchema.methods.authenticate = function(password) {
