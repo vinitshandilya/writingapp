@@ -37,13 +37,14 @@
         font-weight: bold;
     }
 
-    /* .blog-list-title {
-        color: rgb(25, 24, 24);
+    .blog-list-title {
+        color: #B0A648
     }
 
     .blog-list-subtitle {
+        padding-top: 0px;
         color: rgb(25, 24, 24);
-    } */
+    }
 
     .vertical-line {
         border-left: 1px solid #ccc;
@@ -86,47 +87,74 @@
     </nav>
     
 
-<div class="container-fluid">
-    <div class="row">
+    <div class="container-fluid">
+        <div class="row">
 
-        <!-- Left Section -->
-        <div class="col-md-2 right-section">
-            <h6>Discover</h6>
-            <ul class="list-group">
-                <% communityusers.forEach(communityuser => { %>
-                 <% var displayName = communityuser.firstname ? communityuser.firstname + ' ' + communityuser.lastname + ' (@' + communityuser.username + ')' : communityuser.username; %>
-                    <li class="list-group-item"><%= displayName %></li>
-                <% }); %>
-            </ul>
-        </div>
+            <!-- Left Section -->
+            <div class="col-md-2 right-section">
+                <h6>Discover</h6>
+                <ul class="list-group">
+                    <% communityusers.forEach(communityuser => { %>
+                    <% var displayName = communityuser.firstname ? communityuser.firstname + ' ' + communityuser.lastname + ' (@' + communityuser.username + ')' : communityuser.username; %>
+                        <li class="list-group-item"><%= displayName %></li>
+                    <% }); %>
+                </ul>
+            </div>
 
-        <!-- Middle Section -->
-        <div class="col-md-7 vertical-line">
-            <h3 class="mt-4">For You</h3>
-            <div class="list-group">
-                <% personalblogs.forEach(personalblog => { %>
+            <!-- Middle Section -->
+            <div class="col-md-7 vertical-line">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    <h4 class="mt-4">For You</h4>
+
+                    <!-- Dropdown Trigger -->
+                    <h6 class="mt-4 dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa-solid fa-arrow-down-wide-short"></i>
+                    </h6>
+                    <!-- Dropdown Menu -->
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="#">Last updated</a>
+                        <a class="dropdown-item" href="#">Created date</a>
+                        <a class="dropdown-item" href="#">A to Z</a>
+                        <a class="dropdown-item" href="#">Z to A</a>
+                    </div>
+
+                    
+                </div>
+                <div class="list-group">
+                    <% personalblogs.forEach(personalblog => { %>
                     <a href="/index?id=<%= personalblog._id %>" data-blog-id="<%= personalblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
-                        <small class="text-muted"><%= personalblog.author %> &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %></small>
-                        <div class="d-flex w-100 justify-content-between">
-                          <h5 class="mb-1 blog-list-title"><%= personalblog.title %></h5>
-                          <small class="text-muted">3 days ago</small>
+                
+                        <div class="row">
+                        <div class="col-auto">
+                            <img src="https://ak-d.tripcdn.com/images/1mi3e2224vymivgpcC549.jpg?proc=source/trip" alt="Image 2" class="img-thumbnail" width="150" height="150">
                         </div>
-                        <p class="mb-1 blog-list-subtitle"><%= personalblog.subtitle %></p>
-                        <% personalblog.tags.forEach(tag => { %>
+                
+                        <div class="col">
+                            <small class="text-muted"><%= personalblog.author %> &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %></small>
+                            <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1 blog-list-title"><%= personalblog.title %></h5>
+                            <small class="text-muted">3 days ago</small>
+                            </div>
+                            <p class="mb-1 blog-list-subtitle"><%= personalblog.subtitle %></p>
+                            <% personalblog.tags.forEach(tag => { %>
                             <button type="button" class="btn-rounded" disabled><%= tag %></button>
-                        <% }) %>
-                      </a>
-                <% }); %>
+                            <% }) %>
+                        </div>
+                
+                        </div>
+                    </a>
+                    <% }); %>
+                </div>
+                
+            </div>
+            
+
+            <!-- Right Section-->
+            <div class="col-md-3 right-section">
+                
             </div>
         </div>
-        
-
-        <!-- Right Section-->
-        <div class="col-md-3 right-section">
-            
-        </div>
     </div>
-</div>
 
 <!-- Bootstrap JS and dependencies (popper.js, jQuery) -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>

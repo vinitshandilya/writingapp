@@ -19,10 +19,14 @@
 
     <style>
 
+        a {
+            color: #B0A648;
+        }
+
         .footnote {
           position: relative;
           cursor: help;
-          border-bottom: 1px dashed #0D6EFD;
+          border-bottom: 1px dashed #B0A648;
         }
     
         .footnote:hover::after {
@@ -96,6 +100,14 @@
             padding-left: 20px;
             padding-right: 20px;
             font-weight: bold;
+        }
+
+        .blog-title {
+            color: #B0A648;
+        }
+
+        .ribbon-area {
+            color: #B0A648;
         }
 
         #blogDetailsContainer img {
@@ -207,8 +219,6 @@
                     
                     // Get the blog ID from the data attribute
                     var blogId = link.getAttribute('data-blog-id');
-                    
-                    // Call the function to load blog details
                     loadBlogDetails(blogId);
                     currentBlogId = blogId;
                 });
@@ -243,12 +253,12 @@
 
             var htmlContent = marked(blogDetails.blog.body);
             blogDetailsContainer.innerHTML = `
-                <h1 class="mt-4">${blogDetails.blog.title}</h1>
+                <h1 class="mt-4 blog-title">${blogDetails.blog.title}</h1>
                 <p style="font-size: 22px; color: #686868">${blogDetails.blog.subtitle}</p>
-                <div>
-                    <p style="font-size: smaller; color: #0d6efd; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-pen-to-square"></i> ${blogDetails.blog.author}</p>
-                    <p style="font-size: smaller; color: #0d6efd; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-calendar"></i> ${formattedTime}</p>
-                    <p style="font-size: smaller; color: #0d6efd; display: inline-block; margin-right: 10px;"><i class="far fa-clock"></i> ${timeToread}</p>
+                <div class="ribbon-area">
+                    <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-pen-to-square"></i> ${blogDetails.blog.author}</p>
+                    <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-calendar"></i> ${formattedTime}</p>
+                    <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="far fa-clock"></i> ${timeToread}</p>
                 </div>
                 <div class="canvas"><p>${htmlContent}</p></div>
                 <!-- TODO: Add more content as needed -->
@@ -273,6 +283,7 @@
                 var heading = document.createElement('h4');
                 heading.innerText = 'Footnotes';
                 heading.style.fontWeight = 'bold';
+                heading.style.color = '#B0A648';
                 footnoteList.appendChild(heading);
                 var footnoteArray = Array.from(footnoteElements);
 

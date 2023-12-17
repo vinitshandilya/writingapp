@@ -7,113 +7,221 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
     <title>The writing app</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap" rel="stylesheet">
+
     <style>
+
+        .left-section {
+            height: 100vh;
+            padding: 15px;
+        }
+
+        .mid-section {
+            height: 100vh;
+            padding: 15px;
+        }
+
+        .right-section {
+            height: 100vh;
+            padding: 15px;
+        }
+
         .CodeMirror {
-            height: 470px; /* Set your desired height */
+            height: 470px;
             max-height: 100%;
+            border: none !important;
+            box-shadow: none !important;
+            outline: none !important;
+        }
+
+        .editor-toolbar {
+            border: none !important;
+            box-shadow: none !important;
+            outline: none !important;
         }
 
         #popup {
             display: none;
         }
 
-        .custom-textarea {
-            border: none; /* Remove the border */
-            border-radius: 0; /* Optional: Remove border-radius */
-            resize: none; /* Optional: Disable textarea resizing */
+        .custom-textarea-title {
+            border: none;
+            resize: none;
+            font-size: 35px;
+            font-weight: bolder;
         }
 
-        /* Custom style for the placeholder text */
-        .custom-textarea::placeholder {
-            color: #999; /* Placeholder text color */
-            font-size: large;
+        .custom-textarea-title::placeholder {
+            border: none;
+            resize: none;
+            font-size: 35px;
             font-weight: bold;
+            color: rgb(179, 173, 173);
         }
 
-        /* Custom style for the input text */
-        form .custom-textarea:focus {
-            outline: none; /* Remove the focus outline */
-            /* Additional styles for focused state if needed */
+        .custom-textarea-title:focus {
+            border:none;
+            box-shadow:none;
+            outline: none !important;
         }
+
+        .custom-textarea-subtitle {
+            border: none;
+            resize: none;
+            font-size: 20px;
+        }
+
+        .custom-textarea-subtitle::placeholder {
+            border: none;
+            resize: none;
+            font-size: 20px;
+            color: rgb(179, 173, 173);
+        }
+
+        .custom-textarea-subtitle:focus {
+            border:none;
+            box-shadow:none;
+            outline: none !important;
+        }
+
+        .custom-textarea-tags {
+            border: none;
+            resize: none;
+            font-size: 15px;
+        }
+
+        .custom-textarea-tags::placeholder {
+            border: none;
+            resize: none;
+            font-size: 15px;
+            color: rgb(179, 173, 173);
+        }
+
+        .custom-textarea-tags:focus {
+            border:none;
+            box-shadow:none;
+            outline: none !important;
+        }
+
+        .btn-success {
+            background-color: #B0A648;
+            border-color: #B0A648;
+        }
+
+        .btn-success:hover,
+        .btn-success:focus {
+            background-color: #B0A648;
+            border-color: #B0A648;
+            color: #fff;
+        }
+
+
         
     </style>
 </head>
 <body>
 
-<% if (blog !== 'undefined' && blog !== null) { %>
-    <div class="container mt-4">
-        <form action="/index/blogs/<%= blog._id %>/edit" method="post">
-    
-            <div class="mb-3">
-                <textarea class="form-control custom-textarea" id="title" name="title" rows="1" placeholder="Title" style="font-size: large;"><%= blog.title %></textarea>
-            </div>
-    
-            <div class="mb-3">
-                <textarea class="form-control custom-textarea" id="subtitle" name="subtitle" rows="1" placeholder="Subtitle"><%= blog.subtitle %></textarea>
-            </div>
-    
-            <div class="mb-3">
-                <textarea class="form-control" id="body" name="body" rows="10" placeholder="Write something..."><%= blog.body %></textarea>
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- Left Section -->
+            <div class="col-md-2 left-section">
+                
+
             </div>
 
-            <div class="mb-3">
-                <textarea class="form-control custom-textarea" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"></textarea>
+            <!-- Middle Section -->
+            <div class="col-md-8 mid-line">
+
+                <% if (blog !== 'undefined' && blog !== null) { %>
+                    <div class="container mt-4">
+                        <form action="/index/blogs/<%= blog._id %>/edit" method="post">
+                    
+                            <div class="mb-3">
+                                <textarea class="form-control custom-textarea-title" id="title" name="title" rows="1" placeholder="Title"><%= blog.title %></textarea>
+                            </div>
+                    
+                            <div class="mb-3">
+                                <textarea class="form-control custom-textarea-subtitle" id="subtitle" name="subtitle" rows="1" placeholder="Subtitle"><%= blog.subtitle %></textarea>
+                            </div>
+                    
+                            <div class="mb-3">
+                                <textarea class="form-control" id="body" name="body" rows="10" placeholder="Write something..."><%= blog.body %></textarea>
+                            </div>
+                
+                            <div class="mb-3">
+                                <textarea class="form-control custom-textarea-tags" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"></textarea>
+                            </div>
+                            
+                            <!-- <button type="button" class="btn btn-primary" onclick="previewMarkdown()">Preview</button> -->
+                            <button type="submit" class="btn btn-success">Save Changes</button>
+                            <button type="button" class="btn btn-secondary" onclick="cancel()">Cancel</button>
+                            <button type="button" class="btn btn-secondary" id="footnotebutton">Add footnote</button>
+                
+                        </form>
+                    
+                        <div class="mt-4">
+                            <div id="preview"></div>
+                        </div>
+                
+                        <div id="popup">
+                            <input type="text" id="footnote-input" placeholder="Enter footnote text">
+                        </div>
+                    </div>
+                    
+                <% } else { %>
+                    <div class="container mt-4">
+                        <form action="/index/saveblog" method="post">
+                    
+                            <div class="mb-3">
+                                <textarea class="form-control custom-textarea-title" id="title" name="title" rows="1" placeholder="Enter Title..."></textarea>
+                            </div>
+                    
+                            <div class="mb-3">
+                                <textarea class="form-control custom-textarea-subtitle" id="subtitle" name="subtitle" rows="1" placeholder="Enter Subtitle..."></textarea>
+                            </div>
+                    
+                            <div class="mb-3">
+                                <textarea class="form-control" id="body" name="body" rows="10" placeholder="Write something..."></textarea>
+                            </div>
+                
+                            <div class="mb-3">
+                                <textarea class="form-control custom-textarea-tags" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"></textarea>
+                            </div>
+                            <!-- <button type="button" class="btn btn-primary" onclick="previewMarkdown()">Preview</button> -->
+                            <button type="submit" class="btn btn-success">Save</button>
+                            <button type="button" class="btn btn-secondary" onclick="cancel()">Cancel</button>
+                            <button type="button" class="btn btn-secondary" id="footnotebutton">Add footnote</button>
+                
+                        </form>
+                    
+                        <div class="mt-4">
+                            <h2>Preview</h2>
+                            <div id="preview"></div>
+                        </div>
+                
+                        <div id="popup">
+                            <input type="text" id="footnote-input" placeholder="Enter footnote text">
+                        </div>
+                
+                    </div>
+                <% } %>
+                
+                
+                
             </div>
             
-            <button type="button" class="btn btn-primary" onclick="previewMarkdown()">Preview</button>
-            <button type="submit" class="btn btn-success">Save Changes</button>
-            <button type="button" class="btn btn-secondary" onclick="cancel()">Cancel</button>
-            <button type="button" class="btn btn-secondary" id="footnotebutton">Add footnote</button>
 
-        </form>
-    
-        <div class="mt-4">
-            <h2>Preview</h2>
-            <div id="preview"></div>
-        </div>
-
-        <div id="popup">
-            <input type="text" id="footnote-input" placeholder="Enter footnote text">
+            <!-- Right Section-->
+            <div class="col-md-2 right-section">
+                
+            </div>
         </div>
     </div>
-    
-<% } else { %>
-    <div class="container mt-4">
-        <form action="/index/saveblog" method="post">
-    
-            <div class="mb-3">
-                <textarea class="form-control custom-textarea" id="title" name="title" rows="1" placeholder="Title"></textarea>
-            </div>
-    
-            <div class="mb-3">
-                <textarea class="form-control custom-textarea" id="subtitle" name="subtitle" rows="1" placeholder="Subtitle"></textarea>
-            </div>
-    
-            <div class="mb-3">
-                <textarea class="form-control" id="body" name="body" rows="10" placeholder="Write something..."></textarea>
-            </div>
 
-            <div class="mb-3">
-                <textarea class="form-control custom-textarea" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"></textarea>
-            </div>
-            <button type="button" class="btn btn-primary" onclick="previewMarkdown()">Preview</button>
-            <button type="submit" class="btn btn-success">Save</button>
-            <button type="button" class="btn btn-secondary" onclick="cancel()">Cancel</button>
-            <button type="button" class="btn btn-secondary" id="footnotebutton">Add footnote</button>
-
-        </form>
-    
-        <div class="mt-4">
-            <h2>Preview</h2>
-            <div id="preview"></div>
-        </div>
-
-        <div id="popup">
-            <input type="text" id="footnote-input" placeholder="Enter footnote text">
-        </div>
-
-    </div>
-<% } %>
 
 <script src="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -125,7 +233,7 @@
     var simplemde;
 
     document.addEventListener('DOMContentLoaded', function () {
-        simplemde = new SimpleMDE({ element: document.getElementById("body"), 
+        simplemde = new SimpleMDE({ element: document.getElementById("body"), spellChecker: false, 
         autofocus: true,
         placeholder: "Type here...",
         toolbar: [
