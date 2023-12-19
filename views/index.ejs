@@ -8,6 +8,7 @@
     <!-- Bootstrap JS (optional, if you need JavaScript features) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <title>The writing app</title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link href="indexpage.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -23,22 +24,25 @@
             color: #B0A648;
         }
 
-        .footnote {
-          position: relative;
-          cursor: help;
-          border-bottom: 1px dashed #B0A648;
+        .ql-footnote {
+            color: #999;
         }
-    
-        .footnote:hover::after {
-            content: attr(data-content);
+
+        .ql-footnote {
+            position: relative;
+            cursor: help;
+        }
+
+        .ql-footnote:hover::after {
+            content: attr(fntitle);
             display: block;
             position: absolute;
             left: 100%;
             top: 0;
             width: 600px;
-            max-width: 300px; /* Set the maximum width to 300px */
-            white-space: normal; /* Allow text to wrap to a new line */
-            word-wrap: break-word; /* Allow word wrapping */
+            max-width: 300px;
+            white-space: normal;
+            word-wrap: break-word;
             padding: 0.5em;
             background: #ffffff;
             border: 1px solid #d7d0d0;
@@ -51,24 +55,22 @@
         }
 
         .left-section {
+            background-color: #fff;
+            padding: 15px;
+            height: 100vh;
+        }
+
+        .mid-section {
+            background-color: #fff;
             padding: 15px;
             height: 100vh;
         }
 
         .right-section {
-            background-color: #f2f2f2;
+            background-color: #fff;
             height: 100vh;
             padding: 15px;
         }
-
-        .list-group-item {
-            border: none !important;
-            border-top: 1px solid rgba(0, 0, 0, 0.125) !important;
-            background-color: transparent !important;
-            line-height: 2.0;
-            font-weight: bold;
-        }
-
 
         #footnoteList {
             margin-top: auto; /* Push to the bottom */
@@ -83,13 +85,13 @@
             color: #585858;
         }
 
-        figcaption {
+        /* figcaption {
             padding-left: 0px;
             padding-top: 15px;
             font-size: 15px;
             font-family: 'Times New Roman', Times, serif;
             color: #585858;
-        }
+        } */
 
         .canvas {
             font-family: 'Hedvig Letters Serif', serif;
@@ -110,9 +112,15 @@
             color: #B0A648;
         }
 
-        #blogDetailsContainer img {
-            max-width: 700px; /* Set the maximum width */
-            height: auto; /* Maintain the aspect ratio */
+        #bookmark-icon {
+            display: none;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: #007bff;
+            cursor: pointer;
         }
 
 
@@ -145,38 +153,23 @@
             <div class="container-fluid">
                 <div class="row">
                     <!-- Left Section (25% width) -->
-                    <div class="col-md-3">
-
+                    <div class="col-md-3 left-section">
                     </div>
             
                     <!-- Middle Section (50% width) -->
-                    <div class="col-md-6">
-                        <div id="blogDetailsContainer" class="container-fluid"></div>
+                    <div class="col-md-6 mid-section">
+                        <div id="blogheader" class="container-fluid ribbon-area"></div>
+                        <div id="preview" class="container-fluid canvas"></div>
+                        <div id="bookmark-icon">&#128278;</div>
                         <br>
                         <hr>
                         <ul id="footnoteList"></ul>
-                        <br>
-                        <ul class="list-group">
-                            <% blogs.forEach(blog => { %>
-                                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/index/blogs/<%= blog._id %>" data-blog-id="<%= blog._id %>"><%= blog.title %></a>
-                            <% }); %>
-                        </ul>
-                        <h3>Discover authors</h3>
-                            <ul class="list-group">
-                                <% communityusers.forEach(communityuser => { %>
-                                 <% var displayName = communityuser.firstname ? communityuser.firstname + ' ' + communityuser.lastname + ' (@' + communityuser.username + ')' : communityuser.username; %>
-                                    <li class="list-group-item"><%= displayName %></li>
-                                <% }); %>
-                            </ul>
                     </div>
             
                     <!-- Right Section (25% width) -->
-                    <div class="col-md-3">
-
-
-
-
+                    <div class="col-md-3 right-section">
                     </div>
+
                 </div>
             </div>
         </div>
@@ -184,7 +177,7 @@
 
     
 
-    <script src="https://cdn.jsdelivr.net/npm/marked@3.0.2/marked.min.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Core theme JS-->
@@ -193,47 +186,38 @@
 
     <script>
 
+        var blogheader = document.getElementById('blogheader');
+        var previewDiv = document.getElementById('preview');
+        var markedUpDom;
+        var range;
+        var userid;
+        var blogid;
+
         document.addEventListener('DOMContentLoaded', function () {
             // Fetch details for the first blog during initial page load
             const urlParams = new URLSearchParams(window.location.search);
             var highlightBlogId = urlParams.get('id');
-            console.log(highlightBlogId);
 
             if (highlightBlogId !== null && highlightBlogId !== undefined) {
                 loadBlogDetails(highlightBlogId);
             } else {
-                var firstBlogLink = document.querySelector('.list-group-item');
-                if (firstBlogLink) {
-                    var firstBlogId = firstBlogLink.getAttribute('data-blog-id');
-                    currentBlogId = firstBlogId;
-                    loadBlogDetails(firstBlogId);
-                }
+                // var firstBlogLink = document.querySelector('.list-group-item');
+                // if (firstBlogLink) {
+                //     var firstBlogId = firstBlogLink.getAttribute('data-blog-id');
+                //     currentBlogId = firstBlogId;
+                //     loadBlogDetails(firstBlogId);
+                // }
             }
-            
-            // Add click event listeners to all blog links
-            var blogLinks = document.querySelectorAll('.list-group-item');
-            blogLinks.forEach(function (link) {
-                link.addEventListener('click', function (event) {
-                    // Prevent the default behavior of the link (navigation)
-                    event.preventDefault();
-                    
-                    // Get the blog ID from the data attribute
-                    var blogId = link.getAttribute('data-blog-id');
-                    loadBlogDetails(blogId);
-                    currentBlogId = blogId;
-                });
-            });
         });
     
         function loadBlogDetails(blogId) {
-            // AJAX request to the server to fetch blog details
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     var blogDetails = JSON.parse(xhr.responseText);
+                    userid = blogDetails.userid;
+                    blogid = blogDetails.blog._id;
                     updateBlogDetails(blogDetails);
-                    clearFootnoteArea();
-                    listFootnotes();
                 }
             };
             xhr.open('GET', '/index/blogs/' + blogId, true);
@@ -242,27 +226,45 @@
     
         function updateBlogDetails(blogDetails) {
 
-            var blogDetailsContainer = document.getElementById('blogDetailsContainer');
-            console.log(blogDetails.blog.timestamp);
+            var editorContent = blogDetails.blog.body;
+            
+            markedUpDom = recomputeRender(editorContent); // This string will be updated when bookmarks are added.
             const dateObj = new Date(blogDetails.blog.timestamp);
             const formatString = { month: 'short', day: 'numeric', year: 'numeric' };
             const formattedTime = dateObj.toLocaleString("en-US", formatString).toUpperCase();
-            console.log(formattedTime);
 
             var timeToread = calculateReadingTime(blogDetails.blog.body, 250);
 
-            var htmlContent = marked(blogDetails.blog.body);
-            blogDetailsContainer.innerHTML = `
+            blogheader.innerHTML = `
                 <h1 class="mt-4 blog-title">${blogDetails.blog.title}</h1>
                 <p style="font-size: 22px; color: #686868">${blogDetails.blog.subtitle}</p>
-                <div class="ribbon-area">
+                <div>
                     <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-pen-to-square"></i> ${blogDetails.blog.author}</p>
                     <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-calendar"></i> ${formattedTime}</p>
                     <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="far fa-clock"></i> ${timeToread}</p>
-                </div>
-                <div class="canvas"><p>${htmlContent}</p></div>
-                <!-- TODO: Add more content as needed -->
+                </div> `;
+
+            previewDiv.innerHTML = `
+                <div><p>${markedUpDom}</p></div>
             `;
+
+            var footnotes = listFootnotes(markedUpDom);
+            if(footnotes.length > 0) {
+                var footnoteList = document.getElementById('footnoteList');
+                var heading = document.createElement('h4');
+                heading.innerText = 'Footnotes';
+                heading.style.fontWeight = 'bold';
+                heading.style.color = '#B0A648';
+                footnoteList.appendChild(heading);
+
+                footnotes.forEach(function (footnote) {
+                    var listItem = document.createElement('li');
+                    listItem.textContent = footnote;
+                    footnoteList.appendChild(listItem);
+
+                });
+            }
+            
             var editLink = document.getElementById('editLink');
             if (editLink) {
                 editLink.href = `/index/blogs/${blogDetails.blog._id}/edit`;
@@ -274,44 +276,42 @@
             }
         }
 
-        function listFootnotes() {
-            clearFootnoteArea();
-            var footnoteList = document.getElementById('footnoteList');
-            var footnoteElements = document.querySelectorAll('.footnote');
-
-            if (footnoteElements.length > 0) {
-                var heading = document.createElement('h4');
-                heading.innerText = 'Footnotes';
-                heading.style.fontWeight = 'bold';
-                heading.style.color = '#B0A648';
-                footnoteList.appendChild(heading);
-                var footnoteArray = Array.from(footnoteElements);
-
-                footnoteArray.sort(function (a, b) {
-                    var aValue = parseInt(a.textContent.match(/\[(\d+)\]/)[1]);
-                    var bValue = parseInt(b.textContent.match(/\[(\d+)\]/)[1]);
-                    return aValue - bValue;
-                });
-
-                footnoteArray.forEach(function (element) {
-                    var content = element.textContent.trim();
-                    const match = content.match(/\[(\d+)\]/);
-                    if(match) {
-                        const number = match[1];
-                        var dataContent = element.getAttribute('data-content');
-                        console.log(`${number}: ${dataContent || 'No data-content attribute'}`);
-                        var listItem = document.createElement('li');
-                        listItem.textContent = `${number}: ${dataContent || 'No data-content attribute'}`;
-                        footnoteList.appendChild(listItem);
-                    }
-                    
-                });
-            }
+        function recomputeRender(domstr) {
+            var counter = 1;
+            var regex = /\[\^(.*?)\]/g; // Capture the text inside `[^]` using capturing group
+            var previewContent = domstr.replace(regex, function(match, customFootnote) {
+                return `
+                <span class="ql-footnote" fntitle="${customFootnote}">
+                    <sub>
+                        <a href="your-link-url">[${(counter++)}]</a>
+                    </sub>
+                </span>
+                `;
+            });
+            fetchUserBlogMetadata(userid, blogid);
+            
+            return previewContent;
         }
 
-        function clearFootnoteArea() {
-            var footnoteList = document.getElementById('footnoteList');
-            footnoteList.innerHTML = '';
+        async function fetchUserBlogMetadata(userid, blogid) {
+            try {
+                const response = await fetch(`/index/blogs/getuserblogmetadata/${userid}/${blogid}`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    console.log('User Blog Metadata found:', data.userBlogMetadata.markedUpDom);
+                    previewDiv.innerHTML = `
+                        <div><p>${data.userBlogMetadata.markedUpDom}</p></div>
+                    `;
+                    
+                } else {
+                    console.error('Failed to fetch userBlogMetadata:', data.message);
+                    // Handle the error scenario
+                }
+            } catch (error) {
+                console.error('Error during fetch:', error);
+                // Handle other errors, e.g., network issues
+            }
         }
 
         function calculateReadingTime(paragraph, wordsPerMinute) {
@@ -322,6 +322,113 @@
             const readingTime = Math.ceil(wordCount / wpm);
 
             return readingTime + ' MIN READ';
+        }
+
+        function listFootnotes(domstr) {
+
+            const parser = new DOMParser();
+            const document = parser.parseFromString(domstr, "text/html");
+
+            const footnotes = [];
+            const footnoteElements = document.querySelectorAll('.ql-footnote');
+
+            for (const element of footnoteElements) {
+                const footnote_index = element.textContent;
+                const fntitle = element.getAttribute('fntitle');
+
+                if (fntitle) {
+                    footnotes.push(`${footnote_index} ${fntitle}`);
+                }
+            }
+
+            return footnotes;
+        }
+
+        // Add bookmark function
+
+        var bookmarkIcon = document.getElementById('bookmark-icon');
+        var selectedText;
+
+        previewDiv.addEventListener('mouseup', function () {
+            selectedText = getSelectedText();
+            if (selectedText) {
+                showBookmarkIcon();
+            } else {
+                hideBookmarkIcon();
+            }
+        });
+
+        function showBookmarkIcon() {
+            bookmarkIcon.style.display = 'block';
+            bookmarkIcon.addEventListener('click', bookmarkIconClickHandler);
+
+        }
+
+        function hideBookmarkIcon() {
+            bookmarkIcon.style.display = 'none';
+            bookmarkIcon.removeEventListener('click', bookmarkIconClickHandler);
+        }
+
+        function bookmarkIconClickHandler() {
+            if(selectedText !=null) {
+                console.log('Save bookmark to server: ' + selectedText);
+                console.log('Markedup dom string: ' + markedUpDom);
+                var span = document.createElement('span');
+                span.classList.add('bookmark');
+                span.style.textDecoration = 'underline';
+                span.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';
+                range.surroundContents(span);
+
+                var rangeClone = range.cloneContents();
+                var replacementDiv = document.createElement('div');
+                replacementDiv.appendChild(rangeClone);
+                markedUpDom = markedUpDom.replace(selectedText, replacementDiv.innerHTML);
+
+                console.log('Modified Markedup dom string: ' + markedUpDom);
+
+                console.log('userid: ' + userid);
+                console.log('blogid: ' + blogid);
+
+                // create bloguser metadata:
+
+                const blogusermetadata = {
+                    userid: userid,
+                    blogid: blogid,
+                    isfavourite: false,
+                    markedUpDom: markedUpDom
+                }
+
+                saveBlogUserMetadata(blogusermetadata);
+                
+            }
+
+            hideBookmarkIcon();
+            selectedText = null;
+        }
+
+        function saveBlogUserMetadata(blogusermetadata) {
+            // Assuming you're using the Fetch API for simplicity
+            fetch('/index/blogs/updateuserblogmetadata', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ blogusermetadata }),
+            })
+            .then(response => response.json())
+            .then(data => console.log('Response from server:', data))
+            .catch(error => console.error('Error sending data to server:', error));
+        }
+
+        function getSelectedText() {
+            var selection = window.getSelection();
+            range = selection.getRangeAt(0);
+            if (selection) {
+                return selection.toString();
+            } else if (document.selection && document.selection.type != 'Control') {
+                return document.selection.createRange().text;
+            }
+            return '';
         }
 
     </script>

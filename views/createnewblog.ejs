@@ -1,335 +1,505 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
-    <title>The writing app</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+  <title>The writing app</title>
 
-    <style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-        .left-section {
-            height: 100vh;
-            padding: 15px;
-        }
-
-        .mid-section {
-            height: 100vh;
-            padding: 15px;
-        }
-
-        .right-section {
-            height: 100vh;
-            padding: 15px;
-        }
-
-        .CodeMirror {
-            height: 470px;
-            max-height: 100%;
-            border: none !important;
-            box-shadow: none !important;
-            outline: none !important;
-        }
-
-        .editor-toolbar {
-            border: none !important;
-            box-shadow: none !important;
-            outline: none !important;
-        }
-
-        #popup {
-            display: none;
-        }
-
-        .custom-textarea-title {
-            border: none;
-            resize: none;
-            font-size: 35px;
-            font-weight: bolder;
-        }
-
-        .custom-textarea-title::placeholder {
-            border: none;
-            resize: none;
-            font-size: 35px;
-            font-weight: bold;
-            color: rgb(179, 173, 173);
-        }
-
-        .custom-textarea-title:focus {
-            border:none;
-            box-shadow:none;
-            outline: none !important;
-        }
-
-        .custom-textarea-subtitle {
-            border: none;
-            resize: none;
-            font-size: 20px;
-        }
-
-        .custom-textarea-subtitle::placeholder {
-            border: none;
-            resize: none;
-            font-size: 20px;
-            color: rgb(179, 173, 173);
-        }
-
-        .custom-textarea-subtitle:focus {
-            border:none;
-            box-shadow:none;
-            outline: none !important;
-        }
-
-        .custom-textarea-tags {
-            border: none;
-            resize: none;
-            font-size: 15px;
-        }
-
-        .custom-textarea-tags::placeholder {
-            border: none;
-            resize: none;
-            font-size: 15px;
-            color: rgb(179, 173, 173);
-        }
-
-        .custom-textarea-tags:focus {
-            border:none;
-            box-shadow:none;
-            outline: none !important;
-        }
-
-        .btn-success {
-            background-color: #B0A648;
-            border-color: #B0A648;
-        }
-
-        .btn-success:hover,
-        .btn-success:focus {
-            background-color: #B0A648;
-            border-color: #B0A648;
-            color: #fff;
-        }
-
-
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
         
-    </style>
+
+  <style>
+    .left-section {
+        height: 100vh;
+        padding: 15px;
+    }
+
+    .mid-section {
+        height: 100vh;
+        padding: 15px;
+    }
+
+    .right-section {
+        height: 100vh;
+        padding: 15px;
+    }
+
+    .editor {
+        height: 520px;
+        max-height: 100%;
+        border: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+        font-size: large;
+    }
+
+    .ql-toolbar {
+        border: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+    }
+
+    .custom-textarea-title {
+        border: none;
+        resize: none;
+        font-size: 35px;
+        font-weight: bolder;
+    }
+
+    .custom-textarea-title::placeholder {
+        border: none;
+        resize: none;
+        font-size: 35px;
+        font-weight: bold;
+        color: rgb(179, 173, 173);
+    }
+
+    .custom-textarea-title:focus {
+        border:none;
+        box-shadow:none;
+        outline: none !important;
+    }
+
+    .custom-textarea-subtitle {
+        border: none;
+        resize: none;
+        font-size: 20px;
+    }
+
+    .custom-textarea-subtitle::placeholder {
+        border: none;
+        resize: none;
+        font-size: 20px;
+        color: rgb(179, 173, 173);
+    }
+
+    .custom-textarea-subtitle:focus {
+        border:none;
+        box-shadow:none;
+        outline: none !important;
+    }
+
+    .custom-textarea-tags {
+        border: none;
+        resize: none;
+        font-size: 15px;
+    }
+            
+    .custom-textarea-tags::placeholder {
+        border: none;
+        resize: none;
+        font-size: 15px;
+    }
+
+    .custom-textarea-tags:focus {
+        border:none;
+        box-shadow:none;
+        outline: none !important;
+    }
+
+    .popup-input {
+        border: none;
+        resize: none;
+        font-size: 15px;
+    }
+            
+    .popup-input::placeholder {
+        border: none;
+        resize: none;
+        font-size: 15px;
+    }
+
+    .popup-input:focus {
+        border:none;
+        box-shadow:none;
+        outline: none !important;
+    }
+
+    .btn-success {
+        background-color: #B0A648;
+        border-color: #B0A648;
+    }
+
+    .btn-primary {
+        background-color: #b6721f;
+        border-color: #b6721f;
+    }
+
+    .btn-primary:hover {
+        background-color: #B0A648;
+        border-color: #B0A648;
+        color: #fff;
+    }
+
+    .btn-secondary {
+        background-color: transparent;
+        border-color: #b6721f;
+        color: #b6721f;
+    }
+
+    .btn-success:hover,
+    .btn-success:focus {
+        background-color: #B0A648;
+        border-color: #B0A648;
+        color: #fff;
+    }
+
+    .footnote {
+        color: #999;
+    }
+
+    .ql-footnote {
+        color: #999;
+    }
+
+    #preview {
+        margin-top: 20px;
+    }
+
+    .ql-footnote {
+        position: relative;
+        cursor: help;
+    }
+
+    .ql-footnote:hover::after {
+        content: attr(fntitle);
+        display: block;
+        position: absolute;
+        left: 100%;
+        top: 0;
+        width: 600px;
+        max-width: 300px;
+        white-space: normal;
+        word-wrap: break-word;
+        padding: 0.5em;
+        background: #ffffff;
+        border: 1px solid #d7d0d0;
+        box-shadow: 2px 2px 5px rgba(41, 41, 41, 0.2);
+        z-index: 1;
+        border-radius: 15px;
+        font-size: 13px;
+        color: #333;
+        line-height: 1.4;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+
+  </style>
+
+
 </head>
 <body>
 
     <div class="container-fluid">
         <div class="row">
-
             <!-- Left Section -->
             <div class="col-md-2 left-section">
                 
-
+    
             </div>
-
-            <!-- Middle Section -->
+    
+            <!-- Mid Section -->
             <div class="col-md-8 mid-line">
 
                 <% if (blog !== 'undefined' && blog !== null) { %>
-                    <div class="container mt-4">
-                        <form action="/index/blogs/<%= blog._id %>/edit" method="post">
-                    
-                            <div class="mb-3">
-                                <textarea class="form-control custom-textarea-title" id="title" name="title" rows="1" placeholder="Title"><%= blog.title %></textarea>
-                            </div>
-                    
-                            <div class="mb-3">
-                                <textarea class="form-control custom-textarea-subtitle" id="subtitle" name="subtitle" rows="1" placeholder="Subtitle"><%= blog.subtitle %></textarea>
-                            </div>
-                    
-                            <div class="mb-3">
-                                <textarea class="form-control" id="body" name="body" rows="10" placeholder="Write something..."><%= blog.body %></textarea>
-                            </div>
-                
-                            <div class="mb-3">
-                                <textarea class="form-control custom-textarea-tags" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"></textarea>
-                            </div>
-                            
-                            <!-- <button type="button" class="btn btn-primary" onclick="previewMarkdown()">Preview</button> -->
-                            <button type="submit" class="btn btn-success">Save Changes</button>
-                            <button type="button" class="btn btn-secondary" onclick="cancel()">Cancel</button>
-                            <button type="button" class="btn btn-secondary" id="footnotebutton">Add footnote</button>
-                
-                        </form>
-                    
-                        <div class="mt-4">
-                            <div id="preview"></div>
-                        </div>
-                
-                        <div id="popup">
-                            <input type="text" id="footnote-input" placeholder="Enter footnote text">
-                        </div>
+                    <div class="mb-3">
+                        <textarea class="form-control custom-textarea-title" id="title" name="title" rows="1" placeholder="Title"><%= blog.title %></textarea>
                     </div>
-                    
-                <% } else { %>
-                    <div class="container mt-4">
-                        <form action="/index/saveblog" method="post">
-                    
-                            <div class="mb-3">
-                                <textarea class="form-control custom-textarea-title" id="title" name="title" rows="1" placeholder="Enter Title..."></textarea>
-                            </div>
-                    
-                            <div class="mb-3">
-                                <textarea class="form-control custom-textarea-subtitle" id="subtitle" name="subtitle" rows="1" placeholder="Enter Subtitle..."></textarea>
-                            </div>
-                    
-                            <div class="mb-3">
-                                <textarea class="form-control" id="body" name="body" rows="10" placeholder="Write something..."></textarea>
-                            </div>
-                
-                            <div class="mb-3">
-                                <textarea class="form-control custom-textarea-tags" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"></textarea>
-                            </div>
-                            <!-- <button type="button" class="btn btn-primary" onclick="previewMarkdown()">Preview</button> -->
-                            <button type="submit" class="btn btn-success">Save</button>
-                            <button type="button" class="btn btn-secondary" onclick="cancel()">Cancel</button>
-                            <button type="button" class="btn btn-secondary" id="footnotebutton">Add footnote</button>
-                
-                        </form>
-                    
-                        <div class="mt-4">
-                            <h2>Preview</h2>
-                            <div id="preview"></div>
-                        </div>
-                
-                        <div id="popup">
-                            <input type="text" id="footnote-input" placeholder="Enter footnote text">
-                        </div>
-                
+        
+                    <div class="mb-3">
+                        <textarea class="form-control custom-textarea-subtitle" id="subtitle" name="subtitle" rows="1" placeholder="Enter Subtitle..."><%= blog.subtitle %></textarea>
                     </div>
-                <% } %>
-                
-                
-                
-            </div>
-            
+        
+                    <div class="editor" id="editor"><%- blog.body || '' %></div>
+        
+                    <div class="mb-3">
+                        <textarea class="form-control custom-textarea-tags" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"><%= blog.tags && blog.tags.length > 0 ? blog.tags.join(', ') : '' %></textarea>
+                    </div>
+        
+                    <button class="btn btn-primary" id="previewButton" onclick="previewFootnotes()">Preview</button>
+        
+                    <button type="button" class="btn btn-success" onclick="saveBlog(true, '<%= blog.id %>')">Publish Changes</button>
+        
+                    <button type="button" class="btn btn-secondary" onclick="cancel('<%= blog.id %>')">Cancel</button>
+        
+                    <div id="preview"></div>
 
+                    <div id="popup" class="hidden">
+                        <input class="popup-input" type="text" id="userInput" name="user_input" placeholder="Enter footnote...">
+                        <button class="btn btn-success" id="footnoteSubmit">Add</button>
+                    </div>
+
+
+                <% } else { %>
+                    <div class="mb-3">
+                        <textarea class="form-control custom-textarea-title" id="title" name="title" rows="1" placeholder="Enter Title..."></textarea>
+                    </div>
+        
+                    <div class="mb-3">
+                        <textarea class="form-control custom-textarea-subtitle" id="subtitle" name="subtitle" rows="1" placeholder="Enter Subtitle..."></textarea>
+                    </div>
+        
+                    <div class="editor" id="editor"></div>
+        
+                    <div class="mb-3">
+                        <textarea class="form-control custom-textarea-tags" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"></textarea>
+                    </div>
+        
+                    <button class="btn btn-primary" id="previewButton" onclick="previewFootnotes()">Preview</button>
+        
+                    <button type="button" class="btn btn-success" onclick="saveBlog(false, '')">Publish</button>
+        
+                    <button type="button" class="btn btn-secondary" onclick="cancel('')">Cancel</button>
+
+                    <div id="preview"></div>
+
+                    <div id="popup" class="hidden">
+                        <input class="popup-input" type="text" id="userInput" name="user_input" placeholder="Enter footnote...">
+                        <button class="btn btn-success" id="footnoteSubmit">Add</button>
+                    </div>
+
+
+                <% } %>
+    
+                
+    
+    
+            </div>
+    
             <!-- Right Section-->
             <div class="col-md-2 right-section">
                 
             </div>
+
+
         </div>
     </div>
 
+  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/marked@3.0.2/marked.min.js"></script>
-<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
-<script>
-    // var cancelledblog = '<%- JSON.stringify(blog) %>';
-    var simplemde;
 
-    document.addEventListener('DOMContentLoaded', function () {
-        simplemde = new SimpleMDE({ element: document.getElementById("body"), spellChecker: false, 
-        autofocus: true,
-        placeholder: "Type here...",
-        toolbar: [
-            "bold", 
-			"italic", 
-			"strikethrough", "|",
-			"heading", 
-			"heading-smaller", 
-			"heading-bigger", "|", 
-			"heading-1",
-			"heading-2",
-			"heading-3", "|",
-			"quote", 
-			"code",
-			"unordered-list", 
-			"ordered-list", "|", 
-			"clean-block",
-			"link", 
-			"image",
-			"table", 
-			"horizontal-rule", "|",
-			"preview",
-			"side-by-side",
-			"fullscreen",
+  <script>
+
+    const customButton = document.createElement('button');
+    customButton.className = 'ql-custom-button';
+
+    var Block = Quill.import('blots/block');
+
+    class FootnoteBlot extends Block {
+        static blotName = 'footnote';
+        static tagName = 'footnote';
+    }
+
+    Quill.register(FootnoteBlot);
+
+    var toolbarOptions = [
+        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+        ['blockquote', 'code-block'],
+
+        //[{ 'header': 1 }, { 'header': 2 }],               // custom button values
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+        [{ 'direction': 'rtl' }],                         // text direction
+
+        // [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+
+        [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+        [{ 'font': [] }],
+        [{ 'align': [] }],
+
+        ['clean'],                                         // remove formatting button
+
+        ['link', 'image', 'video', 'formula', { 'custom-button': customButton }] 
+    ];
+
+    var quill = new Quill('#editor', {
+        modules: {
+            toolbar: {
+                container: toolbarOptions,
+                handlers: {
+                    'custom-button': function() {
+                        insertFootnote();
+                    }
+                }
+            }
+        },
+        theme: 'snow'
+    });
+
+    const popup = document.getElementById('popup');
+    const footnoteSubmit = document.getElementById('footnoteSubmit');
+
+
+
+    var selectedText;
+
+    function insertFootnote() {
+        selectedText = quill.getSelection();
+        if(selectedText.length > 0) {
+            popup.classList.toggle('hidden');
+        } 
+    }
+
+    footnoteSubmit.addEventListener('click', () => {
+          // Handle user input (e.g., store it, log it to the console)
+          const userInput = document.getElementById('userInput').value;
+          console.log(`User entered: ${userInput}`);
+          popup.classList.toggle('hidden');
+
+          if(selectedText.length > 0) {
+            console.log('selectedText: ' + selectedText);
+            quill.insertText(selectedText.index + selectedText.length, `[^${userInput}]`, 'user');
+            quill.formatText(
+            selectedText.index + selectedText.length, // starting index
+            userInput.length + 3, // length of inserted text + brackets
             {
-            name: "addfootnote",
-                action: function customFunction(simplemde){
-                    document.getElementById('popup').style.display = 'block';
-                    document.getElementById('popup').style.visibility = 'visible';
-                    document.getElementById('footnote-input').focus();
-                },
-                className: "fa-regular fa-note-sticky",
-                title: "Add footnote",
-            },
-			"guide"
-        ],
-      });
-    });
+                color: 'grey', // maintain grey color
+                font: 'Times New Roman', // set font family
+                size: 15, // set font size
+            }
+            );
+            var previewDiv = document.getElementById('preview');
+            var editorContent = quill.root.innerHTML;
+            previewDiv.innerHTML = recomputeRender(editorContent);
+          }
 
-    // Add html footnote markup to selected text
-    function addAttributesToSelection(popuptext) {
-        var cm = simplemde.codemirror;
-        var selectedText = cm.getSelection();
-        if (selectedText && popuptext) {
-          var count = getFootnoteCount();
-          console.log('number of footnotes: ' + count);
-          var replacement = `<span class="footnote" data-content="${popuptext}">${selectedText}<sup>[${count}]</sup></span>`;
-          cm.replaceSelection(replacement);
-        }
+        });
+
+    function previewFootnotes() {
+        var previewDiv = document.getElementById('preview');
+        var editorContent = quill.root.innerHTML;
+        previewDiv.innerHTML = recomputeRender(editorContent);
     }
 
-    // Display footnote popup on button click
-    document.getElementById('footnotebutton').addEventListener('click', function () {
-       document.getElementById('popup').style.display = 'block';
-       document.getElementById('footnote-input').focus();
-    });
-
-    // Detect outside click
-    document.addEventListener('click', function (event) {
-      var popup = document.getElementById('popup');
-      if (!popup.contains(event.target) && event.target !== document.getElementById('footnotebutton')) {
-        popup.style.display = 'none';
-        var footnoteText = document.getElementById('footnote-input').value;
-        addAttributesToSelection(footnoteText);
-        document.getElementById('footnote-input').value = '';
-      }
-    });
-
-    function previewMarkdown() {
-        if (simplemde) {
-            var markdownContent = simplemde.value();
-            var previewContainer = document.getElementById("preview");
-            previewContainer.innerHTML = marked(markdownContent);
-        } else {
-            console.error('SimpleMDE is not defined.');
-        }
+    function recomputeRender(domstr) {
+        var counter = 1;
+        var regex = /\[\^(.*?)\]/g; // Capture the text inside `[^]` using capturing group
+        var previewContent = domstr.replace(regex, function(match, customFootnote) {
+            return `
+            <span class="ql-footnote" fntitle="${customFootnote}">
+                <sub>
+                    <a href="your-link-url">[${(counter++)}]</a>
+                </sub>
+            </span>
+            `;
+        });
+        return previewContent;
     }
 
-    function cancel() {
-        window.location.href = '/homepage';
-    }
-
-    function getFootnoteCount() {
-        var elements = document.getElementsByClassName('cm-attribute');
-
-        // Count occurrences
-        var count = 0;
-        for (var i = 0; i < elements.length; i++) {
-            if (elements[i].innerHTML === 'data-content') {
-                count++;
+    quill.on('editor-change', function(eventName, ...args) {
+        if (eventName === 'text-change') {
+            var [delta, oldDelta, source] = args;
+            if (source === 'user') {
+                // Handle changes made by the user
             }
         }
-        return count+1;
+
+        if (eventName === 'selection-change') {
+            var [range, oldRange, source] = args;
+            if (range && source === 'user' && quill.getFormat(range.index, 1)['footnote']) {
+                // Handle clicks on the footnote
+                // You might want to open a modal for editing or deleting the footnote
+            }
+        }
+    });
+
+
+    function saveBlog(isUpdateOperation, blogid) {
+        console.log(isUpdateOperation);
+        console.log(blogid);
+        const title = document.getElementById('title').value;
+        const subtitle = document.getElementById('subtitle').value;
+        const tags = document.getElementById('tags').value;
+        const body = quill.root.innerHTML;
+
+        const jsonData = {
+                title: title,
+                subtitle: subtitle,
+                body: body,
+                tags: tags
+        };
+
+        if(isUpdateOperation) {
+            //Path: /index/blogs/:id/edit
+            fetch('/index/blogs/' + blogid + '/edit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Blog saved successfully:', data.savedblogid);
+                window.location.href = '/index?id=' + data.savedblogid;
+
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+                // Handle error, if needed
+            });
+
+        } else { // save as new
+            fetch('/index/saveblog', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(jsonData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Blog saved successfully:', data.savedblogid);
+                window.location.href = '/index?id=' + data.savedblogid;
+
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+                // Handle error, if needed
+            });
+        }
+
+        
     }
 
-</script>
+    function cancel(blogid) {
+        if(blogid) {
+            window.location.href = '/index?id=' + blogid;
+        } else {
+            window.location.href = '/homepage';
+        }
+    }
 
+
+  </script>
 </body>
 </html>
+ 

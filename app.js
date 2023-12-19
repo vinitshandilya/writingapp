@@ -8,6 +8,7 @@ const passport = require('passport');
 const flash = require('connect-flash');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./user');
+const UserBlogMetadata = require('./userBlogMetadataModel');
 
 const app = express();
 const port = 3000;
@@ -165,7 +166,8 @@ app.post('/index/saveblog', isLoggedIn, async (req, res) => {
         });
 
         const savedBlog = await newBlog.save();
-        res.redirect(`/index?id=${savedBlog._id}`);
+        // res.redirect(`/index?id=${savedBlog._id}`);
+        res.status(200).json({ savedblogid: savedBlog._id });
         
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -174,13 +176,14 @@ app.post('/index/saveblog', isLoggedIn, async (req, res) => {
 
 // get a blog detail
 app.get('/index/blogs/:id', isLoggedIn, async (req, res) => {
+    const userid = req.session.user._id;
     try {
         const blog = await Blog.findById(req.params.id);
         if (!blog) {
             return res.status(404).send('Blog not found');
         }
         // res.render('blog', { blog, editing: false });
-        res.status(200).json({ blog, editing: false });
+        res.status(200).json({ blog, userid: userid, editing: false });
 
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -225,7 +228,8 @@ app.post('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
         }, { new: true });
 
         // res.redirect(`/index/blogs/${updatedBlog._id}`);
-        res.redirect(`/index?id=${updatedBlog._id}`);
+        // res.redirect(`/index?id=${updatedBlog._id}`);
+        res.status(200).json({ savedblogid: updatedBlog._id });
 
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -239,7 +243,7 @@ app.get('/index/blogs/:id/delete', isLoggedIn, async (req, res) => {
         if (!deletedBlog) {
             return res.status(404).send('Blog not found');
         }
-        res.redirect('/index');
+        res.redirect('/homepage');
 
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -282,6 +286,44 @@ app.post('/index/updateuser', isLoggedIn, async (req, res) => {
 
 })
 
+app.post('/index/blogs/updateuserblogmetadata', isLoggedIn, async (req, res) => {
+    console.log(req.body);
+    try {
+        const { userid, blogid, isfavourite, markedUpDom } = req.body.blogusermetadata;
+
+        // Find or create the user blog metadata entry
+        let userBlogMetadata = await UserBlogMetadata.findOneAndUpdate(
+            { userid, blogid },
+            { isfavourite, markedUpDom },
+            { upsert: true, new: true }
+        );
+        // res.json({ success: true, userBlogMetadata });
+    } catch (error) {
+        console.error('Error handling POST request:', error);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+});
+
+// GET route to fetch userBlogMetadata by userid and blogid
+app.get('/index/blogs/getuserblogmetadata/:userid/:blogid', isLoggedIn, async (req, res) => {
+    try {
+        const { userid, blogid } = req.params;
+        // Find user blog metadata by userid and blogid
+        let userBlogMetadata = await UserBlogMetadata.findOne({ userid, blogid });
+
+        if (userBlogMetadata) {
+            res.json({ success: true, userBlogMetadata });
+        } else {
+            res.status(404).json({ success: false, message: 'User blog metadata not found' });
+        }
+    } catch (error) {
+        console.error('Error handling GET request:', error);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
+    }
+});
+
+
+
 function calculateReadingTime(paragraph, wordsPerMinute) {
     // Assuming an average of 200 words per minute
     const defaultWordsPerMinute = 200;
@@ -294,8 +336,10 @@ function calculateReadingTime(paragraph, wordsPerMinute) {
 
 function getTagsListFromString(tagString) {
     const tags = tagString.split(',').map(item => item.trim());
+    console.log(tags);
     return tags;
 }
+
 
 app.get('/test', (req, res) => {
     res.render('testpage');

@@ -136,9 +136,15 @@
                             <small class="text-muted">3 days ago</small>
                             </div>
                             <p class="mb-1 blog-list-subtitle"><%= personalblog.subtitle %></p>
-                            <% personalblog.tags.forEach(tag => { %>
-                            <button type="button" class="btn-rounded" disabled><%= tag %></button>
-                            <% }) %>
+                            <% if (personalblog.tags.length > 0) { %>
+                                <% personalblog.tags.forEach(tag => { %>
+                                    <% if(tag.trim().length !== 0) { %>
+                                        <button type="button" class="btn-rounded" disabled><%= tag %></button>
+                                    <% } %>
+                                  
+                                <% }) %>
+                              <% } %>
+                              
                         </div>
                 
                         </div>
