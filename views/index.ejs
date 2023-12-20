@@ -123,6 +123,10 @@
             cursor: pointer;
         }
 
+        .highlight {
+      background-color: yellow;
+    }
+
 
     </style>
 </head>
@@ -194,20 +198,12 @@
         var blogid;
 
         document.addEventListener('DOMContentLoaded', function () {
-            // Fetch details for the first blog during initial page load
             const urlParams = new URLSearchParams(window.location.search);
             var highlightBlogId = urlParams.get('id');
 
             if (highlightBlogId !== null && highlightBlogId !== undefined) {
                 loadBlogDetails(highlightBlogId);
-            } else {
-                // var firstBlogLink = document.querySelector('.list-group-item');
-                // if (firstBlogLink) {
-                //     var firstBlogId = firstBlogLink.getAttribute('data-blog-id');
-                //     currentBlogId = firstBlogId;
-                //     loadBlogDetails(firstBlogId);
-                // }
-            }
+            } 
         });
     
         function loadBlogDetails(blogId) {
@@ -215,25 +211,24 @@
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     var blogDetails = JSON.parse(xhr.responseText);
-                    userid = blogDetails.userid;
+                    userid = blogDetails.userid; // userid of the blog author, not the loggedin user.
                     blogid = blogDetails.blog._id;
                     updateBlogDetails(blogDetails);
                 }
             };
-            xhr.open('GET', '/index/blogs/' + blogId, true);
+            xhr.open('GET', `/index/blogs/${blogId}`, true);
             xhr.send();
         }
     
         function updateBlogDetails(blogDetails) {
 
             var editorContent = blogDetails.blog.body;
-            
-            markedUpDom = recomputeRender(editorContent); // This string will be updated when bookmarks are added.
             const dateObj = new Date(blogDetails.blog.timestamp);
+            var timeToread = calculateReadingTime(blogDetails.blog.body, 230);
             const formatString = { month: 'short', day: 'numeric', year: 'numeric' };
             const formattedTime = dateObj.toLocaleString("en-US", formatString).toUpperCase();
-
-            var timeToread = calculateReadingTime(blogDetails.blog.body, 250);
+            
+            markedUpDom = recomputeRender(editorContent); // This is where we decide to parse footnotes, bookmarks, etc.
 
             blogheader.innerHTML = `
                 <h1 class="mt-4 blog-title">${blogDetails.blog.title}</h1>
@@ -247,7 +242,8 @@
             previewDiv.innerHTML = `
                 <div><p>${markedUpDom}</p></div>
             `;
-
+            
+            // Parse footnotes markup and add to page
             var footnotes = listFootnotes(markedUpDom);
             if(footnotes.length > 0) {
                 var footnoteList = document.getElementById('footnoteList');
@@ -265,6 +261,7 @@
                 });
             }
             
+            // Generate nav-bar links for blog update and delete
             var editLink = document.getElementById('editLink');
             if (editLink) {
                 editLink.href = `/index/blogs/${blogDetails.blog._id}/edit`;
@@ -273,46 +270,26 @@
             var deleteLink = document.getElementById('deleteLink');
             if (deleteLink) {
                 deleteLink.href = `/index/blogs/${blogDetails.blog._id}/delete`;
-            }
+            }            
         }
 
+        // parse footnote markup and return updated html string
         function recomputeRender(domstr) {
             var counter = 1;
             var regex = /\[\^(.*?)\]/g; // Capture the text inside `[^]` using capturing group
-            var previewContent = domstr.replace(regex, function(match, customFootnote) {
+            previewContent = domstr.replace(regex, function(match, customFootnote) {
                 return `
-                <span class="ql-footnote" fntitle="${customFootnote}">
-                    <sub>
-                        <a href="your-link-url">[${(counter++)}]</a>
-                    </sub>
-                </span>
-                `;
+                    <span class="ql-footnote" fntitle="${customFootnote}">
+                        <sub>
+                            <a href="your-link-url">[${(counter++)}]</a>
+                        </sub>
+                    </span>
+                    `;
             });
-            fetchUserBlogMetadata(userid, blogid);
-            
+
             return previewContent;
         }
 
-        async function fetchUserBlogMetadata(userid, blogid) {
-            try {
-                const response = await fetch(`/index/blogs/getuserblogmetadata/${userid}/${blogid}`);
-                const data = await response.json();
-
-                if (response.ok) {
-                    console.log('User Blog Metadata found:', data.userBlogMetadata.markedUpDom);
-                    previewDiv.innerHTML = `
-                        <div><p>${data.userBlogMetadata.markedUpDom}</p></div>
-                    `;
-                    
-                } else {
-                    console.error('Failed to fetch userBlogMetadata:', data.message);
-                    // Handle the error scenario
-                }
-            } catch (error) {
-                console.error('Error during fetch:', error);
-                // Handle other errors, e.g., network issues
-            }
-        }
 
         function calculateReadingTime(paragraph, wordsPerMinute) {
             // Assuming an average of 200 words per minute
@@ -344,70 +321,7 @@
             return footnotes;
         }
 
-        // Add bookmark function
-
-        var bookmarkIcon = document.getElementById('bookmark-icon');
-        var selectedText;
-
-        previewDiv.addEventListener('mouseup', function () {
-            selectedText = getSelectedText();
-            if (selectedText) {
-                showBookmarkIcon();
-            } else {
-                hideBookmarkIcon();
-            }
-        });
-
-        function showBookmarkIcon() {
-            bookmarkIcon.style.display = 'block';
-            bookmarkIcon.addEventListener('click', bookmarkIconClickHandler);
-
-        }
-
-        function hideBookmarkIcon() {
-            bookmarkIcon.style.display = 'none';
-            bookmarkIcon.removeEventListener('click', bookmarkIconClickHandler);
-        }
-
-        function bookmarkIconClickHandler() {
-            if(selectedText !=null) {
-                console.log('Save bookmark to server: ' + selectedText);
-                console.log('Markedup dom string: ' + markedUpDom);
-                var span = document.createElement('span');
-                span.classList.add('bookmark');
-                span.style.textDecoration = 'underline';
-                span.style.backgroundColor = 'rgba(255, 0, 0, 0.5)';
-                range.surroundContents(span);
-
-                var rangeClone = range.cloneContents();
-                var replacementDiv = document.createElement('div');
-                replacementDiv.appendChild(rangeClone);
-                markedUpDom = markedUpDom.replace(selectedText, replacementDiv.innerHTML);
-
-                console.log('Modified Markedup dom string: ' + markedUpDom);
-
-                console.log('userid: ' + userid);
-                console.log('blogid: ' + blogid);
-
-                // create bloguser metadata:
-
-                const blogusermetadata = {
-                    userid: userid,
-                    blogid: blogid,
-                    isfavourite: false,
-                    markedUpDom: markedUpDom
-                }
-
-                saveBlogUserMetadata(blogusermetadata);
-                
-            }
-
-            hideBookmarkIcon();
-            selectedText = null;
-        }
-
         function saveBlogUserMetadata(blogusermetadata) {
-            // Assuming you're using the Fetch API for simplicity
             fetch('/index/blogs/updateuserblogmetadata', {
                 method: 'POST',
                 headers: {
@@ -418,17 +332,6 @@
             .then(response => response.json())
             .then(data => console.log('Response from server:', data))
             .catch(error => console.error('Error sending data to server:', error));
-        }
-
-        function getSelectedText() {
-            var selection = window.getSelection();
-            range = selection.getRangeAt(0);
-            if (selection) {
-                return selection.toString();
-            } else if (document.selection && document.selection.type != 'Control') {
-                return document.selection.createRange().text;
-            }
-            return '';
         }
 
     </script>

@@ -3,12 +3,19 @@ const passportLocalMongoose = require('passport-local-mongoose');
 const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
-    username: String,
-    email: String,
-    password: String,
-    firstname: String,
-    lastname: String,
-    bio: String,
+  username: String,
+  email: String,
+  password: String,
+  firstname: String,
+  lastname: String,
+  bio: String,
+  following: [String],
+  followers: [String],
+  bookmarks: [{
+    blogid: String,
+    startidx: Number,
+    endidx: Number,
+  }],
 });
 
 userSchema.methods.authenticate = function(password) {

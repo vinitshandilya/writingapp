@@ -64,6 +64,19 @@
         margin-right: 5px;
         line-height: 30px;
     }
+
+    .follow-button {
+            background-color: transparent;
+            border: 1px solid #B0A648;
+            color: #B0A648;
+    }
+
+    .follow-button.following {
+        /* Following button styles */
+        background-color: #B0A648;
+        border: none;
+        color: #fff;
+    }
     
 </style>
 
@@ -91,15 +104,25 @@
         <div class="row">
 
             <!-- Left Section -->
-            <div class="col-md-2 right-section">
+            <div class="col-md-3 right-section">
                 <h6>Discover</h6>
                 <ul class="list-group">
                     <% communityusers.forEach(communityuser => { %>
-                    <% var displayName = communityuser.firstname ? communityuser.firstname + ' ' + communityuser.lastname + ' (@' + communityuser.username + ')' : communityuser.username; %>
-                        <li class="list-group-item"><%= displayName %></li>
+                      <% var displayName = communityuser.firstname ? communityuser.firstname + ' ' + communityuser.lastname + ' (@' + communityuser.username + ')' : communityuser.username; %>
+                      <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <%= displayName %>
+                        <button class="btn btn-sm follow-button ml-auto" onclick="toggleFollow(this, '<%= communityuser.id %>', '<%= loggedinuser._id %>')">
+                          <% if (loggedinuser.following.includes(communityuser.id)) { %>
+                            Following
+                          <% } else { %>
+                            Follow
+                          <% } %>
+                        </button>
+                      </li>
                     <% }); %>
                 </ul>
             </div>
+
 
             <!-- Middle Section -->
             <div class="col-md-7 vertical-line">
@@ -156,7 +179,7 @@
             
 
             <!-- Right Section-->
-            <div class="col-md-3 right-section">
+            <div class="col-md-2 right-section">
                 
             </div>
         </div>
@@ -166,6 +189,54 @@
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+    function toggleFollow(button, communityUserId, loggedInUserId) {
+        if (button.classList.contains('follow-button')) {
+            button.classList.remove('follow-button');
+            button.classList.add('following-button');
+            button.innerText = 'Following';
+            console.log('Follow button clicked for community user id:', communityUserId, 'by logged-in user id:', loggedInUserId);
+            // update 'following' attribute of the loggedInUser
+
+            updateFollowing(loggedInUserId, communityUserId);
+
+
+        } else {
+            button.classList.remove('following-button');
+            button.classList.add('follow-button');
+            button.innerText = 'Follow';
+            // Add logic here to handle the unfollow action, if needed
+            console.log('Unfollow button clicked for community user id:', communityUserId, 'by logged-in user id:', loggedInUserId);
+        }
+    }
+
+    async function updateFollowing(loggedInUserId, communityUserId) {
+        const url = '/index/updatefollowingandfollowers';
+        const data = { 
+            loggedInUserId: loggedInUserId, 
+            communityUserId: communityUserId 
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) {
+                console.error('HTTP POST request failed:', response.statusText);
+                // Handle error as needed
+            }
+        } catch (error) {
+            console.error('Error sending HTTP POST request:', error);
+            // Handle error as needed
+        }
+    }
+</script>
 
 </body>
 </html>

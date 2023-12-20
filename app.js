@@ -110,7 +110,12 @@ const isLoggedIn = (req, res, next) => {
 app.get('/homepage', isLoggedIn, async (req, res) => {
     const loggedinuser = req.session.user;
     try {
-        const personalblogs = await Blog.find( { userid: loggedinuser._id });
+        const personalblogs = await Blog.find({
+            $or: [
+              { userid: loggedinuser._id }, // Blogs by the logged-in user
+              { userid: { $in: loggedinuser.following } } // Blogs by users in following list
+            ]
+          });
         const communityusers = await User.find( { });
         res.status(200).render('homepage', { personalblogs, loggedinuser, communityusers });
     } catch (error) {
@@ -182,7 +187,7 @@ app.get('/index/blogs/:id', isLoggedIn, async (req, res) => {
         if (!blog) {
             return res.status(404).send('Blog not found');
         }
-        // res.render('blog', { blog, editing: false });
+
         res.status(200).json({ blog, userid: userid, editing: false });
 
     } catch (error) {
@@ -282,45 +287,152 @@ app.post('/index/updateuser', isLoggedIn, async (req, res) => {
     }
 
     console.log(userid);
-    res.redirect('/index');
+    res.redirect('/homepage');
 
 })
 
-app.post('/index/blogs/updateuserblogmetadata', isLoggedIn, async (req, res) => {
+// Update following and followers
+app.post('/index/updatefollowingandfollowers', isLoggedIn, async(req, res) => {
     console.log(req.body);
-    try {
-        const { userid, blogid, isfavourite, markedUpDom } = req.body.blogusermetadata;
+    console.log('Logged in user: ' + req.body.loggedInUserId);
+    console.log('started following: ' + req.body.communityUserId);
 
-        // Find or create the user blog metadata entry
-        let userBlogMetadata = await UserBlogMetadata.findOneAndUpdate(
-            { userid, blogid },
-            { isfavourite, markedUpDom },
-            { upsert: true, new: true }
-        );
-        // res.json({ success: true, userBlogMetadata });
+    // 1. Search User MongoDB for the logged-in user
+    try {
+        const loggedInUser = await User.findById(req.body.loggedInUserId);
+        if (!loggedInUser) {
+            return res.status(400).json({ message: 'User not found' });
+        }
+
+        // 2. Check if user already follows the community
+        if (loggedInUser.following.includes(req.body.communityUserId)) {
+            return res.status(400).json({ message: 'already follows this community user' });
+        }
+
+        // 3. Add the communityUserId to the "following" array
+        loggedInUser.following.push(req.body.communityUserId);
+
+        // 4. Save the updated user document
+        await loggedInUser.save();
+
+        // 5. (Optional) Update Follower list of community user (if needed)
+        // ... Add code to update followers list of community user ...
+
+        const communityUser = await User.findById(req.body.communityUserId);
+
+        if (!communityUser.followers.includes(req.body.loggedInUserId)) {
+            // Add the logged-in user ID to the `followers` array of the community user:
+            communityUser.followers.push(req.body.loggedInUserId);
+          
+            // Save the updated community user document:
+            await communityUser.save();
+        }
+
+        return res.json({ message: 'Following added successfully' });
     } catch (error) {
-        console.error('Error handling POST request:', error);
-        res.status(500).json({ success: false, error: 'Internal Server Error' });
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
     }
+
 });
+
+app.post('/index/blogs/updateuserblogmetadata', isLoggedIn, async (req, res) => {
+    console.log(req.body.blogusermetadata);
+    const { userid, blogid, isFavourite, markedUpDom } = req.body.blogusermetadata;
+  
+    // Check if required parameters are present
+    if (!userid || !blogid || !markedUpDom) {
+      return res.status(400).json({ message: 'Missing required parameters' });
+    }
+  
+    try {
+      // Find the user document
+      const user = await User.findOne({ _id: userid });
+  
+      if (!user) {
+        // User not found, handle as per your needs
+        console.error('User not found!');
+        return res.status(404).json({ message: 'User not found' });
+      } else {
+        // User found, initialize/check blogmetadata array
+        if (!user.blogmetadata) {
+          user.blogmetadata = []; // Initialize empty array if missing
+        }
+  
+        // Find existing blogmetadata object with matching blogid
+        const existingBlogData = user.blogmetadata.find(data => data.blogId === blogid);
+  
+        if (existingBlogData) {
+          // Blog metadata already exists, update it
+          console.log('Updating blogmetadata for userid: ' + user._id + ' and blogid: ' + blogid);
+          existingBlogData.isFavourite = isFavourite;
+          existingBlogData.markedUpDom = markedUpDom;
+        } else {
+          // Create new blogmetadata object with received data
+          console.log('Creating new blogmetadata for userid: ' + user._id + ' and blogid: ' + blogid);
+          user.blogmetadata.push({
+            blogId: blogid,
+            isFavourite,
+            markedUpDom,
+          });
+        }
+  
+        // Save updated user document
+        await user.save();
+  
+        // Return the updated user information
+        return res.json({ user });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+  
+  
 
 // GET route to fetch userBlogMetadata by userid and blogid
 app.get('/index/blogs/getuserblogmetadata/:userid/:blogid', isLoggedIn, async (req, res) => {
     try {
-        const { userid, blogid } = req.params;
-        // Find user blog metadata by userid and blogid
-        let userBlogMetadata = await UserBlogMetadata.findOne({ userid, blogid });
-
-        if (userBlogMetadata) {
-            res.json({ success: true, userBlogMetadata });
-        } else {
-            res.status(404).json({ success: false, message: 'User blog metadata not found' });
+      const { userid, blogid } = req.params;
+  
+      // Check for required parameters
+      if (!userid || !blogid) {
+        return res.status(400).json({ message: 'Missing required parameters' });
+      }
+  
+      // Find the user document
+      const user = await User.findOne({ _id: userid });
+  
+      if (!user) {
+        // User not found, handle as per your needs
+        console.error('User not found!');
+        return res.status(404).json({ message: 'User not found' });
+      } else {
+        // User found, check if blogmetadata exists
+        if (!user.blogmetadata || user.blogmetadata.length === 0) {
+          // No blog metadata available
+          return res.status(404).json({ message: 'Blog metadata not found' });
         }
+  
+        // Find the specific blogmetadata object with matching blogid
+        const targetBlogData = user.blogmetadata.find(data => data.blogId === blogid);
+  
+        if (!targetBlogData) {
+          // Specific blog metadata not found for this blogid
+          return res.status(404).json({ message: 'Blog metadata not found for this blogid' });
+        }
+  
+        // Found specific blog metadata, return markedUpDom
+        return res.json({ markedUpDom: targetBlogData.markedUpDom });
+      }
     } catch (error) {
-        console.error('Error handling GET request:', error);
-        res.status(500).json({ success: false, error: 'Internal Server Error' });
+      console.error(error);
+      return res.status(500).json({ message: 'Internal server error' });
     }
-});
+  });
+  
+  
 
 
 

@@ -1,29 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Selected Text Underline</title>
-    <style>
-        #preview {
-            padding: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+  <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+  <style>
+    .highlight {
+      background-color: yellow;
+    }
+  </style>
+  <title>Quill.js Text Highlighting Test</title>
 </head>
 <body>
 
-<div id="preview">This is some text in the preview div.</div>
-<button onclick="underlineSelectedText()">Underline Selected Text</button>
+  <h1>Quill.js Text Highlighting Test</h1>
 
-<script>
-    function underlineSelectedText() {
-        var selection = window.getSelection();
-        var range = selection.getRangeAt(0);
-        var span = document.createElement('span');
-        span.style.textDecoration = 'underline';
-        range.surroundContents(span);
-    }
-</script>
+  <div id="editor" style="height: 300px;">
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+  </div>
+
+  <script>
+    var quill = new Quill('#editor', {
+      theme: 'snow',
+      readOnly: true,  // Set the editor to read-only
+      modules: {
+        toolbar: false  // Disable the toolbar
+      }
+    });
+
+    quill.on('selection-change', function (range) {
+      if (range) {
+        const selectedText = quill.getText(range.index, range.length);
+        if (selectedText.trim() !== '') {
+          const format = { 'background': 'yellow' };
+          quill.formatText(range.index, range.length, format);
+          console.log('Selected Text:', selectedText);
+        }
+      }
+    });
+  </script>
 
 </body>
 </html>

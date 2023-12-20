@@ -3,13 +3,11 @@ const mongoose = require('mongoose');
 const userBlogMetadataSchema = new mongoose.Schema({
   userid: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   blogid: {
     type: String,
-    required: true,
-    unique: true
+    required: true
   },
   isfavourite: {
     type: Boolean,
@@ -20,6 +18,8 @@ const userBlogMetadataSchema = new mongoose.Schema({
   }
 
 });
+
+userBlogMetadataSchema.index({ userid: 1, blogid: 1 }, { unique: true });
 
 const UserBlogMetadata = mongoose.model('UserBlogMetadata', userBlogMetadataSchema);
 
