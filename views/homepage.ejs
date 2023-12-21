@@ -65,17 +65,27 @@
         line-height: 30px;
     }
 
-    .follow-button {
-            background-color: transparent;
-            border: 1px solid #B0A648;
-            color: #B0A648;
+    .button-not-following {
+        background-color: transparent;
+        border: 1px solid #B0A648;
+        color: #B0A648;
+        width: 100px;
+        height: 30px;
+        padding: 0 10px;
+        cursor: pointer;
+        border-radius: 50px;
     }
 
-    .follow-button.following {
+    .button-following {
         /* Following button styles */
         background-color: #B0A648;
         border: none;
         color: #fff;
+        width: 100px;
+        height: 30px;
+        padding: 0 10px;
+        cursor: pointer;
+        border-radius: 50px;
     }
     
 </style>
@@ -106,21 +116,7 @@
             <!-- Left Section -->
             <div class="col-md-3 right-section">
                 <h6>Discover</h6>
-                <ul class="list-group">
-                    <% communityusers.forEach(communityuser => { %>
-                      <% var displayName = communityuser.firstname ? communityuser.firstname + ' ' + communityuser.lastname + ' (@' + communityuser.username + ')' : communityuser.username; %>
-                      <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <%= displayName %>
-                        <button class="btn btn-sm follow-button ml-auto" onclick="toggleFollow(this, '<%= communityuser.id %>', '<%= loggedinuser._id %>')">
-                          <% if (loggedinuser.following.includes(communityuser.id)) { %>
-                            Following
-                          <% } else { %>
-                            Follow
-                          <% } %>
-                        </button>
-                      </li>
-                    <% }); %>
-                </ul>
+                <ul class="list-group" id="userList"></ul>
             </div>
 
 
@@ -191,51 +187,79 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
 <script>
-    function toggleFollow(button, communityUserId, loggedInUserId) {
-        if (button.classList.contains('follow-button')) {
-            button.classList.remove('follow-button');
-            button.classList.add('following-button');
-            button.innerText = 'Following';
-            console.log('Follow button clicked for community user id:', communityUserId, 'by logged-in user id:', loggedInUserId);
-            // update 'following' attribute of the loggedInUser
 
-            updateFollowing(loggedInUserId, communityUserId);
+document.addEventListener("DOMContentLoaded", function () {
+    buildDiscoverPeopleList();
+        
+});
 
+    async function buildDiscoverPeopleList() {
+        // Fetch data from the API endpoint
+        fetch('/homepage/getDiscoverPeople')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const userList = document.getElementById('userList');
+                userList.innerHTML = ``;
+                data.discoverpeople.forEach(communityuser => {
+                    const displayName = communityuser.firstname ? `${communityuser.firstname} ${communityuser.lastname} (@${communityuser.username})` : communityuser.username;
+                    const buttonText = communityuser.followers.includes(data.loggedinuser._id) ? 'Unfollow' : 'Follow';
+                    const buttonClass = communityuser.followers.includes(data.loggedinuser._id) ? 'button-following' : 'button-not-following';
 
-        } else {
-            button.classList.remove('following-button');
-            button.classList.add('follow-button');
-            button.innerText = 'Follow';
-            // Add logic here to handle the unfollow action, if needed
-            console.log('Unfollow button clicked for community user id:', communityUserId, 'by logged-in user id:', loggedInUserId);
-        }
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    listItem.innerHTML = `
+                        ${displayName}
+                        <button class="btn btn-sm ${buttonClass} ml-auto" onclick="toggleFollowingFollowers(this, '${communityuser._id}', '${data.loggedinuser._id}')">
+                            ${buttonText}
+                        </button>
+                    `;
+
+                    userList.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data: ', error);
+            });
+
     }
 
-    async function updateFollowing(loggedInUserId, communityUserId) {
-        const url = '/index/updatefollowingandfollowers';
-        const data = { 
-            loggedInUserId: loggedInUserId, 
-            communityUserId: communityUserId 
+    async function toggleFollowingFollowers(button, communityUserId, loggedInUserId) {
+        const url = '/index/toggleFollowingAndFollowers';
+        const data = {
+            loggedInUserId: loggedInUserId,
+            communityUserId: communityUserId
         };
 
         try {
             const response = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
             });
 
             if (!response.ok) {
                 console.error('HTTP POST request failed:', response.statusText);
-                // Handle error as needed
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
+
+            const result = await response.json();
+            console.log('Server response:', result);
+
+            buildDiscoverPeopleList();
+
         } catch (error) {
-            console.error('Error sending HTTP POST request:', error);
-            // Handle error as needed
+            console.error('Error sending data to server:', error.message);
         }
     }
+    
+
 </script>
 
 </body>

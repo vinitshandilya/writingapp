@@ -122,6 +122,18 @@ app.get('/homepage', isLoggedIn, async (req, res) => {
     }
 });
 
+// Route to get the community users' following status to build UI list
+app.get('/homepage/getDiscoverPeople', isLoggedIn, async (req, res) => {
+    const loggedinuser = req.session.user;
+    try {
+        const discoverpeople = await User.find( { _id: { $ne: loggedinuser._id } }); // from community users, remove the loggedin user
+        return res.status(200).json({ discoverpeople: discoverpeople, loggedinuser: loggedinuser});
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+
+});
+
 // Render blog details page
 app.get('/index', isLoggedIn, async (req, res) => {
     const loggedinuser = req.session.user;
@@ -306,47 +318,41 @@ app.post('/index/updateuser', isLoggedIn, async (req, res) => {
 })
 
 // Update following and followers
-app.post('/index/updatefollowingandfollowers', isLoggedIn, async(req, res) => {
+app.post('/index/toggleFollowingAndFollowers', isLoggedIn, async(req, res) => {
     console.log(req.body);
     console.log('Logged in user: ' + req.body.loggedInUserId);
     console.log('started following: ' + req.body.communityUserId);
 
-    // 1. Search User MongoDB for the logged-in user
     try {
         const loggedInUser = await User.findById(req.body.loggedInUserId);
-        if (!loggedInUser) {
-            return res.status(400).json({ message: 'User not found' });
-        }
-
-        // 2. Check if user already follows the community
-        if (loggedInUser.following.includes(req.body.communityUserId)) {
-            return res.status(400).json({ message: 'already follows this community user' });
-        }
-
-        // 3. Add the communityUserId to the "following" array
-        loggedInUser.following.push(req.body.communityUserId);
-
-        // 4. Save the updated user document
-        await loggedInUser.save();
-
-        // 5. (Optional) Update Follower list of community user (if needed)
-        // ... Add code to update followers list of community user ...
-
         const communityUser = await User.findById(req.body.communityUserId);
-
-        if (!communityUser.followers.includes(req.body.loggedInUserId)) {
-            // Add the logged-in user ID to the `followers` array of the community user:
-            communityUser.followers.push(req.body.loggedInUserId);
-          
-            // Save the updated community user document:
-            await communityUser.save();
+        if (!loggedInUser) {
+          return res.status(400).json({ message: 'User not found' });
         }
-
-        return res.json({ message: 'Following added successfully' });
-    } catch (error) {
+      
+        if (loggedInUser.following.includes(req.body.communityUserId)) {
+          console.log('already follows this community user. Will remove following followers relationship');
+          loggedInUser.following.pull(req.body.communityUserId); // Use pull to remove the communityUserId
+          await loggedInUser.save();
+          communityUser.followers.pull(req.body.loggedInUserId);
+          await communityUser.save();
+          return res.status(200).json({ message: 'unfollowed' });
+        }
+      
+        loggedInUser.following.push(req.body.communityUserId);
+        await loggedInUser.save();
+        if (!communityUser.followers.includes(req.body.loggedInUserId)) {
+          communityUser.followers.push(req.body.loggedInUserId);
+          await communityUser.save();
+        }
+      
+        return res.status(200).json({ message: 'followed' });
+      
+      } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
-    }
+      }
+      
 
 });
 
@@ -476,3 +482,17 @@ app.get('/test', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
+
+///
+// {
+//     discoverpeople: [
+//         {
+//             _id: String,
+//             username: String,
+//             firstname: String,
+//             lastname: String,
+//             followers: [String],
+//             following: [String]
+//         }
+//     ]
+// }
