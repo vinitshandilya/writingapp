@@ -123,17 +123,12 @@
             cursor: pointer;
         }
 
-        .highlight {
-      background-color: yellow;
-    }
-
 
     </style>
 </head>
 <body>
   <body>
-    <% var currentBlogId; %>
-    <% var displayName = user.firstname ? user.firstname : user.username; %>
+    <% var displayName = loggedinuser.firstname ? loggedinuser.firstname : loggedinuser.username; %>
 
     <div class="d-flex" id="wrapper">
         <div id="page-content-wrapper">
@@ -168,6 +163,7 @@
                         <br>
                         <hr>
                         <ul id="footnoteList"></ul>
+                        <br>
                     </div>
             
                     <!-- Right Section (25% width) -->
@@ -193,8 +189,8 @@
         var blogheader = document.getElementById('blogheader');
         var previewDiv = document.getElementById('preview');
         var markedUpDom;
-        var range;
-        var userid;
+        var bloguserid;
+        var loggedinuserid;
         var blogid;
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -211,9 +207,20 @@
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     var blogDetails = JSON.parse(xhr.responseText);
-                    userid = blogDetails.userid; // userid of the blog author, not the loggedin user.
+                    //console.log(JSON.stringify(blogDetails));
+                    bloguserid = blogDetails.blog.userid; // userid of the blog author, not the loggedin user.
+                    loggedinuserid = blogDetails.loggedinuserid;
+                    console.log(`bloguserid: ${bloguserid}, loggedinuserid: ${loggedinuserid}`);
                     blogid = blogDetails.blog._id;
                     updateBlogDetails(blogDetails);
+
+                    if (bloguserid !== loggedinuserid) {
+                        document.getElementById('editLink').style.display = 'none';
+                        document.getElementById('deleteLink').style.display = 'none';
+                    } else {
+                        document.getElementById('editLink').style.display = 'block';
+                        document.getElementById('deleteLink').style.display = 'block';
+                    }
                 }
             };
             xhr.open('GET', `/index/blogs/${blogId}`, true);
@@ -338,4 +345,3 @@
 
 </body>
 </html>
-

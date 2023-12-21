@@ -85,7 +85,6 @@ app.get('/set-username-and-redirect', (req, res) => {
     // console.log(req.user);
     req.session.user = req.user;
     req.session.username = req.user.username;
-    // Redirect to /index
     res.redirect('/homepage');
 });
 
@@ -116,20 +115,20 @@ app.get('/homepage', isLoggedIn, async (req, res) => {
               { userid: { $in: loggedinuser.following } } // Blogs by users in following list
             ]
           });
-        const communityusers = await User.find( { });
+        const communityusers = await User.find( { _id: { $ne: loggedinuser._id } }); // from community users, remove the loggedin user
         res.status(200).render('homepage', { personalblogs, loggedinuser, communityusers });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 });
 
-
+// Render blog details page
 app.get('/index', isLoggedIn, async (req, res) => {
-    const user = req.session.user;
+    const loggedinuser = req.session.user;
     try {
-        const blogs = await Blog.find( { userid: user._id });
+        const blogs = await Blog.find( { userid: loggedinuser._id });
         const communityusers = await User.find( { });
-        res.status(200).render('index', { blogs, user: user, communityusers });
+        res.status(200).render('index', { blogs, loggedinuser, communityusers });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -181,14 +180,14 @@ app.post('/index/saveblog', isLoggedIn, async (req, res) => {
 
 // get a blog detail
 app.get('/index/blogs/:id', isLoggedIn, async (req, res) => {
-    const userid = req.session.user._id;
+    const loggedinuserid = req.session.user._id;
     try {
         const blog = await Blog.findById(req.params.id);
         if (!blog) {
             return res.status(404).send('Blog not found');
         }
 
-        res.status(200).json({ blog, userid: userid, editing: false });
+        res.status(200).json({ blog, loggedinuserid });
 
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -199,11 +198,17 @@ app.get('/index/blogs/:id', isLoggedIn, async (req, res) => {
 app.get('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
     try {
         const blog = await Blog.findById(req.params.id);
+        console.log(`loggedin userid:       ${req.session.user._id}`);
+        console.log(`blog author userid:    ${blog.userid}`);
         if (!blog) {
             return res.status(404).send('Blog not found');
         }
+        // logged-in user and blog author can be different.
+        if(blog.userid.toString() !== req.session.user._id.toString()) {
+            return res.status(401).json({ error: 'unauthorized' });
+        }
         
-        console.log(blog);
+        //console.log(blog);
         res.status(200).render('createnewblog', { blog: blog });
 
     } catch (error) {
@@ -232,8 +237,6 @@ app.post('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
             tags: getTagsListFromString(req.body.tags)
         }, { new: true });
 
-        // res.redirect(`/index/blogs/${updatedBlog._id}`);
-        // res.redirect(`/index?id=${updatedBlog._id}`);
         res.status(200).json({ savedblogid: updatedBlog._id });
 
     } catch (error) {
@@ -244,8 +247,19 @@ app.post('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
 // Delete Blog Route
 app.get('/index/blogs/:id/delete', isLoggedIn, async (req, res) => {
     try {
-        const deletedBlog = await Blog.findByIdAndDelete(req.params.id);
+        // TODO:logged-in user and blog author can be different.
+        const deletedBlog = await Blog.findById(req.params.id);
         if (!deletedBlog) {
+            return res.status(404).send('Blog not found');
+        }
+        // Check if the logged-in user is the owner of the blog
+        if (deletedBlog.userid.toString() !== req.session.user._id.toString()) {
+            return res.status(401).json({ error: 'unauthorized' });
+        }
+
+        // The logged-in user is the owner of the blog, proceed with deletion
+        const result = await Blog.findByIdAndDelete(req.params.id);
+        if (!result) {
             return res.status(404).send('Blog not found');
         }
         res.redirect('/homepage');
