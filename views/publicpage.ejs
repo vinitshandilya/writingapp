@@ -9,7 +9,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <title>The writing app</title>
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <link href="indexpage.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
@@ -22,30 +21,6 @@
 
         a {
             color: #B0A648;
-        }
-
-        .btn-primary {
-            background-color: transparent;
-            border-color: #b6721f;
-            color: #b6721f;
-        }
-
-        .btn-primary:hover {
-            background-color: #B0A648;
-            border-color: #B0A648;
-            color: #fff;
-        }
-
-        .btn-rounded {
-            display: inline-block;
-            border-radius: 15px;
-            background-color: #B0A648;
-            color: #fff;
-            border: none;
-            box-shadow: none;
-            font-size: smaller;
-            padding: 10 20px;
-            margin-right: 5px;
         }
 
         .ql-footnote {
@@ -136,15 +111,16 @@
             color: #B0A648;
         }
 
-        #bookmark-icon {
-            display: none;
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 24px;
-            color: #007bff;
-            cursor: pointer;
+        .btn-primary {
+            background-color: transparent;
+            border-color: #b6721f;
+            color: #b6721f;
+        }
+
+        .btn-primary:hover {
+            background-color: #B0A648;
+            border-color: #B0A648;
+            color: #fff;
         }
 
         #tags {
@@ -154,16 +130,6 @@
         .tags-container {
             display: inline-block;
             padding: 0px 10px;
-        }
-
-        .monetization-banner {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #b0c9eb;
-            background-color: rgba(15, 157, 88, 0.2); /* #0F9D58 with 70% transparency */
-            border-color: #0F9D58; /* Border color to match */
-            /* color: #fff; */
-            border-radius: 5px;
         }
 
         .translucent-mask {
@@ -183,30 +149,18 @@
             text-align: center;
         }
 
-
     </style>
 </head>
 <body>
   <body>
-    <% var displayName = loggedinuser.firstname ? loggedinuser.firstname : loggedinuser.username; %>
 
     <div class="d-flex" id="wrapper">
         <div id="page-content-wrapper">
             <!-- Top navigation-->
             <nav class="navbar navbar navbar-expand-lg navbar-light" style="background-color: transparent;">
-                <a class="navbar-brand" href="/homepage"><i class="fa-solid fa-angle-left"></i></a></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                        <li class="nav-item"><a class="nav-link" style="margin-right: 15px;" href="" id="appPaywallLink" onclick=updatePaywallStatus()><i class="fa-solid fa-dollar-sign"></i></a></li>
-                        <li class="nav-item"><a class="nav-link" style="margin-right: 15px;" href="#!" id="shareLink"><i class="fa-solid fa-share-nodes"></i></a></li>
-                        <li class="nav-item"><a class="nav-link" style="margin-right: 15px;" href="/index/createnew" id="createNewLink"><i class="fa-solid fa-plus"></i></a></li>
-                        <li class="nav-item"><a class="nav-link" style="margin-right: 15px;" href="#!" id="editLink"><i class="fa-regular fa-pen-to-square"></i></a></li>
-                        <li class="nav-item"><a class="nav-link"style="margin-right: 15px;" href="#!" id="deleteLink" onclick="return confirm('Are you sure you want to delete this blog?')"><i class="fa-regular fa-trash-can"></i></a></li>
-                        <li class="nav-item active"><a class="nav-link" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
-                        <li class="nav-item active"><a class="nav-link" href="/index/profile"> <%= displayName %></a></li>
+                        <a href="/" class="btn btn-primary">Join for free!</a>
                     </ul>
                 </div>
             </nav>
@@ -220,14 +174,12 @@
                     <!-- Middle Section (50% width) -->
                     <div class="col-md-6 mid-section">
                         <div id="blogheader" class="container-fluid ribbon-area"></div>
-                        <div class="monetization-banner" id="monetization-banner-id">This is a paid article.</div>
                         <div id="preview" class="container-fluid canvas"></div>
                         <br>
                         <div class="tags-container">
                             <div id="tags" class="container-fluid"><i class="fa-solid fa-tags"></i></div>
                         </div>
-                        <div id="bookmark-icon">&#128278;</div>
-                        <br>
+                        
                         <hr>
                         <ul id="footnoteList"></ul>
                         <br>
@@ -242,20 +194,20 @@
         </div>
     </div>
 
-    <div class="translucent-mask" id="translucentMask">
-        <div class="center-content">
-            <p>This is a paid article. Join today to get full access!</p>
-            <a href="/" class="btn btn-primary">Join for free!</a>
+    <% if (blog && blog.paywall) { %>
+        <div class="translucent-mask">
+            <div class="center-content">
+                <p>This is a paid article. Join today to get full access!</p>
+                <a href="/" class="btn btn-primary">Join for free!</a>
+            </div>
         </div>
-    </div>
+    <% } %>
 
     
 
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <!-- Bootstrap core JS-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Core theme JS-->
-    <script src="script.js"></script>
 
 
     <script>
@@ -264,15 +216,15 @@
         var previewDiv = document.getElementById('preview');
         var markedUpDom;
         var bloguserid;
-        var loggedinuserid;
         var blogid;
 
         document.addEventListener('DOMContentLoaded', function () {
-            const urlParams = new URLSearchParams(window.location.search);
-            var highlightBlogId = urlParams.get('id');
-
-            if (highlightBlogId !== null && highlightBlogId !== undefined) {
-                loadBlogDetails(highlightBlogId);
+            const url = new URL(window.location.href);
+            const pathname = url.pathname;
+            const parts = pathname.split('/');
+            const blogid = parts[parts.length - 1];
+            if (blogid !== null && blogid !== undefined) {
+                loadBlogDetails(blogid);
             } 
         });
     
@@ -282,46 +234,22 @@
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     var blogDetails = JSON.parse(xhr.responseText);
                     bloguserid = blogDetails.blog.userid;
-                    loggedinuserid = blogDetails.loggedinuserid;
                     blogid = blogDetails.blog._id;
                     updateBlogDetails(blogDetails);
-
-                    if (bloguserid !== loggedinuserid) {
-                        document.getElementById('editLink').style.display = 'none';
-                        document.getElementById('deleteLink').style.display = 'none';
-                        document.getElementById('appPaywallLink').style.display = 'none';
-                    } else {
-                        document.getElementById('editLink').style.display = 'block';
-                        document.getElementById('deleteLink').style.display = 'block';
-                        document.getElementById('appPaywallLink').style.display = 'block';
-                    }
-
-                    // Logic to display translucent mask
-                    var translucentMask = document.getElementById('translucentMask');
-                    if(bloguserid !== loggedinuserid) { // blog author is different than the current user
-                        if(blogDetails.blog.paywall) { // if paywall is enabled, then mask the contents
-                            translucentMask.style.display = 'flex';
-                        } else {
-                            translucentMask.style.display = 'none';
-                        }
-                    } else {
-                        translucentMask.style.display = 'none';
-                    }
                 }
             };
-            xhr.open('GET', `/index/blogs/${blogId}`, true);
+            xhr.open('GET', `/index/blogs/public/blog/${blogId}`, true);
             xhr.send();
         }
     
         function updateBlogDetails(blogDetails) {
-
             var editorContent = blogDetails.blog.body;
             const dateObj = new Date(blogDetails.blog.timestamp);
             var timeToread = calculateReadingTime(blogDetails.blog.body, 230);
             const formatString = { month: 'short', day: 'numeric', year: 'numeric' };
             const formattedTime = dateObj.toLocaleString("en-US", formatString).toUpperCase();
             
-            markedUpDom = recomputeRender(editorContent); // This is where we decide to parse footnotes, bookmarks, etc.
+            markedUpDom = recomputeRender(editorContent);
 
             blogheader.innerHTML = `
                 <h1 class="mt-4 blog-title">${blogDetails.blog.title}</h1>
@@ -353,40 +281,21 @@
 
                 });
             }
-            
-            // Generate nav-bar links for blog update and delete
-            var editLink = document.getElementById('editLink');
-            if (editLink) {
-                editLink.href = `/index/blogs/${blogDetails.blog._id}/edit`;
-            }
-
-            var deleteLink = document.getElementById('deleteLink');
-            if (deleteLink) {
-                deleteLink.href = `/index/blogs/${blogDetails.blog._id}/delete`;
-            }
-            
-            var shareLink = document.getElementById('shareLink');
-            if (shareLink) {
-                shareLink.href = `/index/blogs/public/${blogDetails.blog._id}`;
-            }
 
             // Insert tags
             var tags = blogDetails.blog.tags;
             var tagsDiv = document.getElementById('tags');
 
-            if (tags.length > 1) {
+            if (tags.length > 0) {
                 tagsDiv.style.display = "block";
                 var tagsContainer = document.createElement('div');
                 tagsContainer.classList.add('tags-container');
 
                 tags.forEach(tag => {
-                    var buttonElement = document.createElement('button');
-                    buttonElement.type = 'button';
-                    buttonElement.classList.add('btn-rounded');
-                    buttonElement.disabled = true;
-                    buttonElement.textContent = tag;
-
-                    tagsContainer.appendChild(buttonElement);
+                    var tagElement = document.createElement('span');
+                    tagElement.classList.add('tag');
+                    tagElement.textContent = tag + ', ';
+                    tagsContainer.appendChild(tagElement);
                 });
 
                 // Append the container to the tagsDiv
@@ -395,7 +304,6 @@
                 tagsDiv.style.display = "none";
             }
 
-            getPaywallStatus();
         }
 
         // parse footnote markup and return updated html string
@@ -444,76 +352,6 @@
             }
 
             return footnotes;
-        }
-
-        function saveBlogUserMetadata(blogusermetadata) {
-            fetch('/index/blogs/updateuserblogmetadata', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ blogusermetadata }),
-            })
-            .then(response => response.json())
-            .then(data => console.log('Response from server:', data))
-            .catch(error => console.error('Error sending data to server:', error));
-        }
-
-        function updatePaywallStatus() {
-            const url = `/index/blogs/${blogid}/updatepaywall`;
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const monetizationbanner = document.getElementById("monetization-banner-id");
-                    const appPaywallLink = document.getElementById('appPaywallLink');
-                    const paywallStatus = data.paywallstatus;
-
-                    if(paywallStatus) {
-                        appPaywallLink.style.color = '#0F9D58';
-                        monetizationbanner.style.display = 'block';
-                    } else {
-                        monetizationbanner.style.display = 'none';
-                        appPaywallLink.style.color = '';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating paywall status:', error);
-                });
-        }
-
-
-        function getPaywallStatus() {
-            const url = `/index/blogs/blog/${blogid}/paywallstatus`;
-
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! Status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const monetizationbanner = document.getElementById("monetization-banner-id");
-                    const appPaywallLink = document.getElementById('appPaywallLink');
-                    const paywallStatus = data.paywallstatus;
-                    
-                    if(paywallStatus) {
-                        appPaywallLink.style.color = '#0F9D58';
-                        monetizationbanner.style.display = 'block';
-                    } else {
-                        monetizationbanner.style.display = 'none';
-                        appPaywallLink.style.color = '';
-
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching paywall:', error);
-                });
         }
 
     </script>

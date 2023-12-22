@@ -13,6 +13,7 @@ const blogSchema = new mongoose.Schema({
     tags: [String],
     // images: [String],
     // footnotes: [String],
+    paywall: Boolean,
 });
 
 const Blog = mongoose.model('Blog', blogSchema);

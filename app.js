@@ -146,6 +146,27 @@ app.get('/index', isLoggedIn, async (req, res) => {
     }
 });
 
+// Render blog public page
+app.get('/index/blogs/public/:id', async (req, res) => {
+    const blogid = req.params.id;
+    try {
+        const blog = await Blog.findById(blogid);
+        res.status(200).render('publicpage', { blog });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/index/blogs/public/blog/:id', async (req, res) => {
+    const blogid = req.params.id;
+    try {
+        const blog = await Blog.findById(blogid);
+        return res.status(200).json({ blog: blog });
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+});
+
 // render new blog writing page
 app.get('/index/createnew', isLoggedIn, async (req, res) => {
     const loggedinuser = req.session.user;
@@ -206,6 +227,44 @@ app.get('/index/blogs/:id', isLoggedIn, async (req, res) => {
     }
 });
 
+// Update paywall status for a blog
+app.get('/index/blogs/:id/updatepaywall', isLoggedIn, async (req, res) => {
+    try {
+        const blog = await Blog.findById(req.params.id);
+        if (!blog) {
+            return res.status(404).send('Blog not found');
+        }
+        // Check if the logged-in user is the owner of the blog
+        if (blog.userid.toString() !== req.session.user._id.toString()) {
+            return res.status(401).json({ error: 'unauthorized' });
+        }
+        console.log(`updating paywall status for blogid: ${blog.userid}`);
+        blog.paywall = !blog.paywall;
+        await blog.save();
+        return res.status(200).json({ paywallstatus: blog.paywall });
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+
+});
+
+// get paywall status. should be public route.
+app.get('/index/blogs/blog/:id/paywallstatus', async (req, res) => {
+    const blogid = req.params.id;
+    try {
+        const blog = await Blog.findById(req.params.id);
+        if (!blog) {
+            return res.status(404).send('Blog not found');
+        }
+        return res.status(200).json({ paywallstatus: blog.paywall })
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+
+});
+
 // Edit Blog Route
 app.get('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
     try {
@@ -259,7 +318,6 @@ app.post('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
 // Delete Blog Route
 app.get('/index/blogs/:id/delete', isLoggedIn, async (req, res) => {
     try {
-        // TODO:logged-in user and blog author can be different.
         const deletedBlog = await Blog.findById(req.params.id);
         if (!deletedBlog) {
             return res.status(404).send('Blog not found');
@@ -482,17 +540,3 @@ app.get('/test', (req, res) => {
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
 });
-
-///
-// {
-//     discoverpeople: [
-//         {
-//             _id: String,
-//             username: String,
-//             firstname: String,
-//             lastname: String,
-//             followers: [String],
-//             following: [String]
-//         }
-//     ]
-// }
