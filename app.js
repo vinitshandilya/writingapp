@@ -403,16 +403,73 @@ app.post('/index/toggleFollowingAndFollowers', isLoggedIn, async(req, res) => {
           communityUser.followers.push(req.body.loggedInUserId);
           await communityUser.save();
         }
-      
         return res.status(200).json({ message: 'followed' });
       
       } catch (error) {
+            console.error(error);
+            return res.status(500).json({ message: 'Internal server error' });
+      }    
+});
+
+// Add paid subscribers
+app.post('/index/addsubscription', isLoggedIn, async (req, res) => {
+    const loggedinuserid = req.body.subscriptioninfo.loggedinuserid;
+    const authorid = req.body.subscriptioninfo.authorid;
+
+    try {
+        const loggedInUser = await User.findById(loggedinuserid);
+        const author = await User.findById(authorid);
+        if (!loggedInUser || !author) {
+            return res.status(400).json({ message: 'User not found' });
+        }
+        if(author.paidsubscribers.includes(loggedinuserid)) {
+            // already a paid subscriber to author
+            // redirect to blog details page for blogid redirectblogid
+            // use return statement
+            return res.status(200).json({ status: 'subscribed' })
+        } else {
+            author.paidsubscribers.push(loggedinuserid);
+            await author.save();
+            // TODO: Add subscription field in loggedInUser too.
+            return res.status(200).json({ status: 'subscribed' })
+        }
+
+    } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
-      }
-      
+    }
 
 });
+
+// Check subscription status
+app.post('/index/checksubscription', isLoggedIn, async (req, res) => {
+    const loggedinuserid = req.session.user._id;
+    if(loggedinuserid.toString() !== req.body.subscriptioninfo.loggedinuserid) {
+        return res.status(500).json({ message: 'Unexpected session error'});
+    }
+
+    try {
+        const loggedInUser = await User.findById(loggedinuserid);
+        const author = await User.findById(req.body.subscriptioninfo.authorid);
+        if (!loggedInUser || !author) {
+            return res.status(400).json({ message: 'User not found' });
+        }
+        if(loggedinuserid.toString() === author._id.toString()) { // authors will always be subscribed to their own articles.
+            return res.status(200).json({ status: 'subscribed' })
+        }
+        if(author.paidsubscribers.includes(loggedinuserid)) {
+            return res.status(200).json({ status: 'subscribed' })
+        }
+
+        return res.status(200).json({ status: 'not subscribed' })
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+
+});
+
 
 app.post('/index/blogs/updateuserblogmetadata', isLoggedIn, async (req, res) => {
     console.log(req.body.blogusermetadata);

@@ -220,7 +220,7 @@
                     <!-- Middle Section (50% width) -->
                     <div class="col-md-6 mid-section">
                         <div id="blogheader" class="container-fluid ribbon-area"></div>
-                        <div class="monetization-banner" id="monetization-banner-id">This is a paid article.</div>
+                        <div class="monetization-banner" id="monetization-banner-id">You have monetized this article. Visit your payment settings to learn more.</div>
                         <div id="preview" class="container-fluid canvas"></div>
                         <br>
                         <div class="tags-container">
@@ -244,8 +244,8 @@
 
     <div class="translucent-mask" id="translucentMask">
         <div class="center-content">
-            <p>This is a paid article. Join today to get full access!</p>
-            <a href="/" class="btn btn-primary">Join for free!</a>
+            <p id="subscribe-banner">This is a paid article.</p>
+            <a href="#!" class="btn btn-primary" id="subscribe-button" onclick=authorSubscribe()>Subscribe</a>
         </div>
     </div>
 
@@ -263,7 +263,9 @@
         var blogheader = document.getElementById('blogheader');
         var previewDiv = document.getElementById('preview');
         var markedUpDom;
+        var blogDetails;
         var bloguserid;
+        var blogauthor;
         var loggedinuserid;
         var blogid;
 
@@ -280,11 +282,12 @@
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    var blogDetails = JSON.parse(xhr.responseText);
+                    blogDetails = JSON.parse(xhr.responseText);
                     bloguserid = blogDetails.blog.userid;
                     loggedinuserid = blogDetails.loggedinuserid;
                     blogid = blogDetails.blog._id;
                     updateBlogDetails(blogDetails);
+                    maskUnmaskBlog(bloguserid, loggedinuserid);
 
                     if (bloguserid !== loggedinuserid) {
                         document.getElementById('editLink').style.display = 'none';
@@ -295,22 +298,58 @@
                         document.getElementById('deleteLink').style.display = 'block';
                         document.getElementById('appPaywallLink').style.display = 'block';
                     }
-
-                    // Logic to display translucent mask
                     var translucentMask = document.getElementById('translucentMask');
-                    if(bloguserid !== loggedinuserid) { // blog author is different than the current user
-                        if(blogDetails.blog.paywall) { // if paywall is enabled, then mask the contents
-                            translucentMask.style.display = 'flex';
-                        } else {
-                            translucentMask.style.display = 'none';
-                        }
-                    } else {
-                        translucentMask.style.display = 'none';
-                    }
+                    translucentMask.style.display = 'none';
                 }
             };
             xhr.open('GET', `/index/blogs/${blogId}`, true);
             xhr.send();
+        }
+
+        function maskUnmaskBlog(authorid, loggedinuserid) {
+            var translucentMask = document.getElementById('translucentMask');
+            var subscribebanner = document.getElementById('subscribe-banner');
+            const subscriptioninfo = {
+                authorid: authorid,
+                loggedinuserid: loggedinuserid
+            }
+
+            fetch('/index/checksubscription', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ subscriptioninfo }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response from server:', data.status);
+                var translucentMask = document.getElementById('translucentMask');
+                var subscribebanner = document.getElementById('subscribe-banner');
+
+                if(data.status !== 'subscribed') {
+                    translucentMask.style.display = 'flex';
+                    blogauthor = blogDetails.blog.author;
+                    subscribebanner.innerText = `This is a paid article. Subscribe to ${blogDetails.blog.author} for full access!`;
+                    return true;
+                } else {
+                    translucentMask.style.display = 'none';
+                    return false;
+                }
+                
+            })
+            .catch(error => {
+                console.error('Error sending data to server:', error.message);
+                // Handle the error as needed
+            }); 
+
+
+
         }
     
         function updateBlogDetails(blogDetails) {
@@ -330,6 +369,7 @@
                     <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-pen-to-square"></i> ${blogDetails.blog.author}</p>
                     <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-calendar"></i> ${formattedTime}</p>
                     <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="far fa-clock"></i> ${timeToread}</p>
+                    <p id="premium-label" style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-solid fa-crown"></i></i> PREMIUM</p>
                 </div> `;
 
             previewDiv.innerHTML = `
@@ -350,7 +390,6 @@
                     var listItem = document.createElement('li');
                     listItem.textContent = footnote;
                     footnoteList.appendChild(listItem);
-
                 });
             }
             
@@ -435,7 +474,8 @@
             const footnoteElements = document.querySelectorAll('.ql-footnote');
 
             for (const element of footnoteElements) {
-                const footnote_index = element.textContent;
+                console.log(element);
+                const footnote_index = element.textContent.replace(/\[|\]/g, '');
                 const fntitle = element.getAttribute('fntitle');
 
                 if (fntitle) {
@@ -471,12 +511,23 @@
                 .then(data => {
                     const monetizationbanner = document.getElementById("monetization-banner-id");
                     const appPaywallLink = document.getElementById('appPaywallLink');
+                    const premiumicon = document.getElementById('premium-label');
                     const paywallStatus = data.paywallstatus;
 
                     if(paywallStatus) {
-                        appPaywallLink.style.color = '#0F9D58';
-                        monetizationbanner.style.display = 'block';
+                        if(bloguserid === loggedinuserid) { // display green banner only to the blog author
+                            appPaywallLink.style.color = '#0F9D58';
+                            monetizationbanner.style.display = 'block';
+                            premiumicon.style.display = 'none';
+                        } else {
+                            // paid subscriber should see a 'crown' instead (only if paid subscriber)
+                            premiumicon.style.display = 'block';
+                            monetizationbanner.style.display = 'none';
+                            appPaywallLink.style.color = '';
+                        }
+                        
                     } else {
+                        premiumicon.style.display = 'none';
                         monetizationbanner.style.display = 'none';
                         appPaywallLink.style.color = '';
                     }
@@ -500,21 +551,70 @@
                 .then(data => {
                     const monetizationbanner = document.getElementById("monetization-banner-id");
                     const appPaywallLink = document.getElementById('appPaywallLink');
+                    const premiumicon = document.getElementById('premium-label');
                     const paywallStatus = data.paywallstatus;
                     
                     if(paywallStatus) {
-                        appPaywallLink.style.color = '#0F9D58';
-                        monetizationbanner.style.display = 'block';
+                        if(bloguserid === loggedinuserid) { // display green banner only to the blog author
+                            appPaywallLink.style.color = '#0F9D58';
+                            monetizationbanner.style.display = 'block';
+                            premiumicon.style.display = 'none';
+                        } else {
+                            // paid subscriber should see a 'crown' instead
+                            console.log(`paywall enabled, users are different`);
+                            premiumicon.style.display = 'block';
+                            monetizationbanner.style.display = 'none';
+                            appPaywallLink.style.color = '';
+                        }
+                        
                     } else {
+                        premiumicon.style.display = 'none';
                         monetizationbanner.style.display = 'none';
                         appPaywallLink.style.color = '';
-
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching paywall:', error);
                 });
         }
+
+        function authorSubscribe() {
+            if (!loggedinuserid || !bloguserid || !blogauthor || !blogid) {
+                console.error('One or more required variables are undefined.');
+                return;
+            }
+
+            console.log(`${loggedinuserid} will subscribe to ${bloguserid}, author name: ${blogauthor}, redirect blogid: ${blogid}`);
+            
+            // send request to subscribe user
+            const subscriptioninfo = {
+                loggedinuserid: loggedinuserid,
+                authorid: bloguserid
+            };
+
+            fetch('/index/addsubscription', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ subscriptioninfo }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response from server from authorSubscribe:', data.status);
+                window.location.href = `/index?id=${blogid}`;
+            })
+            .catch(error => {
+                console.error('Error sending data to server:', error.message);
+                // Handle the error as needed
+            }); 
+        }
+
 
     </script>
 
