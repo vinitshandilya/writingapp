@@ -16,7 +16,7 @@ const db_uri = 'mongodb+srv://vinitshandilya:CQozNpwwVhUOXSdT@cluster0.mgznywr.m
 mongoose.connect(db_uri);
 
 // Serve static files from the public folder
-app.use(express.static('public', { 'extensions': ['html', 'css', 'js'] }));
+app.use(express.static('public', { 'extensions': ['html', 'css', 'js', 'png'] }));
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));

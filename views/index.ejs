@@ -287,7 +287,6 @@
                     loggedinuserid = blogDetails.loggedinuserid;
                     blogid = blogDetails.blog._id;
                     updateBlogDetails(blogDetails);
-                    maskUnmaskBlog(bloguserid, loggedinuserid);
 
                     if (bloguserid !== loggedinuserid) {
                         document.getElementById('editLink').style.display = 'none';
@@ -306,52 +305,6 @@
             xhr.send();
         }
 
-        function maskUnmaskBlog(authorid, loggedinuserid) {
-            var translucentMask = document.getElementById('translucentMask');
-            var subscribebanner = document.getElementById('subscribe-banner');
-            const subscriptioninfo = {
-                authorid: authorid,
-                loggedinuserid: loggedinuserid
-            }
-
-            fetch('/index/checksubscription', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ subscriptioninfo }),
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Response from server:', data.status);
-                var translucentMask = document.getElementById('translucentMask');
-                var subscribebanner = document.getElementById('subscribe-banner');
-
-                if(data.status !== 'subscribed') {
-                    translucentMask.style.display = 'flex';
-                    blogauthor = blogDetails.blog.author;
-                    subscribebanner.innerText = `This is a paid article. Subscribe to ${blogDetails.blog.author} for full access!`;
-                    return true;
-                } else {
-                    translucentMask.style.display = 'none';
-                    return false;
-                }
-                
-            })
-            .catch(error => {
-                console.error('Error sending data to server:', error.message);
-                // Handle the error as needed
-            }); 
-
-
-
-        }
-    
         function updateBlogDetails(blogDetails) {
 
             var editorContent = blogDetails.blog.body;
@@ -359,7 +312,7 @@
             var timeToread = calculateReadingTime(blogDetails.blog.body, 230);
             const formatString = { month: 'short', day: 'numeric', year: 'numeric' };
             const formattedTime = dateObj.toLocaleString("en-US", formatString).toUpperCase();
-            
+
             markedUpDom = recomputeRender(editorContent); // This is where we decide to parse footnotes, bookmarks, etc.
 
             blogheader.innerHTML = `
@@ -375,7 +328,7 @@
             previewDiv.innerHTML = `
                 <div><p>${markedUpDom}</p></div>
             `;
-            
+
             // Parse footnotes markup and add to page
             var footnotes = listFootnotes(markedUpDom);
             if(footnotes.length > 0) {
@@ -392,7 +345,7 @@
                     footnoteList.appendChild(listItem);
                 });
             }
-            
+
             // Generate nav-bar links for blog update and delete
             var editLink = document.getElementById('editLink');
             if (editLink) {
@@ -403,7 +356,7 @@
             if (deleteLink) {
                 deleteLink.href = `/index/blogs/${blogDetails.blog._id}/delete`;
             }
-            
+
             var shareLink = document.getElementById('shareLink');
             if (shareLink) {
                 shareLink.href = `/index/blogs/public/${blogDetails.blog._id}`;
@@ -435,6 +388,7 @@
             }
 
             getPaywallStatus();
+            // maskUnmaskBlog(bloguserid, loggedinuserid);
         }
 
         // parse footnote markup and return updated html string
@@ -486,19 +440,6 @@
             return footnotes;
         }
 
-        function saveBlogUserMetadata(blogusermetadata) {
-            fetch('/index/blogs/updateuserblogmetadata', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ blogusermetadata }),
-            })
-            .then(response => response.json())
-            .then(data => console.log('Response from server:', data))
-            .catch(error => console.error('Error sending data to server:', error));
-        }
-
         function updatePaywallStatus() {
             const url = `/index/blogs/${blogid}/updatepaywall`;
             fetch(url)
@@ -531,6 +472,7 @@
                         monetizationbanner.style.display = 'none';
                         appPaywallLink.style.color = '';
                     }
+                    // maskUnmaskBlog(bloguserid, loggedinuserid);
                 })
                 .catch(error => {
                     console.error('Error updating paywall status:', error);
@@ -556,11 +498,53 @@
                     
                     if(paywallStatus) {
                         if(bloguserid === loggedinuserid) { // display green banner only to the blog author
+                            // don't show translucent mask
                             appPaywallLink.style.color = '#0F9D58';
                             monetizationbanner.style.display = 'block';
                             premiumicon.style.display = 'none';
                         } else {
-                            // paid subscriber should see a 'crown' instead
+                            // show translucent mask based on subscription status.
+                            const subscriptioninfo = {
+                                authorid: bloguserid,
+                                loggedinuserid: loggedinuserid
+                            };
+                            fetch('/index/checksubscription', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({ subscriptioninfo }),
+                            })
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                                }
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('Response from server:', data.status);
+                                var translucentMask = document.getElementById('translucentMask');
+                                var subscribebanner = document.getElementById('subscribe-banner');
+
+                                if(data.status !== 'subscribed') {
+                                    // not subscribed, show translucent mask
+                                    translucentMask.style.display = 'flex';
+                                    blogauthor = blogDetails.blog.author;
+                                    subscribebanner.innerText = `This is a paid article. Subscribe to ${blogDetails.blog.author} for full access!`;
+                                    return true;
+                                } else {
+                                    // subscribed to paywalled article
+                                    translucentMask.style.display = 'none';
+                                    monetizationbanner.style.display = 'none';
+                                    premiumicon.style.display = 'block';
+                                    return true;
+                                }
+                                
+                            })
+                            .catch(error => {
+                                console.error('Error sending data to server:', error.message);
+                            });
+
                             console.log(`paywall enabled, users are different`);
                             premiumicon.style.display = 'block';
                             monetizationbanner.style.display = 'none';

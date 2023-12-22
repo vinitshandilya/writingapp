@@ -149,7 +149,12 @@
                         </div>
                 
                         <div class="col">
-                            <small class="text-muted"><%= personalblog.author %> &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %></small>
+                            <small class="text-muted">
+                                <%= personalblog.author %> &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
+                                <% if (personalblog.paywall) { %>
+                                    <i class="fa-solid fa-crown" style="padding-left: 10px; color: #B0A648;"></i>
+                                <% } %>
+                            </small>
                             <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1 blog-list-title"><%= personalblog.title %></h5>
                             <small class="text-muted">3 days ago</small>
