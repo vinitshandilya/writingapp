@@ -359,9 +359,7 @@
     }
 
     footnoteSubmit.addEventListener('click', () => {
-          // Handle user input (e.g., store it, log it to the console)
           const userInput = document.getElementById('userInput').value;
-          console.log(`User entered: ${userInput}`);
           popup.classList.toggle('hidden');
 
           if(selectedText.length > 0) {
@@ -415,8 +413,7 @@
         if (eventName === 'selection-change') {
             var [range, oldRange, source] = args;
             if (range && source === 'user' && quill.getFormat(range.index, 1)['footnote']) {
-                // Handle clicks on the footnote
-                // You might want to open a modal for editing or deleting the footnote
+                
             }
         }
     });

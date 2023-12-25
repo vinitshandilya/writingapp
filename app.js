@@ -8,7 +8,6 @@ const passport = require('passport');
 const flash = require('connect-flash');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./user');
-const UserBlogMetadata = require('./userBlogMetadataModel');
 
 const app = express();
 const port = 3000;
@@ -31,10 +30,38 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-// Landing page for user login
-app.get('/', (req, res) => {
+
+// Landing page
+app.get('/', async (req, res) => {
+    // featured articles
+    try {
+        const featuredblogs = await Blog.find({ });
+        return res.render('landingpage', { featuredblogs });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+app.get('/gettags', async (req, res) => {
+    var tags = [];
+    try {
+        const featuredblogs = await Blog.find( { });
+        const allTags = featuredblogs.reduce((tags, blog) => {
+            return tags.concat(blog.tags);
+          }, []);
+          tags = [...new Set(allTags)];
+          return res.status(200).json( { tags: tags});
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+})
+
+
+// Login page for user login
+app.get('/login', (req, res) => {
     const message = req.query.message || null;
-    res.render('landingpage', { message }); // Create landingpage.ejs in your views folder
+    res.render('loginpage', { message }); // Create loginpage.ejs in your views folder
 });
 
 // Render user registration page
@@ -128,6 +155,18 @@ app.get('/homepage/getDiscoverPeople', isLoggedIn, async (req, res) => {
     try {
         const discoverpeople = await User.find( { _id: { $ne: loggedinuser._id } }); // from community users, remove the loggedin user
         return res.status(200).json({ discoverpeople: discoverpeople, loggedinuser: loggedinuser});
+    } catch (error) {
+        return res.status(500).json({ error: error.message });
+    }
+
+});
+
+// Route to get suggested people
+app.get('/homepage/getSuggestedPeople', async (req, res) => {
+    try {
+        const suggestedpeople = await User.find( {  }); // from community users, remove the loggedin user
+        console.log(suggestedpeople);
+        return res.status(200).json({ suggestedpeople: suggestedpeople });
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }

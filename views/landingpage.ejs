@@ -1,67 +1,393 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap JS (optional, if you need JavaScript features) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <title>The Writing App</title>
-    <link href="testpage.css" rel="stylesheet">
-</head>
-<body>
-    <section class="vh-100 gradient-custom">
-        <div class="container py-5 h-100">
-          <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-              <div class="card bg-dark text-white" style="border-radius: 1rem;">
-                <div class="card-body p-5 text-center">
-      
-                  <div class="mb-md-5 mt-md-4 pb-5">
-      
-                    <h2 class="fw-bold mb-2 text-uppercase">Login</h2>
-                    <p class="text-white-50 mb-5">Please enter your login and password!</p>
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <link rel="preconnect" href="https://fonts.googleapis.com">
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+      <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
+      <title>My writing app</title>
+      <style>
+         .custom-banner {
+         background-color: #fff;
+         height: 50vh; /* 50% of the viewport height */
+         }
+         .custom-navbar {
+         background-color: #fff;
+         color:#000
+         }
+         .mid-section {
+         text-align: left;
+         color: #000;
+         line-height: 2.3;
+         }
+         .left-section img {
+         max-width: 100%; /* Ensure the image doesn't exceed the width of its container */
+         height: auto; /* Maintain the aspect ratio of the image */
+         display: block; /* Remove extra space below the image */
+         margin: 0 auto; /* Center the image horizontally within the container */
+         max-height: 300px; /* Set a maximum height for the image */
+         }
+         .right-section {
+         color: #000;
+         display: flex;
+         flex-direction: column;
+         align-items: center;
+         }
+         .heading-text {
+         font-family: 'Hedvig Letters Serif', serif;
+         font-family: 'Libre Baskerville', serif;
+         }
+         .sign-in {
+         color: #000;
+         font-weight: bold;
+         }
+         .sign-in:hover {
+         color: #000;
+         font-weight: bold;
+         }
+         .btn-primary {
+         background-color: transparent;
+         border-color: #000;
+         color: #000;
+         width: 200px;
+         height: 50px;
+         border-radius: 25px;
+         }
+         .btn-primary:hover {
+         background-color: #000;
+         border-color: #000;
+         color: #fff;
+         }
+         .centered-icon {
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         }
+         .icon-list {
+         margin-top: auto;
+         text-align: center; /* Center the icons horizontally */
+         }
+         .icon-list i {
+         font-size: 30px;
+         margin: 0 15px; /* Add spacing between the icons */
+         }
+         .bottom-section {
+         color: #1c4175;
+         line-height: 2.0;
+         }
+         .navbar.custom-navbar .form-inline {
+         width: 500px; /* Set your desired width here */
+         }
+         .navbar.custom-navbar .searchbar {
+         width: 100%;
+         background: transparent;
+         border-color: #000;
+         border-radius: 50px;
+         }
+         .list-group-item {
+         border: none !important;
+         line-height: normal;
+         border-top: 0px solid rgba(0, 0, 0, 0.125) !important;
+         background-color: transparent !important;
+         }
+         .list-item-container {
+         display: inline-block;
+         margin-right: 5px;
+         padding: 0 10px;
+         }
+         .big-list-item {
+         border: none !important;
+         line-height: 2.3;
+         border-top: 1px solid rgba(0, 0, 0, 0.125) !important;
+         background-color: transparent !important;
+         font-weight: bold;
+         }
+         .blog-list-title {
+         color: #1c4175
+         }
+         .blog-list-subtitle {
+         padding-top: 0px;
+         color: gray;
+         font-weight: normal;
+         }
+         .blog-list-body {
+         font-weight: normal;
+         line-height: 1.5;
+         padding-bottom: 10px;
+         }
+         .btn-rounded {
+         display: inline-block;
+         background-color: transparent;
+         border-color: #1c4175;
+         color: #1c4175;
+         border-width: 1px;
+         box-shadow: none;
+         border-radius: 15px;
+         font-size: smaller;
+         height: 30px;
+         padding: 0 10px;
+         margin-right: 5px;
+         line-height: 30px;
+         }
+         .discover-people {
+         margin-top: 150px;
+         }
+         .seemore-btn {
+         border: none;
+         background-color: transparent;
+         color: #1c4175;
+         font-size: smaller;
+         height: 30px;
+         padding: 0 10px;
+         margin-right: 5px;
+         line-height: 30px;
+         }
+         .seemore-btn:focus {
+         outline: none; /* Remove the default focus outline */
+         }
 
-                    <form action="/login" method="post">
-                        <div class="form-outline form-white mb-4">
-                            <input type="text" id="username" name="username" class="form-control form-control-lg" />
-                            <label class="form-label" for="username">Username</label>
-                          </div>
-            
-                          <div class="form-outline form-white mb-4">
-                            <input type="password" id="password" name="password" class="form-control form-control-lg" />
-                            <label class="form-label" for="password">Password</label>
-                          </div>
-            
-                          <p class="small mb-5 pb-lg-2"><a class="text-white-50" href="#!">Forgot password?</a></p>
-            
-                          <button class="btn btn-outline-light btn-lg px-5" type="submit">Login</button>
-                    </form>
-                    <br>
+      </style>
+   </head>
+   <body>
+      <!-- Navigation Bar -->
+      <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
+         <a class="navbar-brand" href="#">My app</a>
+         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+         </button>
+         <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+               <li class="nav-item active">
+                  <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="#">About</a>
+               </li>
+               <li class="nav-item">
+                  <a class="nav-link" href="#">Contact</a>
+               </li>
+            </ul>
+         </div>
+      </nav>
 
-                    <% if (message) { %>
-                        <p><%= message %></p>
-                    <% } %>
-      
-                    <div class="d-flex justify-content-center text-center mt-4 pt-1">
-                      <a href="#!" class="text-white"><i class="fab fa-facebook-f fa-lg"></i></a>
-                      <a href="#!" class="text-white"><i class="fab fa-twitter fa-lg mx-4 px-2"></i></a>
-                      <a href="#!" class="text-white"><i class="fab fa-google fa-lg"></i></a>
-                    </div>
-      
+      <!-- Top Section with Banner -->
+      <div class="container-fluid text-white text-center py-5 custom-banner d-flex align-items-center justify-content-center">
+         <div>
+            <div class="container-fluid">
+               <div class="row">
+                  <!-- Left Section-->
+                  <div class="col-md-3 left-section">
+                     <img src="lamp1.png" alt="lamp">
                   </div>
-      
-                  <div>
-                    <p class="mb-0">Don't have an account? <a href="/register" class="text-white-50 fw-bold">Sign Up</a>
-                    </p>
+                  <!-- Mid Section -->
+                  <div class="col-md-6 mid-section">
+                     <h1 class="heading-text">Unleash Your Voice, Share Your Story!</h1>
+                     <p>Welcome to The Writer's Hub, where every thought finds a home. Explore, express, and connect through the power of words. Your story matters, and this is the place to tell it.</p>
+                     <button class="btn btn-primary" onclick="window.location.href='/register'">Get started</button>
+                     <br>
+                     <br>
+                     <p>Already a member? <a class="sign-in" href="/login">Sign in</a></p>
                   </div>
-                </div>
-              </div>
+                  <!-- Right Section-->
+                  <div class="col-md-3 right-section centered-icon">
+                     <!-- <div class="icon-list">
+                        <i class="fab fa-google"></i>
+                        <i class="fa-brands fa-linkedin"></i>
+                        <i class="fa-brands fa-apple"></i>
+                        </div> -->
+                  </div>
+               </div>
             </div>
-          </div>
-        </div>
-      </section>
-</body>
-</html>
+         </div>
+      </div>
+      <!-- Bottom Section -->
+      <div class="container mt-5 bottom-section">
+         <div class="row">
 
+            <!-- Bottom Left Section -->
+            <div class="col-lg-8 bottom-left">
+               <h3><i class="fa-solid fa-chart-line"></i> Popular</h3>
+               <div class="list-group">
+                  <% featuredblogs.forEach(featuredblog => { %>
+                  <a href="/index/blogs/public/<%= featuredblog._id %>" data-blog-id="<%= featuredblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
+                     <div class="row">
+                        <div class="col-auto">
+                           <img src="https://ak-d.tripcdn.com/images/1mi3e2224vymivgpcC549.jpg?proc=source/trip" alt="Image 2" class="img-thumbnail" width="150" height="150">
+                        </div>
+                        <div class="col">
+                           <small class="text-muted">
+                           <%= featuredblog.author %> &middot; <%= featuredblog.formatteddate %> &middot; <%= featuredblog.timetoread %>
+                           <% if (featuredblog.paywall) { %>
+                           <i class="fa-solid fa-crown" style="padding-left: 10px; color: #1c4175;"></i>
+                           <% } %>
+                           </small>
+                           <div class="d-flex w-100 justify-content-between">
+                              <h5 class="mb-1 blog-list-title"><%= featuredblog.title %></h5>
+
+                              <%
+                            // Define a function to calculate elapsed time
+                            function calculateElapsedTime(formattedDate) {
+                                var currentDate = new Date();
+                                var date = new Date(formattedDate);
+
+                                var timeDifference = currentDate - date;
+                                var daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+                                if (daysDifference === 0) {
+                                return 'today';
+                                } else if (daysDifference === 1) {
+                                return 'yesterday';
+                                } else if (daysDifference < 7) {
+                                return daysDifference + ' days ago';
+                                } else {
+                                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                                }
+                            }
+
+                            // Call the function with the formatted date from featuredblog
+                            var elapsedTime = calculateElapsedTime(featuredblog.formatteddate);
+                            %>
+
+                              <small class="text-muted"><%= elapsedTime %></small>
+                           </div>
+                           <p class="mb-1 blog-list-subtitle"><%= featuredblog.subtitle %></p>
+                           <p class="mb-1 blog-list-body">
+                              <% 
+                                 var plainText = featuredblog.body.replace(/<[^>]*>/g, '');
+                                 plainText = plainText.replace(/\[[^\]]*\]/g, '');
+                                 var truncatedText = plainText.length <= 200 ? plainText : plainText.substring(0, 200) + '...';
+                                 %>
+                              <%= truncatedText %>
+                           </p>
+                           <% if (featuredblog.tags.length > 0) { %>
+                           <% featuredblog.tags.forEach(tag => { %>
+                           <% if(tag.trim().length !== 0) { %>
+                           <button type="button" class="btn-rounded" disabled><%= tag %></button>
+                           <% } %>
+                           <% }) %>
+                           <% } %>
+                        </div>
+                     </div>
+                  </a>
+                  <% }); %>
+               </div>
+            </div>
+
+            <!-- Bottom Right Section -->
+            <div class="col-lg-4 bottom-right">
+               <h5><i class="fa-solid fa-glasses"></i> Discover topics</h5>
+               <div id="tags" class="container-fluid tags"></div>
+               <button class="seemore-btn" id="seemore-btn" onclick=toggleTagsview(this)>see more</button>
+
+               <h5 class="discover-people"><i class="fa-solid fa-user-plus"></i> Follow people</h5>
+               <ul class="list-group" id="userList"></ul>
+            </div>
+         </div>
+      </div>
+      <!-- Bootstrap JS and jQuery -->
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+      
+      <script>
+
+        var isTagsExpanded = true;
+        var tags;
+        var tagsDiv = document.getElementById('tags');
+        var tagsContainer = document.createElement('div');
+        tagsContainer.classList.add('tags-container');
+
+         document.addEventListener('DOMContentLoaded', function () {
+             fetchTags();
+             buildSuggestedPeopleList();
+         });
+
+         function fetchTags() {
+             fetch('/gettags')
+                 .then(response => {
+                 if (!response.ok) {
+                     throw new Error(`Network response was not ok: ${response.statusText}`);
+                 }
+                 return response.json();
+                 })
+                 .then(data => {
+                 console.log('Fetched data:', data);
+                 tags = data.tags;
+                 displayTags(data.tags, 5);
+                 })
+                 .catch(error => {
+                 console.error('Error during fetch:', error.message);
+                 });
+         }
+
+         function displayTags(tags, count) {
+            tagsContainer.innerHTML = ``;
+            if(tags.length > 0) {
+                     tagsDiv.style.display = "block";
+                     tags.slice(0, count).forEach(tag => {
+                         var buttonElement = document.createElement('button');
+                         buttonElement.type = 'button';
+                         buttonElement.classList.add('btn-rounded');
+                         buttonElement.textContent = tag;
+                         buttonElement.style.marginBottom = '10px';
+                         tagsContainer.appendChild(buttonElement);  
+                     });
+
+                     tagsDiv.appendChild(tagsContainer);
+
+            } else {
+                tagsDiv.style.display = "none";
+            }
+         }
+
+         function toggleTagsview(button) {
+            if(isTagsExpanded) {
+                displayTags(tags, tags.length);
+                button.textContent = 'see less'
+                isTagsExpanded = false;
+            } else {
+                displayTags(tags, 5);
+                button.textContent = 'see more'
+                isTagsExpanded = true;
+            }
+
+         }
+         
+
+        async function buildSuggestedPeopleList() {
+            fetch('/homepage/getSuggestedPeople')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const userList = document.getElementById('userList');
+                    userList.innerHTML = ``;
+                    data.suggestedpeople.forEach(communityuser => {
+                        // is data.loggedinuser._id included in communityuser.paidsubscribers array?
+                        const displayName = communityuser.firstname ? `${communityuser.firstname} ${communityuser.lastname} (@${communityuser.username})` : communityuser.username;
+                        const followercount = communityuser.followers.length;
+                        const listItem = document.createElement('li');
+                        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                        listItem.innerHTML = `
+                            <div class="list-item-container" style="font-size: small">
+                                ${displayName} (${followercount})
+                            </div>
+                        `;
+
+                        userList.appendChild(listItem);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data: ', error);
+                });
+
+        }
+         
+      </script>
+   </body>
+</html>

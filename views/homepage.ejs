@@ -26,7 +26,12 @@
         border: none !important;
         border-top: 0px solid rgba(0, 0, 0, 0.125) !important;
         background-color: transparent !important;
-        font-weight: bold;
+    }
+
+    .list-item-container {
+        display: inline-block;
+        margin-right: 5px;
+        padding: 0 10px;
     }
 
     .big-list-item {
@@ -87,6 +92,7 @@
         cursor: pointer;
         border-radius: 50px;
     }
+
     
 </style>
 
@@ -114,7 +120,7 @@
         <div class="row">
 
             <!-- Left Section -->
-            <div class="col-md-3 right-section">
+            <div class="col-md-3 left-section">
                 <h6>Discover</h6>
                 <ul class="list-group" id="userList"></ul>
             </div>
@@ -157,7 +163,30 @@
                             </small>
                             <div class="d-flex w-100 justify-content-between">
                             <h5 class="mb-1 blog-list-title"><%= personalblog.title %></h5>
-                            <small class="text-muted">3 days ago</small>
+                                <%
+                                function calculateElapsedTime(formattedDate) {
+                                    var currentDate = new Date();
+                                    var date = new Date(formattedDate);
+
+                                    var timeDifference = currentDate - date;
+                                    var daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+                                    if (daysDifference === 0) {
+                                    return 'today';
+                                    } else if (daysDifference === 1) {
+                                    return 'yesterday';
+                                    } else if (daysDifference < 7) {
+                                    return daysDifference + ' days ago';
+                                    } else {
+                                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                                    }
+                                }
+
+                                // Call the function with the formatted date from featuredblog
+                                var elapsedTime = calculateElapsedTime(personalblog.formatteddate);
+                                %>
+
+                              <small class="text-muted"><%= elapsedTime %></small>
                             </div>
                             <p class="mb-1 blog-list-subtitle"><%= personalblog.subtitle %></p>
                             <% if (personalblog.tags.length > 0) { %>
@@ -211,14 +240,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 const userList = document.getElementById('userList');
                 userList.innerHTML = ``;
                 data.discoverpeople.forEach(communityuser => {
+                    // is data.loggedinuser._id included in communityuser.paidsubscribers array?
                     const displayName = communityuser.firstname ? `${communityuser.firstname} ${communityuser.lastname} (@${communityuser.username})` : communityuser.username;
+                    const paidsubsindicator = communityuser.paidsubscribers.includes(data.loggedinuser._id) ? '<i class="fa-solid fa-certificate"></i>' : '';
                     const buttonText = communityuser.followers.includes(data.loggedinuser._id) ? 'Unfollow' : 'Follow';
                     const buttonClass = communityuser.followers.includes(data.loggedinuser._id) ? 'button-following' : 'button-not-following';
 
                     const listItem = document.createElement('li');
                     listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
                     listItem.innerHTML = `
-                        ${displayName}
+                        <div class="list-item-container">
+                            ${displayName}
+                            ${paidsubsindicator}
+                        </div>
                         <button class="btn btn-sm ${buttonClass} ml-auto" onclick="toggleFollowingFollowers(this, '${communityuser._id}', '${data.loggedinuser._id}')">
                             ${buttonText}
                         </button>
