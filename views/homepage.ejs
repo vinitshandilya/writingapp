@@ -23,9 +23,9 @@
     }
 
     .list-group-item {
-        border: none !important;
-        border-top: 0px solid rgba(0, 0, 0, 0.125) !important;
-        background-color: transparent !important;
+        border: none;
+        /* border-top: 0px solid rgba(0, 0, 0, 0.125); */
+        background-color: transparent;
     }
 
     .user-list-title {
@@ -43,16 +43,11 @@
     }
 
     .big-list-item {
-        border: none !important;
+        border: none;
         line-height: 2.5;
-        border-top: 1px solid rgba(0, 0, 0, 0.125) !important;
-        background-color: transparent !important;
+        /* border-top: 1px solid rgba(0, 0, 0, 0.125); */
+        background-color: transparent;
         font-weight: bold;
-    }
-
-    .vertical-line {
-        border-left: 1px solid #ccc;
-        height: 100%;
     }
 
     .btn-rounded {
@@ -65,7 +60,7 @@
         font-size: smaller;
         height: 30px;
         padding: 0 10px;
-        margin-right: 5px;
+        margin: 3px;
         line-height: 30px;
     }
 
@@ -140,38 +135,25 @@
             </ul>
         </div>
     </nav>
-    
 
-    <div class="container-fluid">
+    <!-- Responsive Layout using Bootstrap Grid -->
+    <div class="container mt-4">
         <div class="row">
-
-            <!-- Left Section -->
-            <div class="col-md-3 left-section">
-                <h6>Discover</h6>
-                <ul class="list-group" id="userList"></ul>
-                
-            </div>
-
-
-            <!-- Middle Section -->
-            <div class="col-md-6 vertical-line">
-                <div class="d-flex w-100 justify-content-between align-items-center">
-                    <h4 class="mt-4">For You</h4>
-
-                    <!-- Dropdown Trigger -->
-                    <h6 class="mt-4 dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa-solid fa-arrow-down-wide-short"></i>
-                    </h6>
-                    <!-- Dropdown Menu -->
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#">Last updated</a>
-                        <a class="dropdown-item" href="#">Created date</a>
-                        <a class="dropdown-item" href="#">A to Z</a>
-                        <a class="dropdown-item" href="#">Z to A</a>
-                    </div>
-
-                    
+            <!-- List on the left side -->
+            <div class="col-md-8 list-container">
+                <h6>For You</h6>
+                <!-- Dropdown Trigger -->
+                <h6 class="mt-4 dropdown-toggle" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa-solid fa-arrow-down-wide-short"></i>
+                </h6>
+                <!-- Dropdown Menu -->
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#">Last updated</a>
+                    <a class="dropdown-item" href="#">Created date</a>
+                    <a class="dropdown-item" href="#">A to Z</a>
+                    <a class="dropdown-item" href="#">Z to A</a>
                 </div>
+
                 <div class="list-group">
                     <% personalblogs.forEach(personalblog => { %>
                     <a href="/index?id=<%= personalblog._id %>" data-blog-id="<%= personalblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
@@ -270,16 +252,18 @@
                     </a>
                     <% }); %>
                 </div>
-                
-            </div>
-            
 
-            <!-- Right Section-->
-            <div class="col-md-3 right-section">
-                
+
+            </div>
+
+            <!-- Text on the right side (moved below on smaller screens) -->
+            <div class="col-md-4 text-container">
+                <h6>Discover</h6>
+                <ul class="list-group" id="userList"></ul>
             </div>
         </div>
     </div>
+    
 
 <!-- Bootstrap JS and dependencies (popper.js, jQuery) -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
