@@ -19,8 +19,32 @@
 
     <style>
 
-        a {
-            color: #B0A648;
+      a {
+            color: #1c4175;
+        }
+
+        .btn-primary {
+            background-color: transparent;
+            border-color: #4287f5;
+            color: #4287f5;
+        }
+
+        .btn-primary:hover {
+            background-color: #1c4175;
+            border-color: #1c4175;
+            color: #fff;
+        }
+
+        .btn-rounded {
+            display: inline-block;
+            border-radius: 15px;
+            background-color: #1c4175;
+            color: #fff;
+            border: none;
+            box-shadow: none;
+            font-size: smaller;
+            padding: 10 20px;
+            margin-right: 5px;
         }
 
         .ql-footnote {
@@ -104,27 +128,26 @@
         }
 
         .blog-title {
-            color: #B0A648;
+            color: #1c4175;
         }
 
         .ribbon-area {
-            color: #B0A648;
+            color: #1c4175;
         }
 
-        .btn-primary {
-            background-color: transparent;
-            border-color: #b6721f;
-            color: #b6721f;
-        }
-
-        .btn-primary:hover {
-            background-color: #B0A648;
-            border-color: #B0A648;
-            color: #fff;
+        #bookmark-icon {
+            display: none;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+            color: #1c4175;
+            cursor: pointer;
         }
 
         #tags {
-            color: #B0A648;
+            color: #1c4175;
         }
 
         .tags-container {
@@ -132,7 +155,18 @@
             padding: 0px 10px;
         }
 
+        .monetization-banner {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #b0c9eb;
+            background-color: rgba(78, 149, 241, 0.2); /* #0F9D58 with 70% transparency */
+            border-color: #1c4175; /* Border color to match */
+            /* color: #fff; */
+            border-radius: 5px;
+        }
+
         .translucent-mask {
+            display: none;
             position: fixed;
             top: 0vh;
             left: 0;
@@ -149,48 +183,54 @@
             text-align: center;
         }
 
+        .custom-resizable-image {
+        width: 700px;
+        height: auto;
+        object-fit: contain;
+    }
+
     </style>
 </head>
 <body>
   <body>
 
-    <div class="d-flex" id="wrapper">
-        <div id="page-content-wrapper">
-            <!-- Top navigation-->
-            <nav class="navbar navbar navbar-expand-lg navbar-light" style="background-color: transparent;">
-                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                    <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                        <a href="/" class="btn btn-primary">Join for free!</a>
-                    </ul>
-                </div>
-            </nav>
+    <nav class="navbar navbar navbar-expand-lg navbar-light" style="background-color: transparent;">
+        <a class="navbar-brand" href="/homepage"><i class="fa-solid fa-angle-left"></i></a></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                <a href="/" class="btn btn-primary">Join for free!</a>
+            </ul>
+        </div>
+    </nav>
 
-            <div class="container-fluid">
-                <div class="row">
-                    <!-- Left Section (25% width) -->
-                    <div class="col-md-3 left-section">
-                    </div>
-            
-                    <!-- Middle Section (50% width) -->
-                    <div class="col-md-6 mid-section">
-                        <div id="blogheader" class="container-fluid ribbon-area"></div>
-                        <div id="preview" class="container-fluid canvas"></div>
-                        <br>
-                        <div class="tags-container">
-                            <div id="tags" class="container-fluid"><i class="fa-solid fa-tags"></i></div>
-                        </div>
-                        
-                        <hr>
-                        <ul id="footnoteList"></ul>
-                        <br>
-                    </div>
-            
-                    <!-- Right Section (25% width) -->
-                    <div class="col-md-3 right-section">
-                    </div>
-
-                </div>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Left Section (25% width) -->
+            <div class="col-md-3 left-section">
             </div>
+    
+            <!-- Middle Section (50% width) -->
+            <div class="col-md-6 mid-section">
+                <div id="blogheader" class="container-fluid ribbon-area"></div>
+                <div id="preview" class="container-fluid canvas"></div>
+                <br>
+                <% if (blog && blog.tags.length > 1) { %>
+                <div class="tags-container">
+                    <div id="tags" class="container-fluid"><i class="fa-solid fa-tags"></i></div>
+                </div>
+                <hr>
+                <% } %>
+                <ul id="footnoteList"></ul>
+                <br>
+            </div>
+    
+            <!-- Right Section (25% width) -->
+            <div class="col-md-3 right-section">
+            </div>
+
         </div>
     </div>
 
@@ -271,7 +311,7 @@
                 var heading = document.createElement('h4');
                 heading.innerText = 'Footnotes';
                 heading.style.fontWeight = 'bold';
-                heading.style.color = '#B0A648';
+                heading.style.color = '#1c4175';
                 footnoteList.appendChild(heading);
 
                 footnotes.forEach(function (footnote) {

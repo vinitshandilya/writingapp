@@ -16,6 +16,8 @@ mongoose.connect(db_uri);
 
 // Serve static files from the public folder
 app.use(express.static('public', { 'extensions': ['html', 'css', 'js', 'png'] }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -77,13 +79,13 @@ app.post('/register', async (req, res) => {
         // Check if username already exists
         const existingUsername = await User.findOne({ username });
         if (existingUsername) {
-            return res.redirect('/?message=User already exists with this username. Please login with your username.');
+            return res.redirect('/register/?message=User already exists with this username. Please login with your username.');
         }
 
         // Check if email already exists
         const existingEmail = await User.findOne({ email });
         if (existingEmail) {
-            return res.redirect('/?message=Account already exists with this email. Please login with your username.');
+            return res.redirect('/register/?message=Account already exists with this email. Please login with your username.');
         }
 
         // If both checks pass, proceed with user registration
@@ -93,7 +95,7 @@ app.post('/register', async (req, res) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-            return res.redirect('/?message=Thank you for registering. Please login with your username and password.');
+            return res.redirect('/register/?message=Thank you for registering. Please login with your username and password.');
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -103,7 +105,7 @@ app.post('/register', async (req, res) => {
 // Log in existing user
 app.post('/login', passport.authenticate('local', {
     successRedirect: '/set-username-and-redirect',
-    failureRedirect: '/?message=Invalid credentials.',
+    failureRedirect: '/login/?message=Invalid credentials.',
     failureFlash: true,
 }));
 
@@ -630,6 +632,10 @@ function getTagsListFromString(tagString) {
 app.get('/test', (req, res) => {
     res.render('testpage');
 });
+
+app.post('/testupload', (req, res) => {
+    console.log(req.body);
+})
 
 
 

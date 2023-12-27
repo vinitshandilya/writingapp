@@ -1,89 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
-    <title>Modal Login Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Bootstrap Page Template</title>
+    <style>
+        body {
+            padding-top: 56px; /* Adjusted for the top navigation bar height */
+        }
 
-<style>
-    body {
-    font-family: Arial, sans-serif;
-}
+        .banner {
+            height: 50vh;
+            background-color: #007bff; /* Bootstrap primary color */
+            color: #ffffff; /* White text for contrast */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-.modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(10px);
-}
+        .list-container {
+            padding: 15px;
+        }
 
-.modal-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-</style>
+        .text-container {
+            padding: 15px;
+        }
+    </style>
 </head>
+
 <body>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+        <a class="navbar-brand" href="#">Your Brand</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Contact</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
-    <a href="#" id="showModal">Login</a>
+    <!-- Banner -->
+    <div class="banner">
+        <h1>Welcome to Your Website</h1>
+    </div>
 
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close" id="closeModal">&times;</span>
-            <!-- Your login form goes here -->
-            <form>
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password">
-                <input type="submit" value="Login">
-            </form>
+    <!-- Responsive Layout using Bootstrap Grid -->
+    <div class="container mt-4">
+        <div class="row">
+            <!-- List on the left side -->
+            <div class="col-md-6 list-container">
+                <h3>Bootstrap List</h3>
+                <ul class="list-group">
+                    <li class="list-group-item">Item 1</li>
+                    <li class="list-group-item">Item 2</li>
+                    <li class="list-group-item">Item 3</li>
+                </ul>
+            </div>
+
+            <!-- Text on the right side (moved below on smaller screens) -->
+            <div class="col-md-6 text-container">
+                <h3>Lower Right Text</h3>
+                <p>This is some text on the lower right side of the page.</p>
+            </div>
         </div>
     </div>
 
-    <script>
-        document.getElementById('showModal').addEventListener('click', function () {
-            document.getElementById('loginModal').style.display = 'block';
-        });
-
-        document.getElementById('closeModal').addEventListener('click', function () {
-            document.getElementById('loginModal').style.display = 'none';
-        });
-
-        // Close modal if clicked outside the modal content
-        window.addEventListener('click', function (event) {
-            var modal = document.getElementById('loginModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
-            }
-        });
-
-    </script>
+    <!-- Bootstrap JS and Popper.js (required for Bootstrap components) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgydCEIouA6HNiP+cmZlLlACZMAeP3zKLUce95Szkbe5KTIJ3UqN1OaIa04M"
+        crossorigin="anonymous"></script>
 </body>
+
 </html>

@@ -128,31 +128,31 @@
     }
 
     .btn-success {
-        background-color: #B0A648;
-        border-color: #B0A648;
+        background-color: #1c4175;
+        border-color: #1c4175;
     }
 
     .btn-primary {
-        background-color: #b6721f;
-        border-color: #b6721f;
+        background-color: #4287f5;
+        border-color: #4287f5;
     }
 
     .btn-primary:hover {
-        background-color: #B0A648;
-        border-color: #B0A648;
+        background-color: #1c4175;
+        border-color: #1c4175;
         color: #fff;
     }
 
     .btn-secondary {
         background-color: transparent;
-        border-color: #b6721f;
-        color: #b6721f;
+        border-color: #1c4175;
+        color: #1c4175;
     }
 
     .btn-success:hover,
     .btn-success:focus {
-        background-color: #B0A648;
-        border-color: #B0A648;
+        background-color: #1c4175;
+        border-color: #1c4175;
         color: #fff;
     }
 
@@ -196,6 +196,12 @@
 
     .hidden {
         display: none;
+    }
+
+    .custom-resizable-image {
+        width: 700px;
+        height: auto;
+        object-fit: contain;
     }
 
 
@@ -331,18 +337,29 @@
     ];
 
     var quill = new Quill('#editor', {
-        modules: {
-            toolbar: {
-                container: toolbarOptions,
-                handlers: {
-                    'custom-button': function() {
-                        insertFootnote();
-                    }
+    modules: {
+        toolbar: {
+            container: toolbarOptions,
+            handlers: {
+                'custom-button': function() {
+                    insertFootnote();
                 }
             }
-        },
-        theme: 'snow'
-    });
+        }
+    },
+    theme: 'snow'
+});
+
+quill.on('editor-change', function(eventName, ...args) {
+    if (eventName === 'text-change') {
+        // Check if images are present and add the custom class
+        quill.root.querySelectorAll('img').forEach(function(image) {
+            console.log('image pasted!');
+            image.classList.add('custom-resizable-image');
+        });
+    }
+});
+
 
     const popup = document.getElementById('popup');
     const footnoteSubmit = document.getElementById('footnoteSubmit');

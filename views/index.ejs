@@ -21,25 +21,25 @@
     <style>
 
         a {
-            color: #B0A648;
+            color: #1c4175;
         }
 
         .btn-primary {
             background-color: transparent;
-            border-color: #b6721f;
-            color: #b6721f;
+            border-color: #4287f5;
+            color: #4287f5;
         }
 
         .btn-primary:hover {
-            background-color: #B0A648;
-            border-color: #B0A648;
+            background-color: #1c4175;
+            border-color: #1c4175;
             color: #fff;
         }
 
         .btn-rounded {
             display: inline-block;
             border-radius: 15px;
-            background-color: #B0A648;
+            background-color: #1c4175;
             color: #fff;
             border: none;
             box-shadow: none;
@@ -109,14 +109,6 @@
             color: #585858;
         }
 
-        /* figcaption {
-            padding-left: 0px;
-            padding-top: 15px;
-            font-size: 15px;
-            font-family: 'Times New Roman', Times, serif;
-            color: #585858;
-        } */
-
         .canvas {
             font-family: 'Hedvig Letters Serif', serif;
             line-height: 2.0;
@@ -129,11 +121,11 @@
         }
 
         .blog-title {
-            color: #B0A648;
+            color: #1c4175;
         }
 
         .ribbon-area {
-            color: #B0A648;
+            color: #1c4175;
         }
 
         #bookmark-icon {
@@ -143,12 +135,8 @@
             top: 50%;
             transform: translateY(-50%);
             font-size: 24px;
-            color: #007bff;
+            color: #1c4175;
             cursor: pointer;
-        }
-
-        #tags {
-            color: #B0A648;
         }
 
         .tags-container {
@@ -160,13 +148,14 @@
             padding: 15px;
             margin-bottom: 20px;
             border: 1px solid #b0c9eb;
-            background-color: rgba(15, 157, 88, 0.2); /* #0F9D58 with 70% transparency */
-            border-color: #0F9D58; /* Border color to match */
+            background-color: rgba(78, 149, 241, 0.2); /* #0F9D58 with 70% transparency */
+            border-color: #1c4175; /* Border color to match */
             /* color: #fff; */
             border-radius: 5px;
         }
 
         .translucent-mask {
+            display: none;
             position: fixed;
             top: 0vh;
             left: 0;
@@ -182,6 +171,12 @@
         .center-content {
             text-align: center;
         }
+
+        .custom-resizable-image {
+        width: 700px;
+        height: auto;
+        object-fit: contain;
+    }
 
 
     </style>
@@ -201,7 +196,7 @@
                 <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                     <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
                         <li class="nav-item"><a class="nav-link" style="margin-right: 15px;" href="" id="appPaywallLink" onclick=updatePaywallStatus()><i class="fa-solid fa-dollar-sign"></i></a></li>
-                        <li class="nav-item"><a class="nav-link" style="margin-right: 15px;" href="#!" id="shareLink"><i class="fa-solid fa-share-nodes"></i></a></li>
+                        <li class="nav-item"><a class="nav-link" style="margin-right: 15px;" href="#!" id="shareLink" target="_blank"><i class="fa-solid fa-share-nodes"></i></a></li>
                         <li class="nav-item"><a class="nav-link" style="margin-right: 15px;" href="/index/createnew" id="createNewLink"><i class="fa-solid fa-plus"></i></a></li>
                         <li class="nav-item"><a class="nav-link" style="margin-right: 15px;" href="#!" id="editLink"><i class="fa-regular fa-pen-to-square"></i></a></li>
                         <li class="nav-item"><a class="nav-link"style="margin-right: 15px;" href="#!" id="deleteLink" onclick="return confirm('Are you sure you want to delete this blog?')"><i class="fa-regular fa-trash-can"></i></a></li>
@@ -223,12 +218,12 @@
                         <div class="monetization-banner" id="monetization-banner-id">You have monetized this article. Visit your payment settings to learn more.</div>
                         <div id="preview" class="container-fluid canvas"></div>
                         <br>
-                        <div class="tags-container">
+                        <div class="tags-container" id="tags-container">
                             <div id="tags" class="container-fluid"><i class="fa-solid fa-tags"></i></div>
+                            <br>
+                            <hr>
                         </div>
                         <div id="bookmark-icon">&#128278;</div>
-                        <br>
-                        <hr>
                         <ul id="footnoteList"></ul>
                         <br>
                     </div>
@@ -262,6 +257,12 @@
 
         var blogheader = document.getElementById('blogheader');
         var previewDiv = document.getElementById('preview');
+        var translucentMask = document.getElementById('translucentMask');
+        var subscribebanner = document.getElementById('subscribe-banner');
+        const monetizationbanner = document.getElementById("monetization-banner-id");
+        const appPaywallLink = document.getElementById('appPaywallLink');
+        const tagscontainer = document.getElementById('tags-container');
+        
         var markedUpDom;
         var blogDetails;
         var bloguserid;
@@ -279,6 +280,11 @@
         });
     
         function loadBlogDetails(blogId) {
+            tagscontainer.style.display = 'none';
+            translucentMask.style.display = 'none';
+            // subscribebanner.style.display = 'none';
+            monetizationbanner.style.display = 'none';
+
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4 && xhr.status === 200) {
@@ -297,8 +303,6 @@
                         document.getElementById('deleteLink').style.display = 'block';
                         document.getElementById('appPaywallLink').style.display = 'block';
                     }
-                    var translucentMask = document.getElementById('translucentMask');
-                    translucentMask.style.display = 'none';
                 }
             };
             xhr.open('GET', `/index/blogs/${blogId}`, true);
@@ -312,14 +316,20 @@
             var timeToread = calculateReadingTime(blogDetails.blog.body, 230);
             const formatString = { month: 'short', day: 'numeric', year: 'numeric' };
             const formattedTime = dateObj.toLocaleString("en-US", formatString).toUpperCase();
-
             markedUpDom = recomputeRender(editorContent); // This is where we decide to parse footnotes, bookmarks, etc.
+
+            var author = '';
+            if(blogDetails.blog.userid === loggedinuserid) {
+                author = 'YOU';
+            } else {
+                author = blogDetails.blog.author;
+            }
 
             blogheader.innerHTML = `
                 <h1 class="mt-4 blog-title">${blogDetails.blog.title}</h1>
                 <p style="font-size: 22px; color: #686868">${blogDetails.blog.subtitle}</p>
                 <div>
-                    <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-pen-to-square"></i> ${blogDetails.blog.author}</p>
+                    <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-pen-to-square"></i> ${author}</p>
                     <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-calendar"></i> ${formattedTime}</p>
                     <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="far fa-clock"></i> ${timeToread}</p>
                     <p id="premium-label" style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-solid fa-crown"></i></i> PREMIUM</p>
@@ -336,7 +346,7 @@
                 var heading = document.createElement('h4');
                 heading.innerText = 'Footnotes';
                 heading.style.fontWeight = 'bold';
-                heading.style.color = '#B0A648';
+                heading.style.color = '#1c4175';
                 footnoteList.appendChild(heading);
 
                 footnotes.forEach(function (footnote) {
@@ -367,6 +377,7 @@
             var tagsDiv = document.getElementById('tags');
 
             if (tags.length > 1) {
+                tagscontainer.style.display = 'block';
                 tagsDiv.style.display = "block";
                 var tagsContainer = document.createElement('div');
                 tagsContainer.classList.add('tags-container');
@@ -384,6 +395,7 @@
                 // Append the container to the tagsDiv
                 tagsDiv.appendChild(tagsContainer);
             } else {
+                tagscontainer.style.display = 'none';
                 tagsDiv.style.display = "none";
             }
 
@@ -472,7 +484,7 @@
                         monetizationbanner.style.display = 'none';
                         appPaywallLink.style.color = '';
                     }
-                    // maskUnmaskBlog(bloguserid, loggedinuserid);
+                    
                 })
                 .catch(error => {
                     console.error('Error updating paywall status:', error);
@@ -491,18 +503,22 @@
                     return response.json();
                 })
                 .then(data => {
-                    const monetizationbanner = document.getElementById("monetization-banner-id");
-                    const appPaywallLink = document.getElementById('appPaywallLink');
-                    const premiumicon = document.getElementById('premium-label');
                     const paywallStatus = data.paywallstatus;
+                    const premiumicon = document.getElementById('premium-label');
                     
                     if(paywallStatus) {
+                        console.log('paywalled article');
+                        appPaywallLink.style.color = '#0F9D58';
+
                         if(bloguserid === loggedinuserid) { // display green banner only to the blog author
-                            // don't show translucent mask
-                            appPaywallLink.style.color = '#0F9D58';
+                            // don't show translucent mask but show monetization banner
+                            translucentMask.style.display = 'none';
                             monetizationbanner.style.display = 'block';
                             premiumicon.style.display = 'none';
-                        } else {
+                        } else {  
+                            monetizationbanner.style.display = 'none';
+                            premiumicon.style.display = 'block';
+                            
                             // show translucent mask based on subscription status.
                             const subscriptioninfo = {
                                 authorid: bloguserid,
@@ -523,13 +539,12 @@
                             })
                             .then(data => {
                                 console.log('Response from server:', data.status);
-                                var translucentMask = document.getElementById('translucentMask');
-                                var subscribebanner = document.getElementById('subscribe-banner');
 
                                 if(data.status !== 'subscribed') {
                                     // not subscribed, show translucent mask
                                     translucentMask.style.display = 'flex';
                                     blogauthor = blogDetails.blog.author;
+                                    var subscribebanner = document.getElementById('subscribe-banner');
                                     subscribebanner.innerText = `This is a paid article. Subscribe to ${blogDetails.blog.author} for full access!`;
                                     return true;
                                 } else {
@@ -544,15 +559,14 @@
                             .catch(error => {
                                 console.error('Error sending data to server:', error.message);
                             });
-
-                            console.log(`paywall enabled, users are different`);
-                            premiumicon.style.display = 'block';
-                            monetizationbanner.style.display = 'none';
-                            appPaywallLink.style.color = '';
                         }
                         
                     } else {
+                        // the blog is not paywalled in the first place. Nothing to hide.
+                        console.log('Not paywalled article');
+                        const premiumicon = document.getElementById('premium-label');
                         premiumicon.style.display = 'none';
+                        translucentMask.style.display = 'none';
                         monetizationbanner.style.display = 'none';
                         appPaywallLink.style.color = '';
                     }

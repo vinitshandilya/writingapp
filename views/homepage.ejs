@@ -28,6 +28,14 @@
         background-color: transparent !important;
     }
 
+    .user-list-title {
+        font-size: 15px;
+        color: darkblue;
+    }
+    .user-list-subtitle {
+        color: grey;
+    }
+
     .list-item-container {
         display: inline-block;
         margin-right: 5px;
@@ -42,15 +50,6 @@
         font-weight: bold;
     }
 
-    .blog-list-title {
-        color: #B0A648
-    }
-
-    .blog-list-subtitle {
-        padding-top: 0px;
-        color: rgb(25, 24, 24);
-    }
-
     .vertical-line {
         border-left: 1px solid #ccc;
         height: 100%;
@@ -59,9 +58,9 @@
     .btn-rounded {
         display: inline-block;
         border-radius: 15px;
-        background-color: #bfbfbf;
-        color: #fff;
-        border: none;
+        background-color: none;
+        color: #1c4175;
+        border: 1px solid #1c4175;
         box-shadow: none;
         font-size: smaller;
         height: 30px;
@@ -71,9 +70,10 @@
     }
 
     .button-not-following {
+        font-size: small;
         background-color: transparent;
-        border: 1px solid #B0A648;
-        color: #B0A648;
+        border: 1px solid #1c4175;
+        color: #1c4175;
         width: 100px;
         height: 30px;
         padding: 0 10px;
@@ -82,8 +82,8 @@
     }
 
     .button-following {
-        /* Following button styles */
-        background-color: #B0A648;
+        font-size: small;
+        background-color: #1c4175;
         border: none;
         color: #fff;
         width: 100px;
@@ -91,6 +91,32 @@
         padding: 0 10px;
         cursor: pointer;
         border-radius: 50px;
+    }
+
+    .blog-list-title {
+        color: #1c4175;
+        font-weight: bold;
+    }
+    
+    .blog-list-subtitle {
+        padding-top: 0px;
+        color: #000;
+        font-weight: normal;
+    }
+
+    .blog-list-body {
+        font-weight: normal;
+        font-size: small;
+        line-height: 1.5;
+        padding-bottom: 10px;
+    }
+
+    .img-thumbnail {
+        margin-top: 50%;
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
     }
 
     
@@ -123,11 +149,12 @@
             <div class="col-md-3 left-section">
                 <h6>Discover</h6>
                 <ul class="list-group" id="userList"></ul>
+                
             </div>
 
 
             <!-- Middle Section -->
-            <div class="col-md-7 vertical-line">
+            <div class="col-md-6 vertical-line">
                 <div class="d-flex w-100 justify-content-between align-items-center">
                     <h4 class="mt-4">For You</h4>
 
@@ -150,15 +177,43 @@
                     <a href="/index?id=<%= personalblog._id %>" data-blog-id="<%= personalblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
                 
                         <div class="row">
+
                         <div class="col-auto">
-                            <img src="https://ak-d.tripcdn.com/images/1mi3e2224vymivgpcC549.jpg?proc=source/trip" alt="Image 2" class="img-thumbnail" width="150" height="150">
-                        </div>
+                           <% 
+                               const bodyHtml = personalblog.body || ''; // Ensure personalblog.body is defined
+                               // Define a regular expression to match the src attribute in an img tag
+                               const imgSrcRegex = /<img[^>]*src=["']([^"']+)["']/i;
+                       
+                               // Use the regular expression to find the src attribute
+                               const match = bodyHtml.match(imgSrcRegex);
+                       
+                               // Check if a match is found
+                               if (match) {
+                                   // Extract the src attribute value
+                                   const src = match[1];
+                           %>
+                                   <img src="<%= src %>" alt="Image" class="img-thumbnail">
+                           <%
+                               } else {
+                                   // Display the default picture if no img tags are found
+                           %>
+                                   <img src="https://ak-d.tripcdn.com/images/1mi3e2224vymivgpcC549.jpg?proc=source/trip" alt="Default Image" class="img-thumbnail">
+                           <%
+                               }
+                           %>
+                       </div>
                 
                         <div class="col">
                             <small class="text-muted">
-                                <%= personalblog.author %> &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
+                                <% if (personalblog.userid === loggedinuser._id) { %>
+                                    YOU &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
+                                <% } else { %>
+                                    <%= personalblog.author %> &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
+                                <% } %>
+                                
+                                
                                 <% if (personalblog.paywall) { %>
-                                    <i class="fa-solid fa-crown" style="padding-left: 10px; color: #B0A648;"></i>
+                                    <i class="fa-solid fa-crown" style="padding-left: 10px; color: #1c4175;"></i>
                                 <% } %>
                             </small>
                             <div class="d-flex w-100 justify-content-between">
@@ -189,6 +244,17 @@
                               <small class="text-muted"><%= elapsedTime %></small>
                             </div>
                             <p class="mb-1 blog-list-subtitle"><%= personalblog.subtitle %></p>
+
+                            <p class="mb-1 blog-list-body">
+                                <% 
+                                   var plainText = personalblog.body.replace(/<[^>]*>/g, '');
+                                   plainText = plainText.replace(/\[[^\]]*\]/g, '');
+                                   var truncatedText = plainText.length <= 200 ? plainText : plainText.substring(0, 200) + '...';
+                                   %>
+                                <%= truncatedText %>
+                             </p>
+
+
                             <% if (personalblog.tags.length > 0) { %>
                                 <% personalblog.tags.forEach(tag => { %>
                                     <% if(tag.trim().length !== 0) { %>
@@ -209,7 +275,7 @@
             
 
             <!-- Right Section-->
-            <div class="col-md-2 right-section">
+            <div class="col-md-3 right-section">
                 
             </div>
         </div>
@@ -243,19 +309,26 @@ document.addEventListener("DOMContentLoaded", function () {
                     // is data.loggedinuser._id included in communityuser.paidsubscribers array?
                     const displayName = communityuser.firstname ? `${communityuser.firstname} ${communityuser.lastname} (@${communityuser.username})` : communityuser.username;
                     const paidsubsindicator = communityuser.paidsubscribers.includes(data.loggedinuser._id) ? '<i class="fa-solid fa-certificate"></i>' : '';
+                    var bio = communityuser.bio;
+                    if(bio) {
+                        if(bio.length > 50) {
+                            bio = bio.substring(0, 100) + '...'
+                        }
+                    } else {
+                        bio = '';
+                    }
                     const buttonText = communityuser.followers.includes(data.loggedinuser._id) ? 'Unfollow' : 'Follow';
                     const buttonClass = communityuser.followers.includes(data.loggedinuser._id) ? 'button-following' : 'button-not-following';
-
                     const listItem = document.createElement('li');
                     listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
                     listItem.innerHTML = `
-                        <div class="list-item-container">
-                            ${displayName}
-                            ${paidsubsindicator}
-                        </div>
-                        <button class="btn btn-sm ${buttonClass} ml-auto" onclick="toggleFollowingFollowers(this, '${communityuser._id}', '${data.loggedinuser._id}')">
+                    <div class="flex-shrink-0" style="width: 250px;">
+                        <h5 class="mb-1 user-list-title">${displayName}</h5>
+                        <small class="user-list-subtitle">${bio}</small>
+                    </div>
+                    <button class="btn btn-sm ${buttonClass} ml-auto" onclick="toggleFollowingFollowers(this, '${communityuser._id}', '${data.loggedinuser._id}')">
                             ${buttonText}
-                        </button>
+                    </button>
                     `;
 
                     userList.appendChild(listItem);

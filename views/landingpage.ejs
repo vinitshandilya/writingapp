@@ -11,81 +11,65 @@
       <title>My writing app</title>
       <style>
          .custom-banner {
-         background-color: #fff;
+         background-color: #eef5db;
          height: 50vh; /* 50% of the viewport height */
          }
-         .custom-navbar {
-         background-color: #fff;
-         color:#000
+         .banner-line {
+            border: 0.5px solid white;
          }
-         .mid-section {
+         .custom-navbar {
+         background-color: #eef5db;
+         }
+         .navbar-nav .nav-item .nav-link {
+         color: #1c4175;
+         font-size: small;
+         }
+         .top-mid-section {
          text-align: left;
-         color: #000;
+         color: #1c4175;
          line-height: 2.3;
          }
-         .left-section img {
+         .top-left-section img {
          max-width: 100%; /* Ensure the image doesn't exceed the width of its container */
          height: auto; /* Maintain the aspect ratio of the image */
          display: block; /* Remove extra space below the image */
          margin: 0 auto; /* Center the image horizontally within the container */
          max-height: 300px; /* Set a maximum height for the image */
          }
-         .right-section {
-         color: #000;
-         display: flex;
-         flex-direction: column;
-         align-items: center;
-         }
          .heading-text {
          font-family: 'Hedvig Letters Serif', serif;
          font-family: 'Libre Baskerville', serif;
          }
          .sign-in {
-         color: #000;
+         color: #1c4175;
          font-weight: bold;
          }
          .sign-in:hover {
-         color: #000;
+         color: #1c4175;
          font-weight: bold;
          }
          .btn-primary {
          background-color: transparent;
-         border-color: #000;
-         color: #000;
+         border-color: #1c4175;
+         color: #1c4175;
          width: 200px;
          height: 50px;
          border-radius: 25px;
          }
          .btn-primary:hover {
-         background-color: #000;
-         border-color: #000;
+         background-color: #1c4175;
+         border-color: #1c4175;
          color: #fff;
          }
-         .centered-icon {
-         display: flex;
-         align-items: center;
-         justify-content: center;
-         }
-         .icon-list {
-         margin-top: auto;
-         text-align: center; /* Center the icons horizontally */
-         }
-         .icon-list i {
-         font-size: 30px;
-         margin: 0 15px; /* Add spacing between the icons */
-         }
-         .bottom-section {
+         .bottom-left {
          color: #1c4175;
          line-height: 2.0;
+
          }
-         .navbar.custom-navbar .form-inline {
-         width: 500px; /* Set your desired width here */
-         }
-         .navbar.custom-navbar .searchbar {
-         width: 100%;
-         background: transparent;
-         border-color: #000;
-         border-radius: 50px;
+         .bottom-right {
+         color: #1c4175;
+         line-height: 2.0;
+
          }
          .list-group-item {
          border: none !important;
@@ -106,16 +90,20 @@
          font-weight: bold;
          }
          .blog-list-title {
-         color: #1c4175
+         color: #1c4175;
+         font-weight: bold;
+         
          }
          .blog-list-subtitle {
          padding-top: 0px;
-         color: gray;
+         color: #000;
          font-weight: normal;
          }
          .blog-list-body {
          font-weight: normal;
-         line-height: 1.5;
+         /* font-family: 'Hedvig Letters Serif', serif; */
+         font-size: small;
+         line-height: 2.0;
          padding-bottom: 10px;
          }
          .btn-rounded {
@@ -132,9 +120,6 @@
          margin-right: 5px;
          line-height: 30px;
          }
-         .discover-people {
-         margin-top: 150px;
-         }
          .seemore-btn {
          border: none;
          background-color: transparent;
@@ -148,26 +133,59 @@
          .seemore-btn:focus {
          outline: none; /* Remove the default focus outline */
          }
+         .footer {
+         height: 30vh; /* 50% of the viewport height */
+         background-color: #fff; /* Set your desired background color */
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         }
+         .lower-half-container {
+            padding-top: 20px;
+         }
+
+         .list-group {
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* You may adjust this value based on your design */
+         }
+
+         .user-list-group {
+            height: 100vh;
+            margin-top: 10px;
+         }
+
+         .img-thumbnail {
+            margin-top: 50%;
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+         }
+
 
       </style>
    </head>
    <body>
+      
       <!-- Navigation Bar -->
       <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
-         <a class="navbar-brand" href="#">My app</a>
+         <a class="navbar-brand" href="#">CurioScribe</a>
          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
          <span class="navbar-toggler-icon"></span>
          </button>
          <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-               <li class="nav-item active">
-                  <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+               <li class="nav-item">
+                  <a class="nav-link" href="#">Our Mission</a>
                </li>
                <li class="nav-item">
-                  <a class="nav-link" href="#">About</a>
+                  <a class="nav-link" href="#">Write</a>
                </li>
                <li class="nav-item">
-                  <a class="nav-link" href="#">Contact</a>
+                  <a class="nav-link" href="#">Support</a>
                </li>
             </ul>
          </div>
@@ -178,45 +196,66 @@
          <div>
             <div class="container-fluid">
                <div class="row">
-                  <!-- Left Section-->
-                  <div class="col-md-3 left-section">
-                     <img src="lamp1.png" alt="lamp">
+                  <!-- Top Left Section-->
+                  <div class="col-md-1 top-left-section">
+                     <!-- <img src="lamp1.png" alt="lamp"> -->
                   </div>
-                  <!-- Mid Section -->
-                  <div class="col-md-6 mid-section">
+                  <!-- top Mid Section -->
+                  <div class="col-md-10 top-mid-section">
                      <h1 class="heading-text">Unleash Your Voice, Share Your Story!</h1>
-                     <p>Welcome to The Writer's Hub, where every thought finds a home. Explore, express, and connect through the power of words. Your story matters, and this is the place to tell it.</p>
+                     <p>Welcome to The CurioScribe, where every thought finds a home. Explore, express, and connect through the power of words. Your story matters, and this is the place to tell it.</p>
                      <button class="btn btn-primary" onclick="window.location.href='/register'">Get started</button>
                      <br>
                      <br>
                      <p>Already a member? <a class="sign-in" href="/login">Sign in</a></p>
                   </div>
-                  <!-- Right Section-->
-                  <div class="col-md-3 right-section centered-icon">
-                     <!-- <div class="icon-list">
-                        <i class="fab fa-google"></i>
-                        <i class="fa-brands fa-linkedin"></i>
-                        <i class="fa-brands fa-apple"></i>
-                        </div> -->
+                  <!-- Top Right Section -->
+                  <div class="col-md-1">
+                     
                   </div>
                </div>
             </div>
          </div>
       </div>
-      <!-- Bottom Section -->
-      <div class="container mt-5 bottom-section">
+      <hr class="banner-line">
+
+      <!-- Lower half -->
+      <div class="container-fluid lower-half-container">
          <div class="row">
 
-            <!-- Bottom Left Section -->
-            <div class="col-lg-8 bottom-left">
-               <h3><i class="fa-solid fa-chart-line"></i> Popular</h3>
+            <div class="col-lg-7 col-md-12 bottom-left">
+               <!-- Lower left -->
+               <h5><i class="fa-solid fa-chart-line"></i> Popular</h5>
                <div class="list-group">
                   <% featuredblogs.forEach(featuredblog => { %>
                   <a href="/index/blogs/public/<%= featuredblog._id %>" data-blog-id="<%= featuredblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
                      <div class="row">
+
                         <div class="col-auto">
-                           <img src="https://ak-d.tripcdn.com/images/1mi3e2224vymivgpcC549.jpg?proc=source/trip" alt="Image 2" class="img-thumbnail" width="150" height="150">
-                        </div>
+                           <% 
+                               const bodyHtml = featuredblog.body || ''; // Ensure featuredblog.body is defined
+                               // Define a regular expression to match the src attribute in an img tag
+                               const imgSrcRegex = /<img[^>]*src=["']([^"']+)["']/i;
+                       
+                               // Use the regular expression to find the src attribute
+                               const match = bodyHtml.match(imgSrcRegex);
+                       
+                               // Check if a match is found
+                               if (match) {
+                                   const src = match[1];
+                           %>
+                                   <img src="<%= src %>" alt="Image" class="img-thumbnail">
+                           <%
+                               } else {
+                                   // Display the default picture if no img tags are found
+                           %>
+                                   <img src="https://ak-d.tripcdn.com/images/1mi3e2224vymivgpcC549.jpg?proc=source/trip" alt="Default Image" class="img-thumbnail">
+                           <%
+                               }
+                           %>
+                       </div>
+                       
+                        
                         <div class="col">
                            <small class="text-muted">
                            <%= featuredblog.author %> &middot; <%= featuredblog.formatteddate %> &middot; <%= featuredblog.timetoread %>
@@ -265,7 +304,7 @@
                            <% if (featuredblog.tags.length > 0) { %>
                            <% featuredblog.tags.forEach(tag => { %>
                            <% if(tag.trim().length !== 0) { %>
-                           <button type="button" class="btn-rounded" disabled><%= tag %></button>
+                              <button type="button" class="btn-rounded" disabled><%= tag %></button>
                            <% } %>
                            <% }) %>
                            <% } %>
@@ -276,17 +315,28 @@
                </div>
             </div>
 
-            <!-- Bottom Right Section -->
-            <div class="col-lg-4 bottom-right">
+            <div class="col-lg-3 col-md-12 bottom-right">
+               <!-- Lower right -->
                <h5><i class="fa-solid fa-glasses"></i> Discover topics</h5>
                <div id="tags" class="container-fluid tags"></div>
                <button class="seemore-btn" id="seemore-btn" onclick=toggleTagsview(this)>see more</button>
+               <hr>
+               <h5><i class="fa-solid fa-user-plus"></i> Top Voices</h5>
+               <ul class="user-list-group" id="userList"></ul>
 
-               <h5 class="discover-people"><i class="fa-solid fa-user-plus"></i> Follow people</h5>
-               <ul class="list-group" id="userList"></ul>
             </div>
+
+            <div class="col-md-1">
+               <!-- <img src="lamp1.png" alt="lamp"> -->
+            </div>
+         
          </div>
       </div>
+
+      <div class="footer">
+         
+      </div>
+
       <!-- Bootstrap JS and jQuery -->
       <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -315,7 +365,7 @@
                  .then(data => {
                  console.log('Fetched data:', data);
                  tags = data.tags;
-                 displayTags(data.tags, 5);
+                 displayTags(data.tags, 7);
                  })
                  .catch(error => {
                  console.error('Error during fetch:', error.message);
@@ -327,12 +377,15 @@
             if(tags.length > 0) {
                      tagsDiv.style.display = "block";
                      tags.slice(0, count).forEach(tag => {
-                         var buttonElement = document.createElement('button');
-                         buttonElement.type = 'button';
-                         buttonElement.classList.add('btn-rounded');
-                         buttonElement.textContent = tag;
-                         buttonElement.style.marginBottom = '10px';
-                         tagsContainer.appendChild(buttonElement);  
+                        if(tag.trim().length !== 0) {
+                           var buttonElement = document.createElement('button');
+                           buttonElement.type = 'button';
+                           buttonElement.classList.add('btn-rounded');
+                           buttonElement.textContent = tag;
+                           buttonElement.style.marginBottom = '10px';
+                           tagsContainer.appendChild(buttonElement); 
+
+                        }  
                      });
 
                      tagsDiv.appendChild(tagsContainer);
@@ -348,7 +401,7 @@
                 button.textContent = 'see less'
                 isTagsExpanded = false;
             } else {
-                displayTags(tags, 5);
+                displayTags(tags, 7);
                 button.textContent = 'see more'
                 isTagsExpanded = true;
             }
@@ -367,17 +420,29 @@
                 .then(data => {
                     const userList = document.getElementById('userList');
                     userList.innerHTML = ``;
+                    console.log(data.suggestedpeople);
                     data.suggestedpeople.forEach(communityuser => {
-                        // is data.loggedinuser._id included in communityuser.paidsubscribers array?
-                        const displayName = communityuser.firstname ? `${communityuser.firstname} ${communityuser.lastname} (@${communityuser.username})` : communityuser.username;
-                        const followercount = communityuser.followers.length;
-                        const listItem = document.createElement('li');
-                        listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
-                        listItem.innerHTML = `
-                            <div class="list-item-container" style="font-size: small">
-                                ${displayName} (${followercount})
-                            </div>
-                        `;
+                    // is data.loggedinuser._id included in communityuser.paidsubscribers array?
+                    const displayName = communityuser.firstname ? `${communityuser.firstname} ${communityuser.lastname} (@${communityuser.username})` : communityuser.username;
+                    var bio = communityuser.bio;
+                    if(bio) {
+                        if(bio.length > 50) {
+                            bio = bio.substring(0, 100) + '...'
+                        }
+                    } else {
+                        bio = '';
+                    }
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    listItem.innerHTML = `
+                    <div class="flex-shrink-0" style="width: 250px;">
+                        <h5 class="mb-1 user-list-title">${displayName}</h5>
+                        <small class="user-list-subtitle">${bio}</small>
+                    </div>
+                    <button class="btn btn-sm ml-auto">
+                            ${communityuser.followers.length}
+                    </button>
+                    `;
 
                         userList.appendChild(listItem);
                     });
