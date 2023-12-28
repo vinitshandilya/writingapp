@@ -10,11 +10,8 @@
       <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" />
       <title>My writing app</title>
+    
     <style>
-        body {
-            padding-top: 56px; /* Adjusted for the top navigation bar height */
-        }
-
         .custom-navbar {
          background-color: #eef5db;
          }
@@ -30,8 +27,9 @@
             color: #000;
             display: flex;
             flex-direction: column;
-            align-items: center;
+            align-items: left;
             justify-content: center;
+            border-bottom: 1px solid black;
         }
 
         .heading-text {
@@ -72,6 +70,12 @@
          border: none;
         }
 
+        .user-list-title {
+            font-size: small;
+            color: #0F9D58;
+            font-weight: bold;
+        }
+
         .btn-rounded {
          display: inline-block;
          background-color: transparent;
@@ -108,6 +112,11 @@
             object-fit: cover;
          }
 
+         .blog-list-item-ribbon {
+            font-size: 11px;
+            color: gray;
+         }
+
          .blog-list-title {
          color: #1c4175;
          font-weight: bold;
@@ -138,7 +147,7 @@
 
 <body>
     <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top custom-navbar">
+    <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
         <a class="navbar-brand" href="#">My app</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -161,10 +170,22 @@
 
     <!-- Banner -->
     <div class="banner">
-      <h1 class="heading-text">This is a placeholder!</h1>
-      <p>Welcome to my app, where every thought finds a home. Explore, express, and connect through the power of words. Your story matters, and this is the place to tell it.</p>
-      <button class="btn btn-primary" onclick="window.location.href='/register'">Get started</button>
-      <p>Already a member? <a class="sign-in" href="/login">Sign in</a></p>
+        <div class="container">
+            <div class="row">
+                <!-- left side of the banner -->
+                <div class="col-md-8 banner-text">
+                    <h1 class="heading-text">This is a placeholder!</h1>
+                    <p>Welcome to my app, where every thought finds a home. Explore, express, and connect through the power of words. Your story matters, and this is the place to tell it.</p>
+                    <button class="btn btn-primary" onclick="window.location.href='/register'">Get started</button>
+                    <p>Already a member? <a class="sign-in" href="/login">Sign in</a></p>
+                </div>
+
+                 <!-- right side of the banner -->
+                <div class="col-md-4">
+
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Responsive Layout using Bootstrap Grid -->
@@ -172,7 +193,7 @@
         <div class="row">
             <!-- List on the left side -->
             <div class="col-md-8 list-container">
-               <h5><i class="fa-solid fa-chart-line"></i> Popular</h5>
+               <h6><i class="fa-solid fa-chart-line"></i> Popular</h6>
                 <div class="list-group">
                   <% featuredblogs.forEach(featuredblog => { %>
                   <a href="/index/blogs/public/<%= featuredblog._id %>" data-blog-id="<%= featuredblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
@@ -204,7 +225,7 @@
                        
                         
                         <div class="col">
-                           <small class="text-muted">
+                           <small class="blog-list-item-ribbon">
                            <%= featuredblog.author %> &middot; <%= featuredblog.formatteddate %> &middot; <%= featuredblog.timetoread %>
                            <% if (featuredblog.paywall) { %>
                            <i class="fa-solid fa-crown" style="padding-left: 10px; color: #1c4175;"></i>
@@ -264,11 +285,11 @@
 
             <!-- Text on the right side (moved below on smaller screens) -->
             <div class="col-md-4 text-container">
-               <h5><i class="fa-solid fa-glasses"></i> Discover topics</h5>
+               <h6><i class="fa-solid fa-glasses"></i> Discover topics</h6>
                 <div id="tags" class="container-fluid tags"></div>
                <button class="seemore-btn" id="seemore-btn" onclick=toggleTagsview(this)>see more</button>
                <hr>
-               <h5><i class="fa-solid fa-user-plus"></i> Top Voices</h5>
+               <h6><i class="fa-solid fa-user-plus"></i> Top Voices</h6>
                <ul class="user-list-group" id="userList"></ul>
             </div>
         </div>

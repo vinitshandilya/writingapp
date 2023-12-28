@@ -29,9 +29,11 @@
     }
 
     .user-list-title {
-        font-size: 15px;
-        color: darkblue;
+        font-size: small;
+        color: #1c4175;
+        font-weight: bold;
     }
+    
     .user-list-subtitle {
         color: grey;
     }
@@ -148,10 +150,10 @@
                 </h6>
                 <!-- Dropdown Menu -->
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                    <a class="dropdown-item" href="#">Last updated</a>
-                    <a class="dropdown-item" href="#">Created date</a>
-                    <a class="dropdown-item" href="#">A to Z</a>
-                    <a class="dropdown-item" href="#">Z to A</a>
+                    <a class="dropdown-item" href="#" data-value="last-updated" onclick="handleDropdownItemClick(event, this, `<%= JSON.stringify(personalblogs) %>`)">Last updated</a>
+                    <a class="dropdown-item" href="#" data-value="created-date" onclick="handleDropdownItemClick(event, this, `<%= JSON.stringify(personalblogs) %>`)">Created date</a>
+                    <a class="dropdown-item" href="#" data-value="a-to-z" onclick="handleDropdownItemClick(event, this, `<%= JSON.stringify(personalblogs) %>`)">A to Z</a>
+                    <a class="dropdown-item" href="#" data-value="z-to-a" onclick="handleDropdownItemClick(event, this, `<%= JSON.stringify(personalblogs) %>`)">Z to A</a>
                 </div>
 
                 <div class="list-group">
@@ -160,16 +162,13 @@
                 
                         <div class="row">
 
+                        <!-- Render blog image  -->
                         <div class="col-auto">
                            <% 
                                const bodyHtml = personalblog.body || ''; // Ensure personalblog.body is defined
                                // Define a regular expression to match the src attribute in an img tag
                                const imgSrcRegex = /<img[^>]*src=["']([^"']+)["']/i;
-                       
-                               // Use the regular expression to find the src attribute
                                const match = bodyHtml.match(imgSrcRegex);
-                       
-                               // Check if a match is found
                                if (match) {
                                    // Extract the src attribute value
                                    const src = match[1];
@@ -184,7 +183,8 @@
                                }
                            %>
                        </div>
-                
+                       
+                       <!-- Render ribbon area -->
                         <div class="col">
                             <small class="text-muted">
                                 <% if (personalblog.userid === loggedinuser._id) { %>
@@ -273,9 +273,18 @@
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
-    buildDiscoverPeopleList();
-        
+    buildDiscoverPeopleList();  
 });
+
+    function handleDropdownItemClick(event, clickedoption, personalblogs) {
+            event.preventDefault();
+            var selectedValue = clickedoption.getAttribute('data-value');
+            // sort blogs
+            if(selectedValue === 'a-to-z') {
+                console.log('a-to-z clicked');
+                console.log(personalblogs);
+            }
+    }
 
     async function buildDiscoverPeopleList() {
         // Fetch data from the API endpoint

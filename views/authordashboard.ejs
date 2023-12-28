@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>The writing app</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+
+</head>
+
+<style>
+    .container-fluid {
+      height: 100%;
+    }
+
+    .custom-navbar {
+        border-bottom: 1px solid rgb(208, 203, 203);
+    }
+
+    /* Set different background colors for each column */
+    .col-left {
+      background-color: #fff; /* Blue color */
+      height: 100vh;
+      border-right: 1px solid rgb(208, 203, 203);
+      padding: 20px;
+    }
+
+    .col-right {
+      background-color: #fff; /* Orange color */
+      height: 100vh;
+      padding: 20px;
+    }
+
+    .big-list-item {
+        border: none;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+        /* border-top: 1px solid rgba(0, 0, 0, 0.125); */
+        background-color: transparent;
+        font-weight: bold;
+    }
+
+    .blog-list-title {
+        color: #1c4175;
+        font-weight: bold;
+    }
+    
+    .blog-list-subtitle {
+        padding-top: 0px;
+        color: #000;
+        font-weight: normal;
+    }
+
+    .blog-list-body {
+        font-weight: normal;
+        font-size: small;
+        line-height: 1.5;
+        padding-bottom: 10px;
+    }
+
+    .img-thumbnail {
+        margin-top: 25%;
+        border-radius: 50%;
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+    }
+
+    
+</style>
+
+<body>
+
+    <% var displayName = loggedinuser.firstname ? loggedinuser.firstname : loggedinuser.username; %>
+
+
+    <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
+        <a class="navbar-brand" href="/homepage"><i class="fa-solid fa-angle-left"></i></a></a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                <li class="nav-item active"><a class="nav-link" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+                <li class="nav-item active"><a class="nav-link" href="/index/profile"> <%= displayName %></a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Responsive Layout using Bootstrap Grid -->
+    <div class="container-fluid">
+        <div class="row">
+          <!-- Left Column -->
+          <div class="col-md-5 col-left">
+            <div class="list-group">
+                <% personalblogs.forEach(personalblog => { %>
+                <a href="javascript:void(0);" onclick="handlePaywallDisplay('<%= personalblog._id %>')" data-blog-id="<%= personalblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
+            
+                    <div class="row">
+
+                    <!-- Render blog image  -->
+                    <div class="col-auto">
+                       <% 
+                           const bodyHtml = personalblog.body || ''; // Ensure personalblog.body is defined
+                           // Define a regular expression to match the src attribute in an img tag
+                           const imgSrcRegex = /<img[^>]*src=["']([^"']+)["']/i;
+                           const match = bodyHtml.match(imgSrcRegex);
+                           if (match) {
+                               // Extract the src attribute value
+                               const src = match[1];
+                       %>
+                               <img src="<%= src %>" alt="Image" class="img-thumbnail">
+                       <%
+                           } else {
+                               // Display the default picture if no img tags are found
+                       %>
+                               <img src="https://ak-d.tripcdn.com/images/1mi3e2224vymivgpcC549.jpg?proc=source/trip" alt="Default Image" class="img-thumbnail">
+                       <%
+                           }
+                       %>
+                   </div>
+                   
+                   <!-- Render ribbon area -->
+                    <div class="col">
+                        <small class="text-muted">
+                            <% if (personalblog.userid === loggedinuser._id) { %>
+                                YOU &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
+                            <% } else { %>
+                                <%= personalblog.author %> &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
+                            <% } %>
+                        </small>
+
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1 blog-list-title"><%= personalblog.title %></h5>
+                        </div>
+                        <p class="mb-1 blog-list-subtitle"><%= personalblog.subtitle %></p>
+
+                        <p class="mb-1 blog-list-body">
+                            <% 
+                               var plainText = personalblog.body.replace(/<[^>]*>/g, '');
+                               plainText = plainText.replace(/\[[^\]]*\]/g, '');
+                               var truncatedText = plainText.length <= 200 ? plainText : plainText.substring(0, 200) + '...';
+                               %>
+                            <%= truncatedText %>
+                         </p>
+                          
+                    </div>
+            
+                    </div>
+                </a>
+                <% }); %>
+            </div>
+          </div>
+          
+          <!-- Right Column -->
+          <div class="col-md-7 col-right">
+            <h5>Payout settings</h5>
+            <p id="active-blog-title"></p>
+
+            <div class="switch-container">
+                <label class="switch-label" for="monetization-switch">Monetized:</label>
+                <input type="checkbox" id="monetization-switch" data-on-text="On" data-off-text="Off">
+            </div>
+            
+
+          </div>
+        </div>
+      </div>
+    
+
+<!-- Bootstrap JS and dependencies (popper.js, jQuery) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<script>
+
+const monetizationSwitch = document.getElementById('monetization-switch');
+const activeblogtitle = document.getElementById('active-blog-title');
+var activeblogid;
+
+document.addEventListener('DOMContentLoaded', function () {
+    const firstblogid = `<%= firstblogid %>`;
+    activeblogid = firstblogid;
+    handlePaywallDisplay(firstblogid);
+});
+
+monetizationSwitch.addEventListener('change', function () {
+    console.log('Switch state:', monetizationSwitch.checked);
+    // TODO: update or change paywall status of a given blogid.
+    console.log(`updating paywall status for blogid: ${activeblogid}`);
+    updatePaywallStatus(activeblogid);
+});
+
+
+function handlePaywallDisplay(blogid) {
+    activeblogid = blogid;
+    const url = `/index/blogs/blog/${blogid}/paywallstatus`;
+    fetch(url)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        const paywallStatus = data.paywallstatus;
+        activeblogtitle.innerText = data.title;
+        console.log(`highlighted blog: ${blogid}`);
+        console.log(`paywall status: ${paywallStatus}`);
+
+        if(data.paywallstatus) {
+            monetizationSwitch.checked = true;
+        } else {
+            monetizationSwitch.checked = false;
+        }
+        
+    })
+    .catch(error => {
+        console.error('Error fetching paywall:', error);
+    });
+}
+
+function updatePaywallStatus(blogid) {
+    const url = `/index/blogs/${blogid}/updatepaywall`;
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            const paywallStatus = data.paywallstatus;
+            handlePaywallDisplay(blogid);
+        })
+        .catch(error => {
+            console.error('Error updating paywall status:', error);
+        });
+}
+
+
+
+</script>
+
+</body>
+</html>

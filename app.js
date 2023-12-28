@@ -68,7 +68,8 @@ app.get('/login', (req, res) => {
 
 // Render user registration page
 app.get('/register', (req, res) => {
-    res.status(200).render('registerpage');
+    const message = req.query.message || null;
+    res.status(200).render('registerpage', { message });
 });
 
 // Register new user
@@ -174,6 +175,26 @@ app.get('/homepage/getSuggestedPeople', async (req, res) => {
     }
 
 });
+
+// Route to receive sort request
+// app.post('/homepage/sort', isLoggedIn, async (req,res) => {
+//     console.log(req.body);
+
+//     const loggedinuser = req.session.user;
+//     try {
+//         const personalblogs = await Blog.find({
+//             $or: [
+//               { userid: loggedinuser._id }, // Blogs by the logged-in user
+//               { userid: { $in: loggedinuser.following } } // Blogs by users in following list
+//             ]
+//           })
+//           .sort({ title: -1 });
+//         res.status(200).json( { personalblogs });
+//     } catch (error) {
+//         res.status(500).json({ error: error.message });
+//     }
+
+// });
 
 // Render blog details page
 app.get('/index', isLoggedIn, async (req, res) => {
@@ -298,7 +319,7 @@ app.get('/index/blogs/blog/:id/paywallstatus', async (req, res) => {
         if (!blog) {
             return res.status(404).send('Blog not found');
         }
-        return res.status(200).json({ paywallstatus: blog.paywall })
+        return res.status(200).json({ paywallstatus: blog.paywall, title: blog.title })
 
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -633,8 +654,17 @@ app.get('/test', (req, res) => {
     res.render('testpage');
 });
 
-app.post('/testupload', (req, res) => {
-    console.log(req.body);
+app.get('/homepage/dashboard', isLoggedIn, async (req, res) => {
+    const loggedinuser = req.session.user;
+    try {
+        const personalblogs = await Blog.find({ userid: loggedinuser._id });
+        const firstblogid = personalblogs[0]._id;
+        res.render('authordashboard', { loggedinuser, personalblogs, firstblogid });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'Internal server error' });
+
+    }
 })
 
 

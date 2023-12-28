@@ -72,6 +72,10 @@
                           <button class="btn btn-lg px-5 submit-button" type="submit">Register</button>
                     </form>
                     <br>
+
+                    <% if (message) { %>
+                      <p><%= message %></p>
+                    <% } %>
       
                     <div class="d-flex justify-content-center text-center mt-4 pt-1">
                       <a href="#!"><i class="fab fa-facebook-f fa-lg"></i></a>
