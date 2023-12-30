@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const Blog = require('./blogModel');
+const Bank = require('./bankModel');
 const ejs = require('ejs');
 const session = require('express-session');
 const passport = require('passport');
@@ -503,6 +504,69 @@ app.post('/index/addsubscription', isLoggedIn, async (req, res) => {
 
 });
 
+// add monthly / yearly subscriber fees
+app.post('/homepage/addsubscriptionfees', isLoggedIn, async (req, res) => {
+    console.log(JSON.stringify(req.body));
+    const loggedinuserid = req.session.user._id; 
+    const monthlysubscription = req.body.monthlysubscription;
+    const yearlysubscription = req.body.yearlysubscription;
+
+    console.log(monthlysubscription);
+    console.log(yearlysubscription);
+
+    try {
+        const user = await User.findById(loggedinuserid);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        } else {
+            user.monthlysubscription = monthlysubscription;
+            user.yearlysubscription = yearlysubscription;
+
+            // Save the updated user
+            await user.save();
+
+            console.log('Subscription data saved successfully');
+            return res.status(200).json({ message: 'Subscription saved' });
+        }
+    } catch (error) {
+        console.error('Error updating subscription:', error);
+
+        // Handle specific MongoDB validation errors
+        if (error.name === 'ValidationError') {
+            return res.status(400).json({ message: error.message });
+        }
+
+        // Handle other errors
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
+// get monthly and yearly subscription fees
+app.get('/homepage/getsubscriptionfees', isLoggedIn, async (req, res) => {
+    console.log(JSON.stringify(req.body));
+    const loggedinuser = req.session.user;
+    try {
+        const user = await User.findById(loggedinuser._id);
+        if(!user) {
+            console.log('user not found');
+            return res.status(404).json('user not found');
+        } else {
+            const fees = {
+                monthlysubscription: user.monthlysubscription || 0,
+                yearlysubscription: user.yearlysubscription || 0
+            }
+            return res.status(200).json({ fees: fees });
+        }
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error getting subscription details' });
+    }
+
+});
+
 // Check subscription status
 app.post('/index/checksubscription', isLoggedIn, async (req, res) => {
     const loggedinuserid = req.session.user._id;
@@ -658,12 +722,57 @@ app.get('/homepage/dashboard', isLoggedIn, async (req, res) => {
     const loggedinuser = req.session.user;
     try {
         const personalblogs = await Blog.find({ userid: loggedinuser._id });
-        const firstblogid = personalblogs[0]._id;
-        res.render('authordashboard', { loggedinuser, personalblogs, firstblogid });
+        res.render('authordashboard', { loggedinuser, personalblogs });
     } catch (error) {
         console.log(error);
         return res.status(500).json({ message: 'Internal server error' });
 
+    }
+})
+
+app.post('/homepage/addbankdetails', isLoggedIn, async (req, res) => {
+    const loggedinuser = req.session.user;
+    try {
+        const bankObj = {
+            userid: loggedinuser._id,
+            accountname: req.body.accountname,
+            accountnumber: req.body.accountnumber,
+            accounttype: req.body.accounttype,
+            ifsc: req.body.ifsc,
+            bankname: req.body.bankname,
+            branchname: req.body.branchname,
+            address: req.body.address,
+            timestamp: Date.now()
+        }
+    
+        const existingBank = await Bank.findOne({ userid: bankObj.userid });
+        if (existingBank) {
+            await existingBank.updateOne(bankObj);
+            return res.status(200).json({ message: 'Bank details updated successfully' });
+        } else {
+            const newBank = new Bank(bankObj);
+            await newBank.save();
+            return res.status(201).json({ message: 'Bank details created successfully' });
+        }
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error saving bank details' });
+    }
+});
+
+app.get('/homepage/getbankdetails', isLoggedIn, async (req, res) => {
+    const loggedinuser = req.session.user;
+    try {
+        const existingBank = await Bank.findOne({ userid: loggedinuser._id });
+        if(existingBank) {
+            return res.status(200).json({ existingBank: existingBank })
+        } else {
+            return res.status(200).json({ existingBank: null })
+        }
+    } catch (error) {
+        console.error('Error in /homepage/getbankdetails:', error);
+        return res.status(500).json({ message: 'Error saving bank details' });
     }
 })
 

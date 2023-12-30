@@ -7,6 +7,8 @@
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 </head>
 
@@ -16,6 +18,8 @@
     }
 
     .custom-navbar {
+        padding-left: 10px;
+        padding-right: 10px;
         border-bottom: 1px solid rgb(208, 203, 203);
     }
 
@@ -30,7 +34,6 @@
     .col-right {
       background-color: #fff; /* Orange color */
       height: 100vh;
-      padding: 20px;
     }
 
     .big-list-item {
@@ -42,6 +45,12 @@
     }
 
     .blog-list-title {
+        color: #1c4175;
+        font-weight: bold;
+    }
+
+    .add-new-bank-title {
+        padding-top: 30px;
         color: #1c4175;
         font-weight: bold;
     }
@@ -65,6 +74,71 @@
         width: 100px;
         height: 100px;
         object-fit: cover;
+    }
+
+    .author-payment-settings-container {
+        height: 100%;
+        overflow: auto;
+        padding: 20px;
+    }
+
+    .ifsc-container {
+        color: #1c4175;
+        font-size: smaller;
+        line-height: 1.0;
+    }
+
+    .existing-bank-container {
+        padding-top: 10px;
+        color: gray;
+        font-size: smaller;
+        line-height: 1.0;
+    }
+
+    .btn-primary {
+         background-color: transparent;
+         border-color: #1c4175;
+         color: #1c4175;
+         width: 100px;
+         height: 40px;
+         border-radius: 20px;
+    }
+
+    .btn-primary:hover {
+         background-color: #1c4175;
+         border-color: #1c4175;
+         color: #fff;
+    }
+
+    .mandatory-field {
+        color: red;
+        font-size: smaller;
+        font-weight: bold;
+    }
+
+    .form-label {
+        color: gray;
+        font-weight: bold;
+        font-size: small;
+    }
+
+    .custom-link-style {
+        color: green;
+    }
+
+    .custom-link-style:hover {
+        color: green;
+    }
+
+    .monetization-button {
+        margin-left: 20px;
+    }
+
+    .toast {
+        border: 1px solid #b0c9eb;
+        background-color: rgba(78, 149, 241, 0.2); /* #0F9D58 with 70% transparency */
+        border-color: #1c4175; /* Border color to match */
+        border-radius: 5px;
     }
 
     
@@ -95,9 +169,7 @@
           <div class="col-md-5 col-left">
             <div class="list-group">
                 <% personalblogs.forEach(personalblog => { %>
-                <a href="javascript:void(0);" onclick="handlePaywallDisplay('<%= personalblog._id %>')" data-blog-id="<%= personalblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
-            
-                    <div class="row">
+                <div class="row">
 
                     <!-- Render blog image  -->
                     <div class="col-auto">
@@ -123,12 +195,11 @@
                    
                    <!-- Render ribbon area -->
                     <div class="col">
-                        <small class="text-muted">
-                            <% if (personalblog.userid === loggedinuser._id) { %>
-                                YOU &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
-                            <% } else { %>
-                                <%= personalblog.author %> &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
-                            <% } %>
+                        <small class="text-muted" style="display: flex; flex-direction: row; align-items: center;">
+                            <%= personalblog.formatteddate %>
+                            <div class="monetization-button" onclick="updatePaywallStatus('<%= personalblog._id %>', this)" style="<%= personalblog.paywall ? 'color: green;' : '' %>">
+                                <i class="fa-solid fa-dollar-sign"></i>
+                            </div>
                         </small>
 
                         <div class="d-flex w-100 justify-content-between">
@@ -148,25 +219,72 @@
                     </div>
             
                     </div>
-                </a>
                 <% }); %>
             </div>
           </div>
           
           <!-- Right Column -->
           <div class="col-md-7 col-right">
-            <h5>Payout settings</h5>
-            <p id="active-blog-title"></p>
 
-            <div class="switch-container">
-                <label class="switch-label" for="monetization-switch">Monetized:</label>
-                <input type="checkbox" id="monetization-switch" data-on-text="On" data-off-text="Off">
+            <div class="col-md-12 author-payment-settings-container">
+                <h5 class="blog-list-title">Your bank details on record</h5>
+                <div class="existing-bank-container" id="existing-bank"></div>
+                <h5 class="blog-list-title">Your subscription fees</h5>
+                <div class="existing-bank-container" id="subscription-fees"></div>
+
+                <h5 class="add-new-bank-title">Add / update your bank account details here</h5>
+                <p style="color: green; font-size: smaller;"><a class="custom-link-style" href="/homepage">FAQs about banking data security</a></p>
+                
+                <form onsubmit="saveBank(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="accountHolderName">Name on account <span class="mandatory-field">*</span></label>
+                        <input type="text" class="form-control" id="accountHolderName" name="accountHolderName" placeholder="Enter account holder's name">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="accountNumber">Account number <span class="mandatory-field">*</span></label>
+                        <input type="text" class="form-control" id="accountNumber" name="accountNumber" placeholder="Enter account number">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="accountType">Account type <span class="mandatory-field">*</span></label>
+                        <input type="text" class="form-control" id="accountType" name="accountType" placeholder="Enter account type">
+                    </div>
+        
+                    <div class="form-group">
+                        <label class="form-label" for="ifscCode">IFSC Code <span class="mandatory-field">*</span></label>
+                        <input type="text" class="form-control" id="ifscCode" name="ifscCode" placeholder="Enter IFSC code">
+                    </div>
+                    <div class="ifsc-container" id="apiResults"></div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
+
+                <h5 class="add-new-bank-title">Author subscription settings</h5>
+                <p style="color: green; font-size: smaller;"><a class="custom-link-style" href="/homepage">How to build an awesome reader base?</a></p>
+                
+                <form onsubmit="saveSubscription(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="monthlySubscription">Monthly subscription</label>
+                        <input type="text" class="form-control" id="monthlySubscription" name="monthlySubscription" placeholder="Set up your monthly subscription amount (INR)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="yearlySubscription">Yearly number</label>
+                        <input type="text" class="form-control" id="yearlySubscription" name="yearlySubscription" placeholder="Set up your yearly subscription amount (INR)">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </form>
             </div>
-            
-
           </div>
         </div>
       </div>
+
+      <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 5">
+        <div id="myToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+            <div id="toastContent" class="toast-body"></div>
+        </div>
+     </div>
     
 
 <!-- Bootstrap JS and dependencies (popper.js, jQuery) -->
@@ -176,26 +294,22 @@
 
 <script>
 
-const monetizationSwitch = document.getElementById('monetization-switch');
-const activeblogtitle = document.getElementById('active-blog-title');
-var activeblogid;
+const resultsContainer = document.getElementById('apiResults');
+var bankname;
+var branchname;
+var address;
+var ifsc;
 
 document.addEventListener('DOMContentLoaded', function () {
-    const firstblogid = `<%= firstblogid %>`;
-    activeblogid = firstblogid;
-    handlePaywallDisplay(firstblogid);
+    getBankOnRecord();
+    displaySubscriptionFees();
 });
 
-monetizationSwitch.addEventListener('change', function () {
-    console.log('Switch state:', monetizationSwitch.checked);
-    // TODO: update or change paywall status of a given blogid.
-    console.log(`updating paywall status for blogid: ${activeblogid}`);
-    updatePaywallStatus(activeblogid);
-});
+var ifscCodeInput = document.getElementById('ifscCode');
+ifscCodeInput.addEventListener('focusout', fetchBankDetailsFromIFSC);
 
 
-function handlePaywallDisplay(blogid) {
-    activeblogid = blogid;
+function handlePaywallDisplay(blogid, icon) {
     const url = `/index/blogs/blog/${blogid}/paywallstatus`;
     fetch(url)
     .then(response => {
@@ -205,24 +319,35 @@ function handlePaywallDisplay(blogid) {
         return response.json();
     })
     .then(data => {
-        const paywallStatus = data.paywallstatus;
-        activeblogtitle.innerText = data.title;
-        console.log(`highlighted blog: ${blogid}`);
-        console.log(`paywall status: ${paywallStatus}`);
-
+        displayToast(data.paywallstatus);
         if(data.paywallstatus) {
-            monetizationSwitch.checked = true;
+            icon.style.color = 'green';
         } else {
-            monetizationSwitch.checked = false;
+            icon.style.color = 'gray';
         }
-        
     })
     .catch(error => {
         console.error('Error fetching paywall:', error);
     });
 }
 
-function updatePaywallStatus(blogid) {
+function displayToast(paywallstatus) {
+    document.getElementById('toastContent').innerHTML = (paywallstatus ? 'Post is monetized' : 'Paywall disabled');
+    var toastElement = document.getElementById('myToast');
+    var options = {
+        autohide: false
+    };
+    var toast = new bootstrap.Toast(toastElement, options);
+    toast.show();
+
+    var duration = 3000;
+    setTimeout(function () {
+        toast.hide();
+    }, duration);
+}
+
+
+function updatePaywallStatus(blogid, icon) {
     const url = `/index/blogs/${blogid}/updatepaywall`;
     fetch(url)
         .then(response => {
@@ -233,13 +358,158 @@ function updatePaywallStatus(blogid) {
         })
         .then(data => {
             const paywallStatus = data.paywallstatus;
-            handlePaywallDisplay(blogid);
+            handlePaywallDisplay(blogid, icon);
         })
         .catch(error => {
             console.error('Error updating paywall status:', error);
         });
 }
 
+function fetchBankDetailsFromIFSC() {
+    // Get the value of the IFSC code input
+    var ifscCode = document.getElementById('ifscCode').value;
+
+    // Make an API request to Razorpay IFSC API
+    fetch(`https://ifsc.razorpay.com/${ifscCode}`)
+        .then(response => response.json())
+        .then(data => {
+            // Display the API results in the designated area
+            bankname = data.BANK;
+            branchname = data.BRANCH;
+            address = data.ADDRESS;
+            ifsc = data.IFSC;
+
+            resultsContainer.innerHTML = `<p><strong>Bank Name:</strong> ${data.BANK}</p>
+                                         <p><strong>Branch Name:</strong> ${data.BRANCH}</p>
+                                         <p><strong>Address:</strong> ${data.ADDRESS}</p>
+                                         <p><strong>IFSC:</strong> ${data.IFSC}</p>
+                                         <p><strong>State:</strong> ${data.STATE}</p>`;
+        })
+        .catch(error => {
+            // Handle errors, e.g., IFSC code not found
+            resultsContainer.innerHTML = `<p style="color: red;">Error fetching bank details. Please check the IFSC code and try again.</p>`;
+        });
+}
+
+function saveSubscription(event) {
+    event.preventDefault();
+    const monthlysubscription = document.getElementById('monthlySubscription').value;
+    const yearlysubscription = document.getElementById('yearlySubscription').value;
+
+    const subscriptiondata = {
+        monthlysubscription: monthlysubscription,
+        yearlysubscription: yearlysubscription
+    }
+
+    fetch('/homepage/addsubscriptionfees', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(subscriptiondata)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Subscription settings saved successfully:', data);
+        // TODO: Display subscription data on file
+        displaySubscriptionFees();
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
+function displaySubscriptionFees() {
+    const subscriptionfees = document.getElementById('subscription-fees');
+    fetch('/homepage/getsubscriptionfees')
+        .then(response => response.json())
+        .then(data => {
+            console.log(JSON.stringify(data));
+            if(data.fees) {
+                subscriptionfees.innerHTML = `<p><strong>Monthly subscription:</strong> ${data.fees.monthlysubscription}</p>
+                                         <p><strong>Yearly subscription:</strong> ${data.fees.yearlysubscription}</p>`;
+            } else {
+                subscriptionfees.innerHTML = `<p>No subscription settings found.</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching subscription fees details:', error);
+        });
+
+}
+
+function saveBank(event) {
+    event.preventDefault();
+    const accountHolderName = document.getElementById('accountHolderName').value;
+    const accountNumber = document.getElementById('accountNumber').value;
+    const accountType = document.getElementById('accountType').value;
+    // const ifscCode = document.getElementById('ifscCode').value;
+
+    const securedBankData = {
+        accountname: accountHolderName,
+        accountnumber: accountNumber,
+        accounttype: accountType,
+        ifsc: ifsc,
+        bankname: bankname,
+        branchname: branchname,
+        address: address
+    }
+
+    fetch('/homepage/addbankdetails', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(securedBankData)
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Bank saved successfully:', data);
+        getBankOnRecord(); // update page with new bank records
+
+        document.getElementById('accountHolderName').value = '';
+        document.getElementById('accountNumber').value = '';
+        document.getElementById('accountType').value = '';
+        document.getElementById('ifscCode').value = '';
+        resultsContainer.innerHTML = ``;
+
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
+function getBankOnRecord() {
+    // Send a GET request to the specified URL
+    fetch('/homepage/getbankdetails')
+        .then(response => response.json())
+        .then(data => {
+            if(data.existingBank) {
+                document.getElementById('existing-bank').innerHTML = `<p><strong>Account Name:</strong> ${data.existingBank.accountname}</p>
+                                         <p><strong>Bank:</strong> ${data.existingBank.bankname}</p>
+                                         <p><strong>Account:</strong> ${data.existingBank.accountnumber}</p>
+                                         <p><strong>Account type:</strong> ${data.existingBank.accounttype}</p>
+                                         <p><strong>Branch:</strong> ${data.existingBank.branchname}</p>
+                                         <p><strong>Address:</strong> ${data.existingBank.address}</p>
+                                         <p><strong>IFSC:</strong> ${data.existingBank.ifsc}</p>`;
+            } else {
+                document.getElementById('existing-bank').innerHTML = `<p>No bank record found.</p>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching bank details:', error);
+        });
+}
 
 
 </script>
