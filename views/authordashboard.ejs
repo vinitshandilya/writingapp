@@ -1,518 +1,624 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>The writing app</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-</head>
-
-<style>
-    .container-fluid {
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <title>The writing app</title>
+      <!-- Bootstrap CSS -->
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+   </head>
+   <style>
+      .container-fluid {
       height: 100%;
-    }
-
-    .custom-navbar {
-        padding-left: 10px;
-        padding-right: 10px;
-        border-bottom: 1px solid rgb(208, 203, 203);
-    }
-
-    /* Set different background colors for each column */
-    .col-left {
-      background-color: #fff; /* Blue color */
-      height: 100vh;
-      border-right: 1px solid rgb(208, 203, 203);
-      padding: 20px;
-    }
-
-    .col-right {
-      background-color: #fff; /* Orange color */
-      height: 100vh;
-    }
-
-    .big-list-item {
+      }
+      .custom-navbar {
+      padding-left: 10px;
+      padding-right: 10px;
+      border-bottom: 1px solid rgb(208, 203, 203);
+      }
+      .menu-list-group {
         border: none;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-        /* border-top: 1px solid rgba(0, 0, 0, 0.125); */
-        background-color: transparent;
-        font-weight: bold;
-    }
+        padding: none;
+      }
+      .menu-list-item {
+      color: #1c4175;
+      border: none;
+      background-color: transparent;
+      }
+      .right-content-container {
+      padding: 20px;
+      height: 100%;
+      overflow: auto;
+      }
+      .list-group-item {
+      border: none;
+      padding: 10px;
+      background-color: transparent;
+      }
+      .big-list-item {
+      border: none;
+      /* border-top: 1px solid rgba(0, 0, 0, 0.125); */
+      background-color: transparent;
+      padding-top: 20px;
+      }
+      .blog-list-title {
+      color: #1c4175;
+      font-weight: bold;
+      text-decoration: none;
+      }
+      .add-new-bank-title {
+      color: #1c4175;
+      font-weight: bold;
+      }
+      .blog-list-subtitle {
+      padding-top: 0px;
+      color: #000;
+      font-weight: normal;
+      }
+      .blog-list-body {
+      font-weight: normal;
+      font-size: small;
+      line-height: 1.5;
+      padding-bottom: 10px;
+      }
+      .img-thumbnail {
+      margin-top: 25%;
+      border-radius: 50%;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      }
+      .ifsc-container {
+      color: #1c4175;
+      font-size: smaller;
+      line-height: 1.0;
+      }
+      .existing-bank-container {
+      padding-top: 10px;
+      color: gray;
+      font-size: smaller;
+      line-height: 1.0;
+      }
+      .btn-primary {
+      background-color: transparent;
+      border-color: #1c4175;
+      color: #1c4175;
+      width: 100px;
+      height: 40px;
+      border-radius: 20px;
+      }
+      .btn-primary:hover {
+      background-color: #1c4175;
+      border-color: #1c4175;
+      color: #fff;
+      }
+      .mandatory-field {
+      color: red;
+      font-size: smaller;
+      font-weight: bold;
+      }
+      .form-label {
+      color: gray;
+      font-weight: bold;
+      font-size: small;
+      }
+      .custom-link-style {
+      color: green;
+      }
+      .custom-link-style:hover {
+      color: green;
+      }
+      .monetization-button {
+      margin-left: 20px;
+      width: 30px;
+      height: 30px;
+      background-color: transparent;
+      color: gray;
+      border: 1px solid gray;
+      padding: 0 10px;
+      cursor: pointer;
+      border-radius: 15px;
 
-    .blog-list-title {
-        color: #1c4175;
-        font-weight: bold;
-    }
-
-    .add-new-bank-title {
-        padding-top: 30px;
-        color: #1c4175;
-        font-weight: bold;
-    }
-    
-    .blog-list-subtitle {
-        padding-top: 0px;
-        color: #000;
-        font-weight: normal;
-    }
-
-    .blog-list-body {
-        font-weight: normal;
-        font-size: small;
-        line-height: 1.5;
-        padding-bottom: 10px;
-    }
-
-    .img-thumbnail {
-        margin-top: 25%;
-        border-radius: 50%;
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-    }
-
-    .author-payment-settings-container {
-        height: 100%;
-        overflow: auto;
-        padding: 20px;
-    }
-
-    .ifsc-container {
-        color: #1c4175;
-        font-size: smaller;
-        line-height: 1.0;
-    }
-
-    .existing-bank-container {
-        padding-top: 10px;
-        color: gray;
-        font-size: smaller;
-        line-height: 1.0;
-    }
-
-    .btn-primary {
-         background-color: transparent;
-         border-color: #1c4175;
-         color: #1c4175;
-         width: 100px;
-         height: 40px;
-         border-radius: 20px;
-    }
-
-    .btn-primary:hover {
-         background-color: #1c4175;
-         border-color: #1c4175;
-         color: #fff;
-    }
-
-    .mandatory-field {
-        color: red;
-        font-size: smaller;
-        font-weight: bold;
-    }
-
-    .form-label {
-        color: gray;
-        font-weight: bold;
-        font-size: small;
-    }
-
-    .custom-link-style {
-        color: green;
-    }
-
-    .custom-link-style:hover {
-        color: green;
-    }
-
-    .monetization-button {
-        margin-left: 20px;
-    }
-
-    .toast {
-        border: 1px solid #b0c9eb;
-        background-color: rgba(78, 149, 241, 0.2); /* #0F9D58 with 70% transparency */
-        border-color: #1c4175; /* Border color to match */
-        border-radius: 5px;
-    }
-
-    
-</style>
-
-<body>
-
-    <% var displayName = loggedinuser.firstname ? loggedinuser.firstname : loggedinuser.username; %>
+      }
+      .toast {
+      border: 1px solid #09732b;
+      background-color: rgba(59, 221, 83, 0.2);
+      border-radius: 5px;
+      }
+      .usernametext {
+        color: #09732b;
+      }
+      .edit-user-form-button {
+      background-color: transparent;
+      color: gray;
+      border: none;
+      cursor: pointer;
+      border-radius: 15px;
+      }
 
 
-    <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
-        <a class="navbar-brand" href="/homepage"><i class="fa-solid fa-angle-left"></i></a></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+   </style>
+   <body>
+      <% var displayName = loggedinuser.firstname ? loggedinuser.firstname : loggedinuser.username; %>
+      <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
+         <a class="navbar-brand" href="/homepage"><i class="fa-solid fa-angle-left"></i></a></a>
+         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+         <span class="navbar-toggler-icon"></span>
+         </button>
+         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
             <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                <li class="nav-item active"><a class="nav-link" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
-                <li class="nav-item active"><a class="nav-link" href="/index/profile"> <%= displayName %></a></li>
+               <li class="nav-item active"><a class="nav-link" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
+               <li class="nav-item active"><a class="nav-link" href="/index/profile"> <%= displayName %></a></li>
             </ul>
-        </div>
-    </nav>
-
-    <!-- Responsive Layout using Bootstrap Grid -->
-    <div class="container-fluid">
-        <div class="row">
-          <!-- Left Column -->
-          <div class="col-md-5 col-left">
-            <div class="list-group">
-                <% personalblogs.forEach(personalblog => { %>
-                <div class="row">
-
-                    <!-- Render blog image  -->
-                    <div class="col-auto">
-                       <% 
-                           const bodyHtml = personalblog.body || ''; // Ensure personalblog.body is defined
-                           // Define a regular expression to match the src attribute in an img tag
-                           const imgSrcRegex = /<img[^>]*src=["']([^"']+)["']/i;
-                           const match = bodyHtml.match(imgSrcRegex);
-                           if (match) {
-                               // Extract the src attribute value
-                               const src = match[1];
-                       %>
-                               <img src="<%= src %>" alt="Image" class="img-thumbnail">
-                       <%
-                           } else {
-                               // Display the default picture if no img tags are found
-                       %>
-                               <img src="https://ak-d.tripcdn.com/images/1mi3e2224vymivgpcC549.jpg?proc=source/trip" alt="Default Image" class="img-thumbnail">
-                       <%
-                           }
-                       %>
-                   </div>
-                   
-                   <!-- Render ribbon area -->
-                    <div class="col">
-                        <small class="text-muted" style="display: flex; flex-direction: row; align-items: center;">
-                            <%= personalblog.formatteddate %>
-                            <div class="monetization-button" onclick="updatePaywallStatus('<%= personalblog._id %>', this)" style="<%= personalblog.paywall ? 'color: green;' : '' %>">
-                                <i class="fa-solid fa-dollar-sign"></i>
-                            </div>
-                        </small>
-
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1 blog-list-title"><%= personalblog.title %></h5>
-                        </div>
-                        <p class="mb-1 blog-list-subtitle"><%= personalblog.subtitle %></p>
-
-                        <p class="mb-1 blog-list-body">
-                            <% 
-                               var plainText = personalblog.body.replace(/<[^>]*>/g, '');
-                               plainText = plainText.replace(/\[[^\]]*\]/g, '');
-                               var truncatedText = plainText.length <= 200 ? plainText : plainText.substring(0, 200) + '...';
-                               %>
-                            <%= truncatedText %>
-                         </p>
-                          
-                    </div>
-            
-                    </div>
-                <% }); %>
+         </div>
+      </nav>
+      <!-- Responsive Layout using Bootstrap Grid -->
+      <div class="container-fluid">
+      <div class="row">
+         <!-- Left Column -->
+         <div class="col-md-2 left-menu-container">
+            <div class="list-group menu-list-group">
+               <a href="#" class="list-group-item list-group-item-action menu-list-item" onclick="showContent('articles')"><i class="fa-solid fa-comments-dollar mr-2"></i>Monetize content</a>
+               <a href="#" class="list-group-item list-group-item-action menu-list-item" onclick="showContent('payoutSettings')"><i class="fa-solid fa-coins mr-2"></i>Payout settings</a>
+               <a href="#" class="list-group-item list-group-item-action menu-list-item" onclick="showContent('bankDetails')"><i class="fa-solid fa-building-columns mr-2"></i>Bank details</a>
+               <a href="#" class="list-group-item list-group-item-action menu-list-item" onclick="showContent('accountSettings')"><i class="fa-solid fa-gear mr-2"></i>Account settings</a>
             </div>
-          </div>
-          
-          <!-- Right Column -->
-          <div class="col-md-7 col-right">
-
-            <div class="col-md-12 author-payment-settings-container">
-                <h5 class="blog-list-title">Your bank details on record</h5>
-                <div class="existing-bank-container" id="existing-bank"></div>
-                <h5 class="blog-list-title">Your subscription fees</h5>
-                <div class="existing-bank-container" id="subscription-fees"></div>
-
-                <h5 class="add-new-bank-title">Add / update your bank account details here</h5>
-                <p style="color: green; font-size: smaller;"><a class="custom-link-style" href="/homepage">FAQs about banking data security</a></p>
-                
-                <form onsubmit="saveBank(event)">
-                    <div class="form-group">
-                        <label class="form-label" for="accountHolderName">Name on account <span class="mandatory-field">*</span></label>
-                        <input type="text" class="form-control" id="accountHolderName" name="accountHolderName" placeholder="Enter account holder's name">
+         </div>
+         <!-- Right Column -->
+         <div class="col-md-9 right-content-container">
+            <!-- Articles Content -->
+            <div id="articlesContent" style="display: none;">
+                <% personalblogs.forEach(personalblog => { %>
+                    <div class="row big-list-item">
+                       <!-- Render blog image  -->
+                       <div class="col-auto">
+                          <% 
+                             const bodyHtml = personalblog.body || ''; // Ensure personalblog.body is defined
+                             // Define a regular expression to match the src attribute in an img tag
+                             const imgSrcRegex = /<img[^>]*src=["']([^"']+)["']/i;
+                             const match = bodyHtml.match(imgSrcRegex);
+                             if (match) {
+                                 // Extract the src attribute value
+                                 const src = match[1];
+                             %>
+                          <img src="<%= src %>" alt="Image" class="img-thumbnail">
+                          <%
+                             } else {
+                                 // Display the default picture if no img tags are found
+                             %>
+                          <img src="https://ak-d.tripcdn.com/images/1mi3e2224vymivgpcC549.jpg?proc=source/trip" alt="Default Image" class="img-thumbnail">
+                          <%
+                             }
+                             %>
+                       </div>
+                       <!-- Render ribbon area -->
+                       <div class="col">
+                          <small class="text-muted" style="display: flex; flex-direction: row; align-items: center;">
+                             <%= personalblog.formatteddate %>                           
+                          </small>
+                          <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">
+                                <a href="/index?id=<%= personalblog._id %>" class="blog-list-title">
+                                  <%= personalblog.title %>
+                                </a>
+                            </h5>
+                            <button class="monetization-button" onclick="updatePaywallStatus('<%= personalblog._id %>', this)" 
+                                style="<%= personalblog.paywall ? 
+                                'color: white; border: 1px solid green; background-color: green;' : 'color: gray; border: 1px solid gray; background-color: transparent' %>">
+                                <i class="fa-solid fa-dollar-sign"></i>
+                            </button>                              
+                          </div>
+                          <p class="mb-1 blog-list-subtitle"><%= personalblog.subtitle %></p>
+                          <p class="mb-1 blog-list-body">
+                             <% 
+                                var plainText = personalblog.body.replace(/<[^>]*>/g, '');
+                                plainText = plainText.replace(/\[[^\]]*\]/g, '');
+                                var truncatedText = plainText.length <= 200 ? plainText : plainText.substring(0, 200) + '...';
+                                %>
+                             <%= truncatedText %>
+                          </p>
+                       </div>
                     </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="accountNumber">Account number <span class="mandatory-field">*</span></label>
-                        <input type="text" class="form-control" id="accountNumber" name="accountNumber" placeholder="Enter account number">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label" for="accountType">Account type <span class="mandatory-field">*</span></label>
-                        <input type="text" class="form-control" id="accountType" name="accountType" placeholder="Enter account type">
-                    </div>
-        
-                    <div class="form-group">
-                        <label class="form-label" for="ifscCode">IFSC Code <span class="mandatory-field">*</span></label>
-                        <input type="text" class="form-control" id="ifscCode" name="ifscCode" placeholder="Enter IFSC code">
-                    </div>
-                    <div class="ifsc-container" id="apiResults"></div>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </form>
-
-                <h5 class="add-new-bank-title">Author subscription settings</h5>
-                <p style="color: green; font-size: smaller;"><a class="custom-link-style" href="/homepage">How to build an awesome reader base?</a></p>
-                
-                <form onsubmit="saveSubscription(event)">
-                    <div class="form-group">
+                    <% }); %>
+            </div>
+            <!-- Payout Settings Content -->
+            <div id="payoutSettingsContent" style="display: none;">
+               <div class="col-md-12">
+                  <h5 class="blog-list-title">Your subscription fees</h5>
+                  <div class="existing-bank-container" id="subscription-fees"></div>
+                  
+                  <h5 class="add-new-bank-title">Author subscription settings</h5>
+                  <p style="color: green; font-size: smaller;"><a class="custom-link-style" href="/homepage">How to build an awesome reader base?</a></p>
+                  <form onsubmit="saveSubscription(event)">
+                     <div class="form-group">
                         <label class="form-label" for="monthlySubscription">Monthly subscription</label>
                         <input type="text" class="form-control" id="monthlySubscription" name="monthlySubscription" placeholder="Set up your monthly subscription amount (INR)">
-                    </div>
-
-                    <div class="form-group">
+                     </div>
+                     <div class="form-group">
                         <label class="form-label" for="yearlySubscription">Yearly number</label>
                         <input type="text" class="form-control" id="yearlySubscription" name="yearlySubscription" placeholder="Set up your yearly subscription amount (INR)">
-                    </div>
-
-                    <button type="submit" class="btn btn-primary">Save</button>
+                     </div>
+                     <button type="submit" class="btn btn-primary">Save</button>
+                  </form>
+               </div>
+            </div>
+            <!-- Bank Details Content -->
+            <div id="bankDetailsContent" style="display: none;">
+                <h5 class="blog-list-title">Your bank details on record</h5>
+                <div class="existing-bank-container" id="existing-bank"></div>
+                <h5 class="add-new-bank-title">Add / update your bank account details here</h5>
+                <p style="color: green; font-size: smaller;"><a class="custom-link-style" href="/homepage">FAQs about banking data security</a></p>
+                <form onsubmit="saveBank(event)">
+                   <div class="form-group">
+                      <label class="form-label" for="accountHolderName">Name on account <span class="mandatory-field">*</span></label>
+                      <input type="text" class="form-control" id="accountHolderName" name="accountHolderName" placeholder="Enter account holder's name">
+                   </div>
+                   <div class="form-group">
+                      <label class="form-label" for="accountNumber">Account number <span class="mandatory-field">*</span></label>
+                      <input type="text" class="form-control" id="accountNumber" name="accountNumber" placeholder="Enter account number">
+                   </div>
+                   <div class="form-group">
+                      <label class="form-label" for="accountType">Account type <span class="mandatory-field">*</span></label>
+                      <input type="text" class="form-control" id="accountType" name="accountType" placeholder="Enter account type">
+                   </div>
+                   <div class="form-group">
+                      <label class="form-label" for="ifscCode">IFSC Code <span class="mandatory-field">*</span></label>
+                      <input type="text" class="form-control" id="ifscCode" name="ifscCode" placeholder="Enter IFSC code">
+                   </div>
+                   <div class="ifsc-container" id="apiResults"></div>
+                   <button type="submit" class="btn btn-primary">Save</button>
                 </form>
             </div>
-          </div>
-        </div>
+            <!-- Account settings -->
+            <div id="accountSettingsContent" style="display: none;">
+                <div class="d-flex align-items-center">
+                    <h5 class="blog-list-title mr-3">Profile</h5>
+                    <button class="edit-user-form-button" onclick="showupdateuserform()"><h6><i class="fa-solid fa-pencil"></i></h6></button>
+                </div>
+                <div class="d-flex">
+                    <h3 id="firstnametext" class="mr-2"><%= loggedinuser.firstname %></h3>
+                    <h3 id="lastnametext" class="mr-2"><%= loggedinuser.lastname %></h3>
+                    <h3 class="usernametext" id="usernametext">(@<%= loggedinuser.username %>)</h3>
+                </div>
+                <p id="emailtext"><%= loggedinuser.email %></p>
+                <p id="biotext"><%= loggedinuser.bio %></p>
+                
+                <div class="container mt-4" id="updateuser-form">
+                    <form onsubmit="updateUser(event)">
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="firstname" name="firstname" placeholder="First name" value="">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Last name" value="">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" id="bio" name="bio" placeholder="Tell us about yourself" value="">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </form>
+                </div>
+            </div>
+         </div>
       </div>
-
       <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 5">
-        <div id="myToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+         <div id="myToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
             <div id="toastContent" class="toast-body"></div>
-        </div>
-     </div>
-    
+         </div>
+      </div>
+      <!-- Bootstrap JS and dependencies (popper.js, jQuery) -->
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+      <script>
+         function showContent(item) {
+             document.getElementById('articlesContent').style.display = 'none';
+             document.getElementById('payoutSettingsContent').style.display = 'none';
+             document.getElementById('bankDetailsContent').style.display = 'none';
+             document.getElementById('accountSettingsContent').style.display = 'none';
+             document.getElementById(item + 'Content').style.display = 'block';
+         }
+         
+         const resultsContainer = document.getElementById('apiResults');
+         var bankname;
+         var branchname;
+         var address;
+         var ifsc;
+         
+         document.addEventListener('DOMContentLoaded', function () {
+            showContent('articles');
+            getBankOnRecord();
+            displaySubscriptionFees();
+            getUser('<%= loggedinuser._id %>');
+            var formdiv = document.getElementById('updateuser-form');
+            formdiv.style.display = "none";
+         });
+         
+         var ifscCodeInput = document.getElementById('ifscCode');
+         ifscCodeInput.addEventListener('focusout', fetchBankDetailsFromIFSC);
+         
+         
+         function handlePaywallDisplay(blogid, button) {
+             const url = `/index/blogs/blog/${blogid}/paywallstatus`;
+             fetch(url)
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error(`HTTP error! Status: ${response.status}`);
+                 }
+                 return response.json();
+             })
+             .then(data => {
+                 displayToast(data.paywallstatus);
+                 if(data.paywallstatus) {
+                    button.style.backgroundColor = 'green';
+                    button.style.borderColor = 'green';
+                    button.style.color = 'white';
+                 } else {
+                    button.style.backgroundColor = 'transparent';
+                    button.style.borderColor = 'gray';
+                    button.style.color = 'gray';
+                 }
+             })
+             .catch(error => {
+                 console.error('Error fetching paywall:', error);
+             });
+         }
+         
+         function displayToast(paywallstatus) {
+             document.getElementById('toastContent').innerHTML = (paywallstatus ? 'Post is monetized' : 'Paywall disabled');
+             document.getElementById('myToast').backgroundColor = (paywallstatus ? '#09732b' : '#ff0000');
+             var toastElement = document.getElementById('myToast');
+             var options = {
+                 autohide: false
+             };
+             var toast = new bootstrap.Toast(toastElement, options);
+             toast.show();
+         
+             var duration = 3000;
+             setTimeout(function () {
+                 toast.hide();
+             }, duration);
+         }
+         
+         
+         function updatePaywallStatus(blogid, button) {
+             const url = `/index/blogs/${blogid}/updatepaywall`;
+             fetch(url)
+                 .then(response => {
+                     if (!response.ok) {
+                         throw new Error(`HTTP error! Status: ${response.status}`);
+                     }
+                     return response.json();
+                 })
+                 .then(data => {
+                     const paywallStatus = data.paywallstatus;
+                     handlePaywallDisplay(blogid, button);
+                 })
+                 .catch(error => {
+                     console.error('Error updating paywall status:', error);
+                 });
+         }
+         
+         function fetchBankDetailsFromIFSC() {
+             // Get the value of the IFSC code input
+             var ifscCode = document.getElementById('ifscCode').value;
+         
+             // Make an API request to Razorpay IFSC API
+             fetch(`https://ifsc.razorpay.com/${ifscCode}`)
+                 .then(response => response.json())
+                 .then(data => {
+                     // Display the API results in the designated area
+                     bankname = data.BANK;
+                     branchname = data.BRANCH;
+                     address = data.ADDRESS;
+                     ifsc = data.IFSC;
+         
+                     resultsContainer.innerHTML = `<p><strong>Bank Name:</strong> ${data.BANK}</p>
+                                                  <p><strong>Branch Name:</strong> ${data.BRANCH}</p>
+                                                  <p><strong>Address:</strong> ${data.ADDRESS}</p>
+                                                  <p><strong>IFSC:</strong> ${data.IFSC}</p>
+                                                  <p><strong>State:</strong> ${data.STATE}</p>`;
+                 })
+                 .catch(error => {
+                     // Handle errors, e.g., IFSC code not found
+                     resultsContainer.innerHTML = `<p style="color: red;">Error fetching bank details. Please check the IFSC code and try again.</p>`;
+                 });
+         }
+         
+         function saveSubscription(event) {
+             event.preventDefault();
+             const monthlysubscription = document.getElementById('monthlySubscription').value;
+             const yearlysubscription = document.getElementById('yearlySubscription').value;
+         
+             const subscriptiondata = {
+                 monthlysubscription: monthlysubscription,
+                 yearlysubscription: yearlysubscription
+             }
+         
+             fetch('/homepage/addsubscriptionfees', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify(subscriptiondata)
+             })
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error('Network response was not ok');
+                 }
+                 return response.json();
+             })
+             .then(data => {
+                 console.log('Subscription settings saved successfully:', data);
+                 // TODO: Display subscription data on file
+                 displaySubscriptionFees();
+             })
+             .catch(error => {
+                 console.error('There was a problem with the fetch operation:', error);
+             });
+         }
+         
+         function displaySubscriptionFees() {
+             const subscriptionfees = document.getElementById('subscription-fees');
+             fetch('/homepage/getsubscriptionfees')
+                 .then(response => response.json())
+                 .then(data => {
+                     console.log(JSON.stringify(data));
+                     if(data.fees) {
+                         subscriptionfees.innerHTML = `<p><strong>Monthly subscription:</strong> ${data.fees.monthlysubscription}</p>
+                                                  <p><strong>Yearly subscription:</strong> ${data.fees.yearlysubscription}</p>`;
+                     } else {
+                         subscriptionfees.innerHTML = `<p>No subscription settings found.</p>`;
+                     }
+                 })
+                 .catch(error => {
+                     console.error('Error fetching subscription fees details:', error);
+                 });
+         
+         }
 
-<!-- Bootstrap JS and dependencies (popper.js, jQuery) -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        function getUser(userid) {
+            const getuserurl = `/index/getuser/${userid}`;
 
-<script>
-
-const resultsContainer = document.getElementById('apiResults');
-var bankname;
-var branchname;
-var address;
-var ifsc;
-
-document.addEventListener('DOMContentLoaded', function () {
-    getBankOnRecord();
-    displaySubscriptionFees();
-});
-
-var ifscCodeInput = document.getElementById('ifscCode');
-ifscCodeInput.addEventListener('focusout', fetchBankDetailsFromIFSC);
-
-
-function handlePaywallDisplay(blogid, icon) {
-    const url = `/index/blogs/blog/${blogid}/paywallstatus`;
-    fetch(url)
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            fetch(getuserurl)
+                 .then(response => response.json())
+                 .then(data => {
+                     console.log(JSON.stringify(data));
+                     if(data.loggedinuser) {
+                        // update the divs to dispay saved user
+                        document.getElementById('firstnametext').innerText = data.loggedinuser.firstname;
+                        document.getElementById('lastnametext').innerText = data.loggedinuser.lastname;
+                        document.getElementById('usernametext').innerText = `(@${data.loggedinuser.username})`;
+                        document.getElementById('emailtext').innerText = data.loggedinuser.email;
+                        document.getElementById('biotext').innerText = data.loggedinuser.bio;   
+                     } else {
+                         
+                     }
+                 })
+                 .catch(error => {
+                     console.error('Error fetching user details:', error);
+                 });
         }
-        return response.json();
-    })
-    .then(data => {
-        displayToast(data.paywallstatus);
-        if(data.paywallstatus) {
-            icon.style.color = 'green';
-        } else {
-            icon.style.color = 'gray';
-        }
-    })
-    .catch(error => {
-        console.error('Error fetching paywall:', error);
-    });
-}
 
-function displayToast(paywallstatus) {
-    document.getElementById('toastContent').innerHTML = (paywallstatus ? 'Post is monetized' : 'Paywall disabled');
-    var toastElement = document.getElementById('myToast');
-    var options = {
-        autohide: false
-    };
-    var toast = new bootstrap.Toast(toastElement, options);
-    toast.show();
+        function updateUser(event) {
+            event.preventDefault();
+            console.log('updateUser');
+            const firstname = document.getElementById('firstname').value;
+            const lastname = document.getElementById('lastname').value;
+            const bio = document.getElementById('bio').value;
 
-    var duration = 3000;
-    setTimeout(function () {
-        toast.hide();
-    }, duration);
-}
-
-
-function updatePaywallStatus(blogid, icon) {
-    const url = `/index/blogs/${blogid}/updatepaywall`;
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
+            const userprofile = {
+                firstname: firstname,
+                lastname: lastname,
+                bio: bio
             }
-            return response.json();
-        })
-        .then(data => {
-            const paywallStatus = data.paywallstatus;
-            handlePaywallDisplay(blogid, icon);
-        })
-        .catch(error => {
-            console.error('Error updating paywall status:', error);
-        });
-}
 
-function fetchBankDetailsFromIFSC() {
-    // Get the value of the IFSC code input
-    var ifscCode = document.getElementById('ifscCode').value;
+            fetch('/index/updateuser', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify(userprofile)
+             })
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error('Network response was not ok');
+                 }
+                 return response.json();
+             })
+             .then(data => {
+                 console.log('User saved successfully:', data);
+                 document.getElementById('firstname').value = '';
+                 document.getElementById('lastname').value = '';
+                 document.getElementById('bio').value = '';
 
-    // Make an API request to Razorpay IFSC API
-    fetch(`https://ifsc.razorpay.com/${ifscCode}`)
-        .then(response => response.json())
-        .then(data => {
-            // Display the API results in the designated area
-            bankname = data.BANK;
-            branchname = data.BRANCH;
-            address = data.ADDRESS;
-            ifsc = data.IFSC;
-
-            resultsContainer.innerHTML = `<p><strong>Bank Name:</strong> ${data.BANK}</p>
-                                         <p><strong>Branch Name:</strong> ${data.BRANCH}</p>
-                                         <p><strong>Address:</strong> ${data.ADDRESS}</p>
-                                         <p><strong>IFSC:</strong> ${data.IFSC}</p>
-                                         <p><strong>State:</strong> ${data.STATE}</p>`;
-        })
-        .catch(error => {
-            // Handle errors, e.g., IFSC code not found
-            resultsContainer.innerHTML = `<p style="color: red;">Error fetching bank details. Please check the IFSC code and try again.</p>`;
-        });
-}
-
-function saveSubscription(event) {
-    event.preventDefault();
-    const monthlysubscription = document.getElementById('monthlySubscription').value;
-    const yearlysubscription = document.getElementById('yearlySubscription').value;
-
-    const subscriptiondata = {
-        monthlysubscription: monthlysubscription,
-        yearlysubscription: yearlysubscription
-    }
-
-    fetch('/homepage/addsubscriptionfees', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(subscriptiondata)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
+                 getUser(data.loggedinuser._id);
+             })
+             .catch(error => {
+                 console.error('There was a problem with the fetch operation:', error);
+             });
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Subscription settings saved successfully:', data);
-        // TODO: Display subscription data on file
-        displaySubscriptionFees();
-    })
-    .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-    });
-}
+         
+         function saveBank(event) {
+             event.preventDefault();
+             const accountHolderName = document.getElementById('accountHolderName').value;
+             const accountNumber = document.getElementById('accountNumber').value;
+             const accountType = document.getElementById('accountType').value;
+             // const ifscCode = document.getElementById('ifscCode').value;
+         
+             const securedBankData = {
+                 accountname: accountHolderName,
+                 accountnumber: accountNumber,
+                 accounttype: accountType,
+                 ifsc: ifsc,
+                 bankname: bankname,
+                 branchname: branchname,
+                 address: address
+             }
+         
+             fetch('/homepage/addbankdetails', {
+                 method: 'POST',
+                 headers: {
+                     'Content-Type': 'application/json'
+                 },
+                 body: JSON.stringify(securedBankData)
+             })
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error('Network response was not ok');
+                 }
+                 return response.json();
+             })
+             .then(data => {
+                 console.log('Bank saved successfully:', data);
+                 getBankOnRecord(); // update page with new bank records
+         
+                 document.getElementById('accountHolderName').value = '';
+                 document.getElementById('accountNumber').value = '';
+                 document.getElementById('accountType').value = '';
+                 document.getElementById('ifscCode').value = '';
+                 resultsContainer.innerHTML = ``;
+         
+             })
+             .catch(error => {
+                 console.error('There was a problem with the fetch operation:', error);
+             });
+         }
+         
+         function getBankOnRecord() {
+             // Send a GET request to the specified URL
+             fetch('/homepage/getbankdetails')
+                 .then(response => response.json())
+                 .then(data => {
+                     if(data.existingBank) {
+                         document.getElementById('existing-bank').innerHTML = `<p><strong>Account Name:</strong> ${data.existingBank.accountname}</p>
+                                                  <p><strong>Bank:</strong> ${data.existingBank.bankname}</p>
+                                                  <p><strong>Account:</strong> ${data.existingBank.accountnumber}</p>
+                                                  <p><strong>Account type:</strong> ${data.existingBank.accounttype}</p>
+                                                  <p><strong>Branch:</strong> ${data.existingBank.branchname}</p>
+                                                  <p><strong>Address:</strong> ${data.existingBank.address}</p>
+                                                  <p><strong>IFSC:</strong> ${data.existingBank.ifsc}</p>`;
+                     } else {
+                         document.getElementById('existing-bank').innerHTML = `<p>No bank record found.</p>`;
+                     }
+                 })
+                 .catch(error => {
+                     console.error('Error fetching bank details:', error);
+                 });
+         }
 
-function displaySubscriptionFees() {
-    const subscriptionfees = document.getElementById('subscription-fees');
-    fetch('/homepage/getsubscriptionfees')
-        .then(response => response.json())
-        .then(data => {
-            console.log(JSON.stringify(data));
-            if(data.fees) {
-                subscriptionfees.innerHTML = `<p><strong>Monthly subscription:</strong> ${data.fees.monthlysubscription}</p>
-                                         <p><strong>Yearly subscription:</strong> ${data.fees.yearlysubscription}</p>`;
+         function showupdateuserform() {
+            var formdiv = document.getElementById('updateuser-form');
+            if (formdiv.style.display === "none" || formdiv.style.display === "") {
+                formdiv.style.display = "block";
             } else {
-                subscriptionfees.innerHTML = `<p>No subscription settings found.</p>`;
+                formdiv.style.display = "none";
             }
-        })
-        .catch(error => {
-            console.error('Error fetching subscription fees details:', error);
-        });
-
-}
-
-function saveBank(event) {
-    event.preventDefault();
-    const accountHolderName = document.getElementById('accountHolderName').value;
-    const accountNumber = document.getElementById('accountNumber').value;
-    const accountType = document.getElementById('accountType').value;
-    // const ifscCode = document.getElementById('ifscCode').value;
-
-    const securedBankData = {
-        accountname: accountHolderName,
-        accountnumber: accountNumber,
-        accounttype: accountType,
-        ifsc: ifsc,
-        bankname: bankname,
-        branchname: branchname,
-        address: address
-    }
-
-    fetch('/homepage/addbankdetails', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(securedBankData)
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Bank saved successfully:', data);
-        getBankOnRecord(); // update page with new bank records
-
-        document.getElementById('accountHolderName').value = '';
-        document.getElementById('accountNumber').value = '';
-        document.getElementById('accountType').value = '';
-        document.getElementById('ifscCode').value = '';
-        resultsContainer.innerHTML = ``;
-
-    })
-    .catch(error => {
-        console.error('There was a problem with the fetch operation:', error);
-    });
-}
-
-function getBankOnRecord() {
-    // Send a GET request to the specified URL
-    fetch('/homepage/getbankdetails')
-        .then(response => response.json())
-        .then(data => {
-            if(data.existingBank) {
-                document.getElementById('existing-bank').innerHTML = `<p><strong>Account Name:</strong> ${data.existingBank.accountname}</p>
-                                         <p><strong>Bank:</strong> ${data.existingBank.bankname}</p>
-                                         <p><strong>Account:</strong> ${data.existingBank.accountnumber}</p>
-                                         <p><strong>Account type:</strong> ${data.existingBank.accounttype}</p>
-                                         <p><strong>Branch:</strong> ${data.existingBank.branchname}</p>
-                                         <p><strong>Address:</strong> ${data.existingBank.address}</p>
-                                         <p><strong>IFSC:</strong> ${data.existingBank.ifsc}</p>`;
-            } else {
-                document.getElementById('existing-bank').innerHTML = `<p>No bank record found.</p>`;
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching bank details:', error);
-        });
-}
-
-
-</script>
-
-</body>
+         }
+         
+         
+      </script>
+   </body>
 </html>

@@ -1,37 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <title>Bootstrap Toast Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <title>Bootstrap Page</title>
 </head>
+
 <body>
 
-<div class="container mt-5">
-    <button id="showToastBtn" class="btn btn-primary">Show Toast</button>
-</div>
+    <!-- Top Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Your Logo</a>
+    </nav>
 
-<script>
-    document.getElementById('showToastBtn').addEventListener('click', function () {
-        var toast = new bootstrap.Toast(document.getElementById('myToast'));
-        toast.show();
-    });
-</script>
+    <!-- Page Content -->
+    <div class="container-fluid mt-3">
+        <div class="row">
 
-<!-- Toast Container -->
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 5">
-    <div id="myToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-            <strong class="me-auto">Bootstrap Toast</strong>
-            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body">
-            This is a Bootstrap Toast example.
+            <!-- Left Section -->
+            <div class="col-md-3">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Articles')">Articles</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('PayoutSettings')">Payout Settings</a>
+                    <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('BankDetails')">Bank Details</a>
+                </div>
+            </div>
+
+            <!-- Right Section -->
+            <div class="col-md-9">
+                <div id="content">
+                    <!-- Content will be loaded here based on the clicked item -->
+                    <h2>Welcome to Your Dashboard</h2>
+                    <p>Select an item on the left to view content.</p>
+                </div>
+            </div>
+
         </div>
     </div>
-</div>
+
+    <!-- Bootstrap JS and Popper.js (required for Bootstrap's JavaScript plugins) -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
+        integrity="sha384-XpL11e5TqUnjOrNjDTEz4FhMqyJqLEqFeSIXMErbyTfaJ/34ETq6qPQ8rjNUIYTZ" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-J6f8Xof1h1l6I1aGj4l9O2AY5+RLnNwl6O9x6wAH2b65HyF4hUnb5OMsjsWQm1jZ" crossorigin="anonymous"></script>
+
+    <script>
+        // Function to load content based on the clicked item
+        function loadContent(item) {
+            // You can customize this function to load content dynamically based on the selected item
+            var contentDiv = document.getElementById('content');
+            contentDiv.innerHTML = '<h2>' + item + ' Content</h2><p>This is the content for ' + item + '.</p>';
+        }
+    </script>
 
 </body>
+
 </html>

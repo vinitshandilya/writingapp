@@ -418,7 +418,7 @@ app.get('/index/profile', isLoggedIn, async (req, res) => {
 // Update user
 app.post('/index/updateuser', isLoggedIn, async (req, res) => {
     console.log(req.body);
-    var userid = req.user._id;
+    var userid = req.session.user._id;
 
     try {
         const user = await User.findById(userid);
@@ -428,15 +428,34 @@ app.post('/index/updateuser', isLoggedIn, async (req, res) => {
             user.bio = req.body.bio;
             await user.save();
             console.log('user updated!');
+            return res.status(200).json({ loggedinuser: user });
         }
     } catch(err) {
-        res.status(500).send('Internal Server Error');
+        return res.status(500).send('Internal Server Error');
     }
 
     console.log(userid);
     res.redirect('/homepage');
 
-})
+});
+
+// Get user details
+app.get('/index/getuser/:id', isLoggedIn, async (req, res) => {
+    const loggedinuserid = req.params.id;
+    try {
+        const loggedinuser = await User.findById(loggedinuserid); 
+        if(loggedinuser) {
+            return res.status(200).json({ loggedinuser: loggedinuser} );
+        } else {
+            return res.status(404).json({ loggedinuser: null });
+        }
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
+    } 
+});
+
 
 // Update following and followers
 app.post('/index/toggleFollowingAndFollowers', isLoggedIn, async(req, res) => {
