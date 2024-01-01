@@ -1,63 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <title>Bootstrap Page</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <title>Vertical Tabs Example</title>
+  <style>
+    /* Custom styles for demonstration purposes */
+    body {
+      padding: 20px;
+    }
+    .vertical-tabs {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .vertical-tabs .nav-link {
+      padding: 10px 15px;
+      border-bottom: 1px solid #ddd;
+      border-radius: 0;
+      text-align: left;
+    }
+    .vertical-tabs .nav-link.active {
+      background-color: #f8f9fa;
+      border-right: 2px solid #007bff;
+    }
+    .vertical-tabs .tab-content {
+      padding: 15px;
+    }
+  </style>
 </head>
-
 <body>
 
-    <!-- Top Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Your Logo</a>
-    </nav>
+<div class="container">
+  <h2>Vertical Tabs Example</h2>
 
-    <!-- Page Content -->
-    <div class="container-fluid mt-3">
-        <div class="row">
-
-            <!-- Left Section -->
-            <div class="col-md-3">
-                <div class="list-group">
-                    <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('Articles')">Articles</a>
-                    <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('PayoutSettings')">Payout Settings</a>
-                    <a href="#" class="list-group-item list-group-item-action" onclick="loadContent('BankDetails')">Bank Details</a>
-                </div>
-            </div>
-
-            <!-- Right Section -->
-            <div class="col-md-9">
-                <div id="content">
-                    <!-- Content will be loaded here based on the clicked item -->
-                    <h2>Welcome to Your Dashboard</h2>
-                    <p>Select an item on the left to view content.</p>
-                </div>
-            </div>
-
-        </div>
+  <div class="row">
+    <div class="col-md-3">
+      <div class="nav flex-column nav-pills vertical-tabs" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">Tab 1</a>
+        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">Tab 2</a>
+        <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">Tab 3</a>
+        <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">Tab 4</a>
+      </div>
     </div>
+    <div class="col-md-9">
+      <div class="tab-content" id="v-pills-tabContent">
+        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
+          <h3>Tab 1 Content</h3>
+          <p>This is the content of Tab 1.</p>
+        </div>
+        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
+          <h3>Tab 2 Content</h3>
+          <p>This is the content of Tab 2.</p>
+        </div>
+        <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
+          <h3>Tab 3 Content</h3>
+          <p>This is the content of Tab 3.</p>
+        </div>
+        <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
+          <h3>Tab 4 Content</h3>
+          <p>This is the content of Tab 4.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-    <!-- Bootstrap JS and Popper.js (required for Bootstrap's JavaScript plugins) -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"
-        integrity="sha384-XpL11e5TqUnjOrNjDTEz4FhMqyJqLEqFeSIXMErbyTfaJ/34ETq6qPQ8rjNUIYTZ" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-        integrity="sha384-J6f8Xof1h1l6I1aGj4l9O2AY5+RLnNwl6O9x6wAH2b65HyF4hUnb5OMsjsWQm1jZ" crossorigin="anonymous"></script>
-
-    <script>
-        // Function to load content based on the clicked item
-        function loadContent(item) {
-            // You can customize this function to load content dynamically based on the selected item
-            var contentDiv = document.getElementById('content');
-            contentDiv.innerHTML = '<h2>' + item + ' Content</h2><p>This is the content for ' + item + '.</p>';
-        }
-    </script>
-
+<!-- Bootstrap JS and Popper.js scripts (optional) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
-
 </html>

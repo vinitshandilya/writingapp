@@ -14,6 +14,7 @@ const userSchema = new mongoose.Schema({
   paidsubscribers: [String],
   monthlysubscription: String,
   yearlysubscription: String,
+  notificationcount: String,
   bookmarks: [{
     blogid: String,
     startidx: Number,

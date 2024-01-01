@@ -19,9 +19,12 @@
       padding-right: 10px;
       border-bottom: 1px solid rgb(208, 203, 203);
       }
+      .left-menu-container {
+        border-right: 1px solid rgb(208, 203, 203);
+      }
       .menu-list-group {
         border: none;
-        padding: none;
+        padding-top: 20px;
       }
       .menu-list-item {
       color: #1c4175;
@@ -29,10 +32,24 @@
       background-color: transparent;
       }
       .right-content-container {
-      padding: 20px;
-      height: 100%;
+      background-color: rgb(245, 246, 249);
+      height: 100vh;
       overflow: auto;
       }
+    
+     .card {
+     border: 1px solid #ddd; /* Optional: Add a border for a card-like appearance */
+     border-radius: 8px; /* Optional: Add rounded corners */
+     box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1); /* Add box shadow with 70% transparency */
+     }
+
+      .articlesContent, 
+      .payoutSettingsContent,
+      .bankDetailsContent,
+      .accountSettingsContent {
+        padding: 20px;
+      }
+
       .list-group-item {
       border: none;
       padding: 10px;
@@ -139,25 +156,117 @@
       border-radius: 15px;
       }
 
+      .profile-btn {
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            background-color: transparent;
+            color: purple;
+            border: none;
+        }
+        .profile-btn:hover, .btn-ptr {
+            background-color: transparent;
+            color: purple;
+            border: none;
+        }
+
+        .profile-btn:focus,
+        .profile-btn:active,
+        .btn-ptr:focus,
+        .btn-ptr:active {
+            border: none;
+            outline: none;
+            box-shadow: none;
+        }
+        .circle {
+            width: 40px; /* Adjust the size of the circle as needed */
+            height: 40px;
+            background-color: purple; /* Set the color of the circle */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white; /* Text color */
+            font-size: 24px; /* Adjust the font size as needed */
+            font-weight: bold; /* Adjust the font weight as needed */
+        }
+        .dropdown-menu {
+            border:1px solid rgb(208, 203, 203);
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .dropdown-item {
+            font-size: small;
+            color: gray;
+
+        }
+
 
    </style>
    <body>
       <% var displayName = loggedinuser.firstname ? loggedinuser.firstname : loggedinuser.username; %>
       <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
-         <a class="navbar-brand" href="/homepage"><i class="fa-solid fa-angle-left"></i></a></a>
-         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-         <span class="navbar-toggler-icon"></span>
-         </button>
-         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-               <li class="nav-item active"><a class="nav-link" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i></a></li>
-               <li class="nav-item active"><a class="nav-link" href="/index/profile"> <%= displayName %></a></li>
-            </ul>
-         </div>
+
+        <a class="navbar-brand mr-auto" href="/homepage" style="margin-left: 10px;">
+            <div class="d-flex align-items-center">
+                <div class="overflow-hidden mr-2" style="font-size: medium; font-weight: bolder; color: purple;">
+                    <i class="fa-solid fa-arrow-left-long"></i>
+                </div>
+                <div class="overflow-hidden" style="font-size: smaller; font-weight: normal; color: purple;">
+                    <small>Go Back</small>
+                </div>
+            </div>
+        </a>
+
+
+        <button type="button ml-auto" class="btn profile-btn">
+            <div class="row no-gutters" style="display: flex; justify-content: center; align-items: center;">
+                
+                <div class="col" style="display: flex; justify-content: center; align-items: center;" onclick="window.location.href='/homepage'">
+                    <!-- profile pic ---------------------------------------------------------------->
+                    <div class="col">
+                        <div class="circle">
+                            <span class="initial" style="line-height: 1;"><%= displayName.charAt(0).toUpperCase() %></span>
+                        </div>
+                    </div>
+
+                    <!-- pri and sec texts ---------------------------------------------------------->
+                    <div class="col">
+                        <div class="row no-gutters" style="white-space: nowrap; overflow: hidden;">
+                            <div class="col" style="font-weight: bold;">
+                                <%= `${loggedinuser.firstname} ${loggedinuser.lastname}` %>
+                            </div>
+                        </div>
+                        <div class="row no-gutters">
+                            <div class="col">
+                                <small class="d-block"><%= `${loggedinuser.email}` %></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- dropdown menu -------------------------------------------------------------->
+                <div class="col">
+                    <div class="dropdown show">
+                        <a class="btn dropdown-toggle btn-ptr" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                          <a class="dropdown-item" href="/homepage">Home</a>
+                          <a class="dropdown-item" href="/homepage/dashboard">Dashboard</a>
+                          <a class="dropdown-item" href="#">Settings</a>
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="/logout">Logout</a>
+                        </div>
+                      </div>
+                </div>
+
+            </div>            
+        </button>
       </nav>
-      <!-- Responsive Layout using Bootstrap Grid -->
+
       <div class="container-fluid">
-      <div class="row">
+        <div class="row no-gutters">
          <!-- Left Column -->
          <div class="col-md-2 left-menu-container">
             <div class="list-group menu-list-group">
@@ -168,9 +277,9 @@
             </div>
          </div>
          <!-- Right Column -->
-         <div class="col-md-9 right-content-container">
+         <div class="col-md-10 right-content-container">
             <!-- Articles Content -->
-            <div id="articlesContent" style="display: none;">
+            <div class="card articlesContent" id="articlesContent" style="display: none;">
                 <% personalblogs.forEach(personalblog => { %>
                     <div class="row big-list-item">
                        <!-- Render blog image  -->
@@ -225,7 +334,7 @@
                     <% }); %>
             </div>
             <!-- Payout Settings Content -->
-            <div id="payoutSettingsContent" style="display: none;">
+            <div class="card payoutSettingsContent" id="payoutSettingsContent" style="display: none;">
                <div class="col-md-12">
                   <h5 class="blog-list-title">Your subscription fees</h5>
                   <div class="existing-bank-container" id="subscription-fees"></div>
@@ -246,7 +355,7 @@
                </div>
             </div>
             <!-- Bank Details Content -->
-            <div id="bankDetailsContent" style="display: none;">
+            <div class="card bankDetailsContent" id="bankDetailsContent" style="display: none;">
                 <h5 class="blog-list-title">Your bank details on record</h5>
                 <div class="existing-bank-container" id="existing-bank"></div>
                 <h5 class="add-new-bank-title">Add / update your bank account details here</h5>
@@ -273,7 +382,7 @@
                 </form>
             </div>
             <!-- Account settings -->
-            <div id="accountSettingsContent" style="display: none;">
+            <div class="card accountSettingsContent" id="accountSettingsContent" style="display: none;">
                 <div class="d-flex align-items-center">
                     <h5 class="blog-list-title mr-3">Profile</h5>
                     <button class="edit-user-form-button" onclick="showupdateuserform()"><h6><i class="fa-solid fa-pencil"></i></h6></button>
