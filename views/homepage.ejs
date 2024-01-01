@@ -216,11 +216,13 @@
             </div>            
         </a>
 
-        <button type="button" class="position-relative badge-button mr-3 mt-2">
+        <button id="badge-container" type="button" class="position-relative badge-button mr-3 mt-2" data-bs-toggle="modal" data-bs-target="#notificationModal">
             <i class="fa-regular fa-bell"></i>
-            <span class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" style="width: 1.25rem; height: 1.25rem;">
-                <span class="d-flex align-items-center justify-content-center" style="line-height: 1; font-size: xx-small; font-weight: bold; color: #fff; height: 100%;">1</span>
-            </span>
+            <span id="red-badge" class="<%= loggedinuser.unreadnotification ? '' : 'visually-hidden' %> position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" style="width: 1.25rem; height: 1.25rem;">
+                <span class="d-flex align-items-center justify-content-center" style="line-height: 1; font-size: xx-small; font-weight: bold; color: #fff; height: 100%;">
+                    <%= loggedinuser.notifications.length %>
+                </span>
+            </span>            
         </button>
         <!-- Note: Use 'visually-hidden' class on the button to hide notification bell -->
         
@@ -402,6 +404,32 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Notifications</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <div class="list-group">
+                <% loggedinuser.notifications.forEach(notification => { %>
+                    <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between">
+                          <h5 class="mb-1"><%= notification.notiftext %></h5>
+                          <small class="text-muted">3 days ago</small>
+                        </div>
+                        <p class="mb-1"><%= notification.notiftext %></p>
+                        <small class="text-muted">Donec id elit non mi porta.</small>
+                      </a>
+                <% }) %>
+            </div>
+            </div>
+        </div>
+        </div>
+    </div>
     
 
 <!-- Bootstrap JS and dependencies (popper.js, jQuery) -->
@@ -412,8 +440,53 @@
 <script>
 
 document.addEventListener("DOMContentLoaded", function () {
-    buildDiscoverPeopleList();  
+    var notificationModal = new bootstrap.Modal(document.getElementById('notificationModal'));
+    notificationModal._element.addEventListener('hidden.bs.modal', clearNotification);
+    buildDiscoverPeopleList();
 });
+
+    function clearNotification() {
+        const loggedinuserid = `<%= loggedinuser._id %>`;
+        const url = `/homepage/clearnotif/${loggedinuserid}`;
+
+        fetch(url)
+             .then(response => {
+                 if (!response.ok) {
+                     throw new Error(`HTTP error! Status: ${response.status}`);
+                 }
+                 return response.json();
+             })
+             .then(data => {
+                var redbadge = document.getElementById('red-badge');
+                var badgecontainer = document.getElementById('badge-container');
+                if(data.cleared) {
+                    console.log('notification cleared');
+                    badgecontainer.innerHTML = `
+                    <i class="fa-regular fa-bell"></i>
+                    <span id="red-badge" class="visually-hidden position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" style="width: 1.25rem; height: 1.25rem;">
+                        <span class="d-flex align-items-center justify-content-center" style="line-height: 1; font-size: xx-small; font-weight: bold; color: #fff; height: 100%;">
+                            <%= loggedinuser.notifications.length %>
+                        </span>
+                    </span>
+                    `;
+
+                } else {
+                    badgecontainer.innerHTML = `
+                    <i class="fa-regular fa-bell"></i>
+                    <span id="red-badge" class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" style="width: 1.25rem; height: 1.25rem;">
+                        <span class="d-flex align-items-center justify-content-center" style="line-height: 1; font-size: xx-small; font-weight: bold; color: #fff; height: 100%;">
+                            ${loggedinuser.notifications.length}
+                        </span>
+                    </span>
+                    `;
+                }    
+             })
+             .catch(error => {
+                 console.error('Error clearing notification:', error);
+             });
+        
+        
+    }
 
     function handleDropdownItemClick(event, clickedoption, personalblogs) {
             event.preventDefault();

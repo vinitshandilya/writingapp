@@ -483,6 +483,10 @@ app.post('/index/toggleFollowingAndFollowers', isLoggedIn, async(req, res) => {
         await loggedInUser.save();
         if (!communityUser.followers.includes(req.body.loggedInUserId)) {
           communityUser.followers.push(req.body.loggedInUserId);
+
+          addNotification(loggedInUser, communityUser, `${loggedInUser.firstname} started following you.`);
+          communityUser.unreadnotification = true;
+
           await communityUser.save();
         }
         return res.status(200).json({ message: 'followed' });
@@ -492,6 +496,39 @@ app.post('/index/toggleFollowingAndFollowers', isLoggedIn, async(req, res) => {
             return res.status(500).json({ message: 'Internal server error' });
       }    
 });
+
+// update notification data in user profile
+function addNotification(sender, receiver, message) {
+    const notifobject = {
+        senderuserid: sender._id,
+        receiveruserid: receiver._id,
+        notiftext: message
+    }
+    console.log(notifobject);
+    if(notifobject) {
+        receiver.notifications.push(notifobject);
+    }
+}
+
+// get route to clear notification
+app.get('/homepage/clearnotif/:id', isLoggedIn, async (req, res) => {
+    const loggedinuserid = req.params.id;
+    try {
+        const loggedInUser = await User.findById(loggedinuserid);
+        if(!loggedInUser) {
+            return res.status(400).json({ message: 'User not found' });
+        } else {
+            console.log(`notification will be cleared for ${loggedinuserid}`)
+            loggedInUser.unreadnotification = false;
+            await loggedInUser.save();
+            return res.status(200).json({ cleared: true });
+        }
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+})
 
 // Add paid subscribers
 app.post('/index/addsubscription', isLoggedIn, async (req, res) => {
@@ -794,6 +831,18 @@ app.get('/homepage/getbankdetails', isLoggedIn, async (req, res) => {
         return res.status(500).json({ message: 'Error saving bank details' });
     }
 })
+
+// send notification route
+// app.post('/homepage/sendnotification', isLoggedIn, async (req, res) => {
+//     const senderuserid = req.session.user._id;
+//     const receiveruserid = req.body.notification.receiveruserid;
+//     const notiftext = req.body.notification.notiftext;
+
+//     notification = {senderuserid, receiveruserid, notiftext};
+
+//     return res.status(200).json(notification);
+
+// });
 
 
 

@@ -14,12 +14,17 @@ const userSchema = new mongoose.Schema({
   paidsubscribers: [String],
   monthlysubscription: String,
   yearlysubscription: String,
-  notificationcount: String,
   bookmarks: [{
     blogid: String,
     startidx: Number,
     endidx: Number,
   }],
+  notifications: [{
+    senderuserid: String,
+    receiveruserid: String,
+    notiftext: String,
+  }],
+  unreadnotification: Boolean,
 });
 
 userSchema.methods.authenticate = function(password) {
