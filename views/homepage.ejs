@@ -213,7 +213,7 @@
                 <div class="overflow-hidden" style="font-size: smaller; font-weight: normal; color: purple;">
                     <small>Subtitle</small>
                 </div>
-            </div>            
+            </div>
         </a>
 
         <button id="badge-container" type="button" class="position-relative badge-button mr-3 mt-2" data-bs-toggle="modal" data-bs-target="#notificationModal">
@@ -439,14 +439,58 @@
 
 <script>
 
+const loggedinuserid = `<%= loggedinuser._id %>`;
+var badgecontainer = document.getElementById('badge-container');
+
 document.addEventListener("DOMContentLoaded", function () {
     var notificationModal = new bootstrap.Modal(document.getElementById('notificationModal'));
     notificationModal._element.addEventListener('hidden.bs.modal', clearNotification);
     buildDiscoverPeopleList();
+    manageNotificationDisplay();
 });
 
-    function clearNotification() {
-        const loggedinuserid = `<%= loggedinuser._id %>`;
+function manageNotificationDisplay() {
+    const url = '/homepage/getnotificationcount';
+
+    fetch(url)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log(`fetched notification count: ${data.count}`);
+            if(data && data.count > 0) {
+                
+                // display notif
+                badgecontainer.innerHTML = `
+                    <i class="fa-regular fa-bell"></i>
+                    <span id="red-badge" class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" style="width: 1.25rem; height: 1.25rem;">
+                        <span class="d-flex align-items-center justify-content-center" style="line-height: 1; font-size: xx-small; font-weight: bold; color: #fff; height: 100%;">
+                            ${data.count}
+                        </span>
+                    </span>
+                `;
+
+            } else {
+                badgecontainer.innerHTML = `
+                    <i class="fa-regular fa-bell"></i>
+                    <span id="red-badge" class="visually-hidden position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" style="width: 1.25rem; height: 1.25rem;">
+                        <span class="d-flex align-items-center justify-content-center" style="line-height: 1; font-size: xx-small; font-weight: bold; color: #fff; height: 100%;">
+                            <%= loggedinuser.notifications.length %>
+                        </span>
+                    </span>
+                `;
+            }
+            
+        })
+        .catch(error => {
+            console.error('Error displaying notification:', error);
+    });
+}
+
+    function clearNotification() { 
         const url = `/homepage/clearnotif/${loggedinuserid}`;
 
         fetch(url)
@@ -457,10 +501,9 @@ document.addEventListener("DOMContentLoaded", function () {
                  return response.json();
              })
              .then(data => {
-                var redbadge = document.getElementById('red-badge');
-                var badgecontainer = document.getElementById('badge-container');
+                console.log('cleared notification');
+                console.log(data);
                 if(data.cleared) {
-                    console.log('notification cleared');
                     badgecontainer.innerHTML = `
                     <i class="fa-regular fa-bell"></i>
                     <span id="red-badge" class="visually-hidden position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" style="width: 1.25rem; height: 1.25rem;">
@@ -468,24 +511,12 @@ document.addEventListener("DOMContentLoaded", function () {
                             <%= loggedinuser.notifications.length %>
                         </span>
                     </span>
-                    `;
-
-                } else {
-                    badgecontainer.innerHTML = `
-                    <i class="fa-regular fa-bell"></i>
-                    <span id="red-badge" class="position-absolute top-0 start-100 translate-middle p-2 bg-danger border border-light rounded-circle" style="width: 1.25rem; height: 1.25rem;">
-                        <span class="d-flex align-items-center justify-content-center" style="line-height: 1; font-size: xx-small; font-weight: bold; color: #fff; height: 100%;">
-                            ${loggedinuser.notifications.length}
-                        </span>
-                    </span>
-                    `;
-                }    
+                `;
+                } 
              })
              .catch(error => {
                  console.error('Error clearing notification:', error);
-             });
-        
-        
+        });
     }
 
     function handleDropdownItemClick(event, clickedoption, personalblogs) {

@@ -530,6 +530,31 @@ app.get('/homepage/clearnotif/:id', isLoggedIn, async (req, res) => {
     }
 })
 
+// fetch unread notifications for a user
+app.get('/homepage/getnotificationcount', isLoggedIn, async (req, res) => {
+    const loggedinuser = req.session.user;
+    console.log(`get notification for ${loggedinuser.firstname}`);
+    console.log(loggedinuser);
+    try {
+        const user = await User.findById(loggedinuser._id);
+        if(!user) {
+            return res.status(400).json({ message: 'User not found' }); 
+        } else {
+            if(user.unreadnotification) {
+                return res.status(200).json({ count: user.notifications.length });
+            } else {
+                return res.status(200).json({ count: 0 });
+            }
+        }
+        
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+    
+
+});
+
 // Add paid subscribers
 app.post('/index/addsubscription', isLoggedIn, async (req, res) => {
     const loggedinuserid = req.body.subscriptioninfo.loggedinuserid;
