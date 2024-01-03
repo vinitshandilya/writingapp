@@ -86,6 +86,15 @@
          padding: 10 20px;
          margin-right: 5px;
          }
+         .ql-container {
+         border: none !important;
+         }
+         .ql-editor {
+            font-size: medium;
+            font-family: 'Hedvig Letters Serif', serif;
+            padding: 0;
+            line-height: 2.0;
+         }
          .ql-footnote {
          color: #999;
          }
@@ -123,10 +132,6 @@
          font-size: 15px;
          font-family: 'Times New Roman', Times, serif;
          color: #585858;
-         }
-         .canvas {
-         /* font-family: 'Hedvig Letters Serif', serif; */
-         line-height: 2.0;
          }
          
          .blog-title {
@@ -187,6 +192,9 @@
          }
          .navbar-toggler {
          border: none;
+         }
+         .image-container {
+         padding: 10px;
          }
       </style>
    </head>
@@ -263,7 +271,7 @@
                <div class="col-md-6 mx-auto">
                   <div id="blogheader" class="container-fluid ribbon-area"></div>
                   <div class="monetization-banner" id="monetization-banner-id">You have monetized this article. Visit <a href="/homepage/dashboard">Author's Dashboard</a> to customize payout settings.</div>
-                  <div id="preview" class="container-fluid canvas"></div>
+                  <div id="preview" class="container-fluid"></div>
                   <br>
                   <div class="tags-container" id="tags-container">
                      <div id="tags" class="container-fluid"><i class="fa-solid fa-tags"></i></div>
@@ -290,6 +298,22 @@
          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
          <!-- Core theme JS-->
          <script>
+
+            // Initialize Quill for the preview without a toolbar (readOnly)
+            var quillpreview = new Quill('#preview', {
+                readOnly: true,
+                theme: 'snow'
+            });
+
+            var previewContainer = document.querySelector('#preview');
+            var previewToolbar = previewContainer.previousElementSibling;
+
+            if (previewToolbar && previewToolbar.classList.contains('ql-toolbar')) {
+                previewToolbar.parentNode.removeChild(previewToolbar);
+            }
+
+
+
             var blogheader = document.getElementById('blogheader');
             var previewDiv = document.getElementById('preview');
             var translucentMask = document.getElementById('translucentMask');
@@ -369,9 +393,10 @@
                         <p id="premium-label" style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-solid fa-crown"></i></i> PREMIUM</p>
                     </div> `;
             
-                previewDiv.innerHTML = `
-                    <div><p>${markedUpDom}</p></div>
-                `;
+                // previewDiv.innerHTML = `
+                //     <div><p>${markedUpDom}</p></div>
+                // `;
+                quillpreview.clipboard.dangerouslyPasteHTML(markedUpDom);
             
                 // Parse footnotes markup and add to page
                 var footnotes = listFootnotes(markedUpDom);
@@ -441,17 +466,32 @@
             function recomputeRender(domstr) {
                 var counter = 1;
                 var regex = /\[\^(.*?)\]/g; // Capture the text inside `[^]` using capturing group
-                previewContent = domstr.replace(regex, function(match, customFootnote) {
+                var previewContent = domstr.replace(regex, function(match, customFootnote) {
                     return `
-                        <span class="ql-footnote" fntitle="${customFootnote}">
-                            <sub>
-                                <a href="your-link-url">[${(counter++)}]</a>
-                            </sub>
-                        </span>
-                        `;
+                    <span class="ql-footnote" fntitle="${customFootnote}">
+                        <sub>
+                            <a href="#">[${(counter++)}]</a>
+                        </sub>
+                    </span>
+                    `;
                 });
-            
-                return previewContent;
+                return replaceImgWithDivs(previewContent);
+            }
+
+            function replaceImgWithDivs(htmlString) {
+            var imgRegex = /<img([^>]*)>/g;
+
+            var modifiedHtml = htmlString.replace(imgRegex, function(match, imgAttributes) {
+                    return '<div class="row justify-content-center">' +
+                            '<div class="col-md-11 mx-auto">' +
+                                '<div class="image-container text-center">' +
+                                    '<img class="img-fluid" style="max-height: 100%;"' + imgAttributes + '>' +
+                                '</div>' +
+                            '</div>' +
+                        '</div>';
+                });
+
+                return modifiedHtml;
             }
             
             

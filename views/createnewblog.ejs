@@ -36,13 +36,28 @@
         padding: 15px;
     }
 
-    .editor {
-        height: 520px;
-        max-height: 100%;
+    .ql-editor {
         border: none !important;
         box-shadow: none !important;
         outline: none !important;
-        font-size: large;
+        max-height: none;
+        height: auto !important; 
+        overflow-y: hidden;
+            font-size: medium;
+            font-family: 'Hedvig Letters Serif', serif;
+            padding: 0;
+         }
+
+    .ql-container {
+        border: none !important;
+        box-shadow: none !important;
+        outline: none !important;
+        max-height: none;
+        height: auto !important; 
+        overflow-y: hidden;
+            font-size: medium;
+            font-family: 'Hedvig Letters Serif', serif;
+            padding: 0;
     }
 
     .ql-toolbar {
@@ -198,10 +213,8 @@
         display: none;
     }
 
-    img {
-    max-width: 100%; /* Resize proportionally to fit the screen, up to 100% of its container's width */
-    height: auto;   /* Maintain aspect ratio */
-    object-fit: contain;
+    .image-container {
+      padding: 10px;
     }
 
   </style>
@@ -212,14 +225,8 @@
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Left Section -->
-            <div class="col-md-2 left-section">
-                
-    
-            </div>
-    
-            <!-- Mid Section -->
-            <div class="col-md-8 mid-line">
+
+            <div class="col-md-8 mx-auto">
 
                 <% if (blog !== 'undefined' && blog !== null) { %>
                     <div class="mb-3">
@@ -236,13 +243,13 @@
                         <textarea class="form-control custom-textarea-tags" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"><%= blog.tags && blog.tags.length > 0 ? blog.tags.join(', ') : '' %></textarea>
                     </div>
         
-                    <button class="btn btn-primary" id="previewButton" onclick="previewFootnotes()">Preview</button>
+                    <button class="btn btn-primary" id="previewButton" onclick="loadPreview()">Preview</button>
         
                     <button type="button" class="btn btn-success" onclick="saveBlog(true, '<%= blog.id %>')">Publish Changes</button>
         
                     <button type="button" class="btn btn-secondary" onclick="cancel('<%= blog.id %>')">Cancel</button>
-        
-                    <div id="preview"></div>
+
+                    <div class="preview" id="preview"></div>
 
                     <div id="popup" class="hidden">
                         <input class="popup-input" type="text" id="userInput" name="user_input" placeholder="Enter footnote...">
@@ -265,13 +272,13 @@
                         <textarea class="form-control custom-textarea-tags" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"></textarea>
                     </div>
         
-                    <button class="btn btn-primary" id="previewButton" onclick="previewFootnotes()">Preview</button>
+                    <button class="btn btn-primary" id="previewButton" onclick="loadPreview()">Preview</button>
         
                     <button type="button" class="btn btn-success" onclick="saveBlog(false, '')">Publish</button>
         
                     <button type="button" class="btn btn-secondary" onclick="cancel('')">Cancel</button>
 
-                    <div id="preview"></div>
+                    <div class="preview" id="preview"></div>
 
                     <div id="popup" class="hidden">
                         <input class="popup-input" type="text" id="userInput" name="user_input" placeholder="Enter footnote...">
@@ -280,26 +287,28 @@
 
 
                 <% } %>
-    
-                
-    
-    
-            </div>
-    
-            <!-- Right Section-->
-            <div class="col-md-2 right-section">
-                
-            </div>
-
-
         </div>
     </div>
 
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
 
-
   <script>
+
+    // Initialize Quill for the preview without a toolbar (readOnly)
+    var quillpreview = new Quill('#preview', {
+        readOnly: true,
+        theme: 'snow'
+    });
+
+    var previewContainer = document.querySelector('#preview');
+    var previewToolbar = previewContainer.previousElementSibling;
+
+    if (previewToolbar && previewToolbar.classList.contains('ql-toolbar')) {
+        previewToolbar.parentNode.removeChild(previewToolbar);
+    }
+
+
 
     const customButton = document.createElement('button');
     customButton.className = 'ql-custom-button';
@@ -351,17 +360,11 @@
 
 quill.on('editor-change', function(eventName, ...args) {
     if (eventName === 'text-change') {
-        // Check if images are present and add the custom class
         quill.root.querySelectorAll('img').forEach(function(image) {
-            console.log('image pasted!');
-            console.log(image.getAttribute('src'));
-
-            // This is valid only if the user pastes an image. But what if user pastes a url? It should be passed as it is.
             if (image.src.startsWith('data:')) { // a base64 image data, then upload to server and get a url
                 // Handle the image asynchronously
                 handleImageUpload(image);
             }
-
         });
     }
 });
@@ -443,10 +446,9 @@ function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
 
         });
 
-    function previewFootnotes() {
-        var previewDiv = document.getElementById('preview');
+    function loadPreview() {
         var editorContent = quill.root.innerHTML;
-        previewDiv.innerHTML = recomputeRender(editorContent);
+        quillpreview.clipboard.dangerouslyPasteHTML(recomputeRender(editorContent));
     }
 
     function recomputeRender(domstr) {
@@ -461,7 +463,23 @@ function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
             </span>
             `;
         });
-        return previewContent;
+        return replaceImgWithDivs(previewContent);
+    }
+
+    function replaceImgWithDivs(htmlString) {
+    var imgRegex = /<img([^>]*)>/g;
+
+    var modifiedHtml = htmlString.replace(imgRegex, function(match, imgAttributes) {
+            return '<div class="row justify-content-center">' +
+                    '<div class="col-md-11 mx-auto">' +
+                        '<div class="image-container text-center">' +
+                            '<img class="img-fluid" style="max-height: 100%;"' + imgAttributes + '>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+        });
+
+        return modifiedHtml;
     }
 
     quill.on('editor-change', function(eventName, ...args) {

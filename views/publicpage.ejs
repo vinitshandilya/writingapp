@@ -183,11 +183,9 @@
             text-align: center;
         }
 
-        img {
-         max-width: 100%; /* Resize proportionally to fit the screen, up to 100% of its container's width */
-         height: auto;   /* Maintain aspect ratio */
-         object-fit: contain;
-        }
+        .image-container {
+         padding: 10px;
+         }
 
     </style>
 </head>
@@ -350,17 +348,32 @@
         function recomputeRender(domstr) {
             var counter = 1;
             var regex = /\[\^(.*?)\]/g; // Capture the text inside `[^]` using capturing group
-            previewContent = domstr.replace(regex, function(match, customFootnote) {
+            var previewContent = domstr.replace(regex, function(match, customFootnote) {
                 return `
-                    <span class="ql-footnote" fntitle="${customFootnote}">
-                        <sub>
-                            <a href="your-link-url">[${(counter++)}]</a>
-                        </sub>
-                    </span>
-                    `;
+                <span class="ql-footnote" fntitle="${customFootnote}">
+                    <sub>
+                        <a href="#">[${(counter++)}]</a>
+                    </sub>
+                </span>
+                `;
+            });
+            return replaceImgWithDivs(previewContent);
+        }
+
+        function replaceImgWithDivs(htmlString) {
+        var imgRegex = /<img([^>]*)>/g;
+
+        var modifiedHtml = htmlString.replace(imgRegex, function(match, imgAttributes) {
+                return '<div class="row justify-content-center">' +
+                        '<div class="col-md-11 mx-auto">' +
+                            '<div class="image-container text-center">' +
+                                '<img class="img-fluid" style="max-height: 100%;"' + imgAttributes + '>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>';
             });
 
-            return previewContent;
+            return modifiedHtml;
         }
 
 
