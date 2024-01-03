@@ -198,12 +198,11 @@
         display: none;
     }
 
-    .custom-resizable-image {
-        width: 700px;
+    img {
+        width: 400px;
         height: auto;
         object-fit: contain;
     }
-
 
   </style>
 
@@ -355,10 +354,56 @@ quill.on('editor-change', function(eventName, ...args) {
         // Check if images are present and add the custom class
         quill.root.querySelectorAll('img').forEach(function(image) {
             console.log('image pasted!');
-            image.classList.add('custom-resizable-image');
+            console.log(image.getAttribute('src'));
+
+            // This is valid only if the user pastes an image. But what if user pastes a url? It should be passed as it is.
+            if (image.src.startsWith('data:')) { // a base64 image data, then upload to server and get a url
+                // Handle the image asynchronously
+                handleImageUpload(image);
+            }
+
         });
     }
 });
+
+function handleImageUpload(image) {
+    const base64Data = image.getAttribute('src').split(',')[1];
+    const blob = b64toBlob(base64Data, 'image/png');
+    const formData = new FormData();
+    formData.append('image', blob, 'image.png'); // 'image' is the field name
+
+    // upload the image asynchronously
+    fetch('/upload-image', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Replace base64 image source with the server response URL
+        image.src = data.imageUrl;
+        console.log(`image url: ${data.imageUrl}`);
+    })
+    .catch(error => console.error('Error uploading image:', error));
+}
+
+function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
+    const byteCharacters = atob(b64Data);
+    const byteArrays = [];
+
+    for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+            byteNumbers[i] = slice.charCodeAt(i);
+        }
+
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+    }
+
+    return new Blob(byteArrays, { type: contentType });
+}
 
 
     const popup = document.getElementById('popup');
@@ -411,7 +456,7 @@ quill.on('editor-change', function(eventName, ...args) {
             return `
             <span class="ql-footnote" fntitle="${customFootnote}">
                 <sub>
-                    <a href="your-link-url">[${(counter++)}]</a>
+                    <a href="#">[${(counter++)}]</a>
                 </sub>
             </span>
             `;

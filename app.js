@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const multer = require('multer');
 const mongoose = require('mongoose');
 const Blog = require('./blogModel');
 const Bank = require('./bankModel');
@@ -14,6 +15,21 @@ const app = express();
 const port = 3000;
 const db_uri = 'mongodb+srv://vinitshandilya:CQozNpwwVhUOXSdT@cluster0.mgznywr.mongodb.net/?retryWrites=true&w=majority';
 mongoose.connect(db_uri);
+
+// Multer configuration for handling image uploads
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, 'uploads/')  // Specify the directory where uploaded images will be stored
+    },
+    filename: function (req, file, cb) {
+      const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+      cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname))
+    }
+  });
+
+  const upload = multer({ storage: storage });
+  app.use('/uploads', express.static('uploads'));
+
 
 // Serve static files from the public folder
 app.use(express.static('public', { 'extensions': ['html', 'css', 'js', 'png'] }));
@@ -857,20 +873,30 @@ app.get('/homepage/getbankdetails', isLoggedIn, async (req, res) => {
     }
 })
 
-// send notification route
-// app.post('/homepage/sendnotification', isLoggedIn, async (req, res) => {
-//     const senderuserid = req.session.user._id;
-//     const receiveruserid = req.body.notification.receiveruserid;
-//     const notiftext = req.body.notification.notiftext;
-
-//     notification = {senderuserid, receiveruserid, notiftext};
-
-//     return res.status(200).json(notification);
-
-// });
+// Handle the '/upload-image' route
+app.post('/upload-image', isLoggedIn, upload.single('image'), (req, res) => {
+    // 'image' is the field name specified when appending the file to FormData
+    console.log(`req.get(host): ${req.get('host')}`);
+    
+    //TODO: When accessed from mobile, using laptop url: http://192.168.31.4:3000
+    // the images uploaded from laptop can't be accessed because the image url is
+    // generated as http://localhost:3000/<image_id>.png
+    // 
+  
+    // Check if a file was provided
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file provided' });
+    }
+  
+    // Construct the URL for the uploaded image
+    const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+  
+    // Send the image URL as the response
+    res.json({ imageUrl });
+  });
 
 
 
 app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Server is running on port: ${port}`);
 });

@@ -183,12 +183,6 @@
             text-align: center;
         }
 
-        .custom-resizable-image {
-        width: 700px;
-        height: auto;
-        object-fit: contain;
-    }
-
     </style>
 </head>
 <body>
@@ -326,7 +320,7 @@
             var tags = blogDetails.blog.tags;
             var tagsDiv = document.getElementById('tags');
 
-            if (tags.length > 0) {
+            if (tags.length > 0 && tagsDiv) {
                 tagsDiv.style.display = "block";
                 var tagsContainer = document.createElement('div');
                 tagsContainer.classList.add('tags-container');

@@ -174,11 +174,16 @@
          .center-content {
          text-align: center;
          }
-         .custom-resizable-image {
-         width: 700px;
-         height: auto;
+         img {
+         max-width: 100%; /* Resize proportionally to fit the screen, up to 100% of its container's width */
+         height: auto;   /* Maintain aspect ratio */
          object-fit: contain;
-         }
+        }
+        @media (max-width: 768px) {  /* Example for screens up to 768px wide */
+        img {
+            max-width: 50%;  /* Adjust for smaller screens as needed */
+        }
+        }
          .navbar-toggler:focus,
          .navbar-toggler:active,
          .navbar-toggler-icon:focus {
@@ -289,7 +294,6 @@
          <!-- Bootstrap core JS-->
          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
          <!-- Core theme JS-->
-         <script src="script.js"></script>
          <script>
             var blogheader = document.getElementById('blogheader');
             var previewDiv = document.getElementById('preview');

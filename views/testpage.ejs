@@ -1,54 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-  <title>Centered Navbar Links</title>
+  <meta charset="utf-8">
 </head>
 <body>
+  <div class="element"></div>
+  <script type="module">
+    import { Editor } from 'https://esm.sh/@tiptap/core'
+    import StarterKit from 'https://esm.sh/@tiptap/starter-kit'
+    
+    const editor = new Editor({
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-  
-  <a class="navbar-brand mr-auto" href="/homepage" style="margin-left: 10px;">
-    <div class="d-flex align-items-center">
-        <div class="overflow-hidden mr-2" style="font-size: medium; font-weight: bolder; color: #1c4175;">
-            <i class="fa-solid fa-arrow-left-long"></i>
-        </div>
-        <div class="overflow-hidden" style="font-size: smaller; font-weight: normal; color: #1c4175;">
-            <small>Back</small>
-        </div>
-    </div>
-  </a>
 
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+    element: document.querySelector('.element'),
 
-  <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" href="#">Home</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">About</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Services</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Contact</a>
-      </li>
-    </ul>
-  </div>
+    extensions: StarterKit.configure({
+      heading: {
+        levels: [1, 2, 3],
+      },
+    }),
+    
+    content: '<p>Example Text</p>',
+    autofocus: true,
+    editable: true,
+    injectCSS: false,
 
-  <div class="ml-auto">
-    <button class="btn btn-outline-success" type="button">Button</button>
-  </div>
-</nav>
 
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+   })
+  </script>
 </body>
 </html>
