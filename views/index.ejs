@@ -370,6 +370,7 @@
             function updateBlogDetails(blogDetails) {
             
                 var editorContent = blogDetails.blog.body;
+                console.log(`html string from server: ${editorContent}`);
                 const dateObj = new Date(blogDetails.blog.timestamp);
                 var timeToread = calculateReadingTime(blogDetails.blog.body, 230);
                 const formatString = { month: 'short', day: 'numeric', year: 'numeric' };

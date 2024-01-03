@@ -175,15 +175,12 @@
         color: #999;
     }
 
-    .ql-footnote {
-        color: #999;
-    }
-
     #preview {
         margin-top: 20px;
     }
 
     .ql-footnote {
+        color: #999;
         position: relative;
         cursor: help;
     }
@@ -294,6 +291,8 @@
 
 
   <script>
+
+    var htmldata;
 
     // Initialize Quill for the preview without a toolbar (readOnly)
     var quillpreview = new Quill('#preview', {
@@ -439,9 +438,9 @@ function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
                 size: 15, // set font size
             }
             );
-            var previewDiv = document.getElementById('preview');
+            // var previewDiv = document.getElementById('preview');
             var editorContent = quill.root.innerHTML;
-            previewDiv.innerHTML = recomputeRender(editorContent);
+            quillpreview.clipboard.dangerouslyPasteHTML(recomputeRender(editorContent));
           }
 
         });
@@ -463,6 +462,7 @@ function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
             </span>
             `;
         });
+        console.log(`recompute render output: ${previewContent}`);
         return replaceImgWithDivs(previewContent);
     }
 
@@ -478,6 +478,9 @@ function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
                     '</div>' +
                 '</div>';
         });
+
+        console.log(`After image manipulation: ${modifiedHtml}`);
+        htmldata = modifiedHtml;
 
         return modifiedHtml;
     }
@@ -505,7 +508,7 @@ function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
         const title = document.getElementById('title').value;
         const subtitle = document.getElementById('subtitle').value;
         const tags = document.getElementById('tags').value;
-        const body = quill.root.innerHTML;
+        var body = htmldata ? htmldata : recomputeRender(quill.root.innerHTML);
 
         const jsonData = {
                 title: title,
