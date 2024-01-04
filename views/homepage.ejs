@@ -197,6 +197,22 @@
             font-weight: lighter;
         }
 
+        .start-new-button {
+            border: 1px solid #000;
+            border-radius: 3px;
+            background-color: black;
+            color: white;
+
+        }
+        .start-new-button:focus,
+        .start-new-button:active {
+            border: 1px solid black;
+            background-color: white;
+            outline: none;
+            box-shadow: none;
+            color: black;
+        }
+
     
 </style>
 
@@ -215,6 +231,12 @@
                 </div>
             </div>
         </a>
+
+        <div class="col-auto">
+            <a href="/index/createnew" class="start-new-button btn btn-sm ml-auto">
+                Create New
+            </a>
+        </div>        
 
         <button id="badge-container" type="button" class="position-relative badge-button mr-3 mt-2" data-bs-toggle="modal" data-bs-target="#notificationModal">
             <i class="fa-regular fa-bell"></i>
@@ -566,7 +588,7 @@ function manageNotificationDisplay() {
                             </div>
                         </div>
 
-                        <div class="col-auto"> <!-- Use col-auto to allow the button to take its natural width -->
+                        <div class="col-auto">
                             <button class="btn btn-sm ${buttonClass} ml-auto" onclick="toggleFollowingFollowers(this, '${communityuser._id}', '${data.loggedinuser._id}')">
                                 ${buttonText}
                             </button>

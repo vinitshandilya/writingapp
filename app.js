@@ -1,5 +1,6 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const multer = require('multer');
 const mongoose = require('mongoose');
 const Blog = require('./blogModel');
@@ -10,6 +11,7 @@ const passport = require('passport');
 const flash = require('connect-flash');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./user');
+const cheerio = require('cheerio');
 
 const app = express();
 const port = 3000;
@@ -128,8 +130,6 @@ app.post('/login', passport.authenticate('local', {
 }));
 
 app.get('/set-username-and-redirect', (req, res) => {
-    // Set the username in the session
-    // console.log(req.user);
     req.session.user = req.user;
     req.session.username = req.user.username;
     res.redirect('/homepage');
@@ -185,33 +185,12 @@ app.get('/homepage/getDiscoverPeople', isLoggedIn, async (req, res) => {
 app.get('/homepage/getSuggestedPeople', async (req, res) => {
     try {
         const suggestedpeople = await User.find( {  }); // from community users, remove the loggedin user
-        console.log(suggestedpeople);
         return res.status(200).json({ suggestedpeople: suggestedpeople });
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
 
 });
-
-// Route to receive sort request
-// app.post('/homepage/sort', isLoggedIn, async (req,res) => {
-//     console.log(req.body);
-
-//     const loggedinuser = req.session.user;
-//     try {
-//         const personalblogs = await Blog.find({
-//             $or: [
-//               { userid: loggedinuser._id }, // Blogs by the logged-in user
-//               { userid: { $in: loggedinuser.following } } // Blogs by users in following list
-//             ]
-//           })
-//           .sort({ title: -1 });
-//         res.status(200).json( { personalblogs });
-//     } catch (error) {
-//         res.status(500).json({ error: error.message });
-//     }
-
-// });
 
 // Render blog details page
 app.get('/index', isLoggedIn, async (req, res) => {
@@ -317,7 +296,6 @@ app.get('/index/blogs/:id/updatepaywall', isLoggedIn, async (req, res) => {
         if (blog.userid.toString() !== req.session.user._id.toString()) {
             return res.status(401).json({ error: 'unauthorized' });
         }
-        console.log(`updating paywall status for blogid: ${blog.userid}`);
         blog.paywall = !blog.paywall;
         await blog.save();
         return res.status(200).json({ paywallstatus: blog.paywall });
@@ -344,12 +322,10 @@ app.get('/index/blogs/blog/:id/paywallstatus', async (req, res) => {
 
 });
 
-// Edit Blog Route
+// Render Edit Blog Page
 app.get('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
     try {
         const blog = await Blog.findById(req.params.id);
-        console.log(`loggedin userid:       ${req.session.user._id}`);
-        console.log(`blog author userid:    ${blog.userid}`);
         if (!blog) {
             return res.status(404).send('Blog not found');
         }
@@ -357,8 +333,7 @@ app.get('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
         if(blog.userid.toString() !== req.session.user._id.toString()) {
             return res.status(401).json({ error: 'unauthorized' });
         }
-        
-        //console.log(blog);
+
         res.status(200).render('createnewblog', { blog: blog });
 
     } catch (error) {
@@ -374,9 +349,11 @@ app.post('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
         day: 'numeric',
         year: 'numeric',
         };
+    const newhtmlstring = req.body.body;
+    var oldhtmlstring = ''
     const formattedDate = today.toLocaleDateString('en-US', options);
     try {
-        const updatedBlog = await Blog.findByIdAndUpdate(req.params.id, {
+        const blog = await Blog.findByIdAndUpdate(req.params.id, {
             title: req.body.title,
             subtitle: req.body.subtitle,
             body: req.body.body,
@@ -385,9 +362,14 @@ app.post('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
             formatteddate: formattedDate.toUpperCase(),
             timetoread: calculateReadingTime(req.body.body, 250) + ' MIN READ',
             tags: getTagsListFromString(req.body.tags)
-        }, { new: true });
+        }, { new: false }); // save user edits and return old blog
 
-        res.status(200).json({ savedblogid: updatedBlog._id });
+        oldhtmlstring = blog.body;
+        var images_to_delete = findRemovedImageUrls(oldhtmlstring, newhtmlstring);
+        deleteImages(images_to_delete);
+
+
+        res.status(200).json({ savedblogid: blog._id });
 
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -396,6 +378,8 @@ app.post('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
 
 // Delete Blog Route
 app.get('/index/blogs/:id/delete', isLoggedIn, async (req, res) => {
+    // TODO: Delete unused images here as well as in edit blog route because,
+    // users can delete an entire blog, or remove an image from a blog
     try {
         const deletedBlog = await Blog.findById(req.params.id);
         if (!deletedBlog) {
@@ -411,6 +395,8 @@ app.get('/index/blogs/:id/delete', isLoggedIn, async (req, res) => {
         if (!result) {
             return res.status(404).send('Blog not found');
         }
+        var images_to_delete = findRemovedImageUrls(result.body, '');
+        deleteImages(images_to_delete);
         res.redirect('/homepage');
 
     } catch (error) {
@@ -433,7 +419,6 @@ app.get('/index/profile', isLoggedIn, async (req, res) => {
 
 // Update user
 app.post('/index/updateuser', isLoggedIn, async (req, res) => {
-    console.log(req.body);
     var userid = req.session.user._id;
 
     try {
@@ -443,14 +428,12 @@ app.post('/index/updateuser', isLoggedIn, async (req, res) => {
             user.lastname = req.body.lastname;
             user.bio = req.body.bio;
             await user.save();
-            console.log('user updated!');
             return res.status(200).json({ loggedinuser: user });
         }
     } catch(err) {
         return res.status(500).send('Internal Server Error');
     }
 
-    console.log(userid);
     res.redirect('/homepage');
 
 });
@@ -475,9 +458,6 @@ app.get('/index/getuser/:id', isLoggedIn, async (req, res) => {
 
 // Update following and followers
 app.post('/index/toggleFollowingAndFollowers', isLoggedIn, async(req, res) => {
-    console.log(req.body);
-    console.log('Logged in user: ' + req.body.loggedInUserId);
-    console.log('started following: ' + req.body.communityUserId);
 
     try {
         const loggedInUser = await User.findById(req.body.loggedInUserId);
@@ -520,7 +500,6 @@ function addNotification(sender, receiver, message) {
         receiveruserid: receiver._id,
         notiftext: message
     }
-    console.log(notifobject);
     if(notifobject) {
         receiver.notifications.push(notifobject);
     }
@@ -534,7 +513,6 @@ app.get('/homepage/clearnotif/:id', isLoggedIn, async (req, res) => {
         if(!loggedInUser) {
             return res.status(400).json({ message: 'User not found' });
         } else {
-            console.log(`notification will be cleared for ${loggedinuserid}`)
             loggedInUser.unreadnotification = false;
             await loggedInUser.save();
             return res.status(200).json({ cleared: true });
@@ -549,8 +527,6 @@ app.get('/homepage/clearnotif/:id', isLoggedIn, async (req, res) => {
 // fetch unread notifications for a user
 app.get('/homepage/getnotificationcount', isLoggedIn, async (req, res) => {
     const loggedinuser = req.session.user;
-    console.log(`get notification for ${loggedinuser.firstname}`);
-    console.log(loggedinuser);
     try {
         const user = await User.findById(loggedinuser._id);
         if(!user) {
@@ -603,13 +579,9 @@ app.post('/index/addsubscription', isLoggedIn, async (req, res) => {
 
 // add monthly / yearly subscriber fees
 app.post('/homepage/addsubscriptionfees', isLoggedIn, async (req, res) => {
-    console.log(JSON.stringify(req.body));
     const loggedinuserid = req.session.user._id; 
     const monthlysubscription = req.body.monthlysubscription;
     const yearlysubscription = req.body.yearlysubscription;
-
-    console.log(monthlysubscription);
-    console.log(yearlysubscription);
 
     try {
         const user = await User.findById(loggedinuserid);
@@ -623,7 +595,6 @@ app.post('/homepage/addsubscriptionfees', isLoggedIn, async (req, res) => {
             // Save the updated user
             await user.save();
 
-            console.log('Subscription data saved successfully');
             return res.status(200).json({ message: 'Subscription saved' });
         }
     } catch (error) {
@@ -642,12 +613,10 @@ app.post('/homepage/addsubscriptionfees', isLoggedIn, async (req, res) => {
 
 // get monthly and yearly subscription fees
 app.get('/homepage/getsubscriptionfees', isLoggedIn, async (req, res) => {
-    console.log(JSON.stringify(req.body));
     const loggedinuser = req.session.user;
     try {
         const user = await User.findById(loggedinuser._id);
         if(!user) {
-            console.log('user not found');
             return res.status(404).json('user not found');
         } else {
             const fees = {
@@ -695,7 +664,6 @@ app.post('/index/checksubscription', isLoggedIn, async (req, res) => {
 
 
 app.post('/index/blogs/updateuserblogmetadata', isLoggedIn, async (req, res) => {
-    console.log(req.body.blogusermetadata);
     const { userid, blogid, isFavourite, markedUpDom } = req.body.blogusermetadata;
   
     // Check if required parameters are present
@@ -722,12 +690,10 @@ app.post('/index/blogs/updateuserblogmetadata', isLoggedIn, async (req, res) => 
   
         if (existingBlogData) {
           // Blog metadata already exists, update it
-          console.log('Updating blogmetadata for userid: ' + user._id + ' and blogid: ' + blogid);
           existingBlogData.isFavourite = isFavourite;
           existingBlogData.markedUpDom = markedUpDom;
         } else {
           // Create new blogmetadata object with received data
-          console.log('Creating new blogmetadata for userid: ' + user._id + ' and blogid: ' + blogid);
           user.blogmetadata.push({
             blogId: blogid,
             isFavourite,
@@ -806,7 +772,6 @@ function calculateReadingTime(paragraph, wordsPerMinute) {
 
 function getTagsListFromString(tagString) {
     const tags = tagString.split(',').map(item => item.trim());
-    console.log(tags);
     return tags;
 }
 
@@ -821,7 +786,6 @@ app.get('/homepage/dashboard', isLoggedIn, async (req, res) => {
         const personalblogs = await Blog.find({ userid: loggedinuser._id });
         res.render('authordashboard', { loggedinuser, personalblogs });
     } catch (error) {
-        console.log(error);
         return res.status(500).json({ message: 'Internal server error' });
 
     }
@@ -876,25 +840,62 @@ app.get('/homepage/getbankdetails', isLoggedIn, async (req, res) => {
 // Handle the '/upload-image' route
 app.post('/upload-image', isLoggedIn, upload.single('image'), (req, res) => {
     // 'image' is the field name specified when appending the file to FormData
-    console.log(`req.get(host): ${req.get('host')}`);
-    
-    //TODO: When accessed from mobile, using laptop url: http://192.168.31.4:3000
-    // the images uploaded from laptop can't be accessed because the image url is
-    // generated as http://localhost:3000/<image_id>.png
-    // 
-  
-    // Check if a file was provided
     if (!req.file) {
       return res.status(400).json({ error: 'No image file provided' });
     }
-  
-    // Construct the URL for the uploaded image
     const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
-  
-    // Send the image URL as the response
     res.json({ imageUrl });
-  });
+});
 
+  function findRemovedImageUrls(oldHtmlString, newHtmlString) {
+    const oldImageUrls = extractImageUrls(oldHtmlString);
+    const newImageUrls = extractImageUrls(newHtmlString);
+  
+    const removedImageUrls = oldImageUrls.filter(url => !newImageUrls.includes(url));
+
+    console.log('urls to remove:');
+    console.log(removedImageUrls);
+  
+    return removedImageUrls;
+  }
+  
+  function extractImageUrls(htmlString) {
+    const $ = cheerio.load(htmlString);
+    const imageUrls = [];
+  
+    $('img').each((index, element) => {
+      const imageUrl = $(element).attr('src');
+      if (imageUrl) {
+        imageUrls.push(imageUrl);
+      }
+    });
+  
+    return imageUrls;
+  }
+
+  function deleteImages(imageUrls) {
+    const publicFolderPath = path.join(__dirname, 'uploads');
+    if(imageUrls.length > 0) {
+        imageUrls.forEach((imageUrl) => {
+            const fileName = path.basename(imageUrl);
+            const imagePath = path.join(publicFolderPath, fileName);
+        
+            // Check if the file exists before attempting to delete
+            if (fs.existsSync(imagePath)) {
+              // Delete the file
+              fs.unlinkSync(imagePath);
+              console.log(`Deleted: ${imagePath}`);
+            } else {
+                console.log(`File not found: ${imagePath}`);
+                console.log(`Absolute path used: ${path.resolve(imagePath)}`);
+                console.log(`Current working directory: ${process.cwd()}`);
+                console.log(`Contents of public folder: ${fs.readdirSync(publicFolderPath)}`);
+            }
+          });
+    } else {
+        console.log('no images to delete');
+    }
+  }
 
 
 app.listen(port, () => {
