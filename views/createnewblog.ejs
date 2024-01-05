@@ -18,22 +18,34 @@
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8" crossorigin="anonymous"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
         onload="renderMathInElement(document.body);"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
         
 
   <style>
-    .left-section {
-        height: 100vh;
-        padding: 15px;
+
+    .custom-navbar {
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+         padding-left: 20px;
+         padding-right: 20px;
+         border-bottom: 1px solid rgb(208, 203, 203);
+         background-color: #faebd4;
+         color: black !important;
     }
 
-    .mid-section {
-        height: 100vh;
-        padding: 15px;
+    .ql-toolbar {
+        border: none !important;
+        box-shadow: none !important;
+        outline: none !important;
     }
 
-    .right-section {
-        height: 100vh;
-        padding: 15px;
+    .ql-snow, .ql-stroke {
+        stroke: #000 !important;
+        /* stroke-width: 1 !important; */
     }
 
     .ql-editor {
@@ -41,29 +53,23 @@
         box-shadow: none !important;
         outline: none !important;
         max-height: none;
-        height: auto !important; 
+        height: auto !important;
         overflow-y: hidden;
-            font-size: medium;
-            font-family: 'Hedvig Letters Serif', serif;
-            padding: 0;
-         }
+        font-size: medium;
+        font-family: 'Libre Baskerville', serif;
+        padding: 0;
+    }
 
     .ql-container {
         border: none !important;
         box-shadow: none !important;
         outline: none !important;
         max-height: none;
-        height: auto !important; 
+        height: auto !important;
         overflow-y: hidden;
-            font-size: medium;
-            font-family: 'Hedvig Letters Serif', serif;
-            padding: 0;
-    }
-
-    .ql-toolbar {
-        border: none !important;
-        box-shadow: none !important;
-        outline: none !important;
+        font-size: medium;
+        font-family: 'Libre Baskerville', serif;
+        padding: 0;
     }
 
     .custom-textarea-title {
@@ -124,24 +130,6 @@
         outline: none !important;
     }
 
-    .popup-input {
-        border: none;
-        resize: none;
-        font-size: 15px;
-    }
-            
-    .popup-input::placeholder {
-        border: none;
-        resize: none;
-        font-size: 15px;
-    }
-
-    .popup-input:focus {
-        border:none;
-        box-shadow:none;
-        outline: none !important;
-    }
-
     .btn-success {
         background-color: #1c4175;
         border-color: #1c4175;
@@ -171,39 +159,8 @@
         color: #fff;
     }
 
-    .footnote {
-        color: #999;
-    }
-
     #preview {
         margin-top: 20px;
-    }
-
-    .ql-footnote {
-        color: #999;
-        position: relative;
-        cursor: help;
-    }
-
-    .ql-footnote:hover::after {
-        content: attr(fntitle);
-        display: block;
-        position: absolute;
-        left: 100%;
-        top: 0;
-        width: 600px;
-        max-width: 300px;
-        white-space: normal;
-        word-wrap: break-word;
-        padding: 0.5em;
-        background: #ffffff;
-        border: 1px solid #d7d0d0;
-        box-shadow: 2px 2px 5px rgba(41, 41, 41, 0.2);
-        z-index: 1;
-        border-radius: 15px;
-        font-size: 13px;
-        color: #333;
-        line-height: 1.4;
     }
 
     .hidden {
@@ -214,16 +171,116 @@
       padding: 10px;
     }
 
-  </style>
+    #display-preview-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 1;
+      width: 3;
+      margin: 0 5px; /* Adjust the margin as needed */
+    }
 
+    .modal-full .modal-dialog {
+    max-width: 90%;
+  }
+
+  </style>
 
 </head>
 <body>
 
-    <div class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light custom-navbar fixed-top">
+        <div id="toolbar" class="container-fluid d-flex justify-content-center">
+            <!-- Add font size dropdown -->
+            <select class="ql-size">
+                <option value="small"></option>
+                <!-- Note a missing, thus falsy value, is used to reset to default -->
+                <option selected></option>
+                <option value="large"></option>
+                <option value="huge"></option>
+            </select>
+    
+            <!--['bold', 'italic', 'underline', 'strike']-->
+            <span class="ql-formats">
+                <button class="ql-bold"></button>
+                <button class="ql-italic"></button>
+                <button class="ql-underline"></button>
+                <button class="ql-strike"></button>
+            </span>
+    
+            <!-- Add blockquote button -->
+            <span class="ql-formats">
+                <button class="ql-blockquote"></button>
+                <button class="ql-code-block"></button>
+                <button class="ql-code"></button>
+            </span>
+    
+            <span class="ql-formats">
+                <button class="ql-list" value="ordered"></button>
+                <button class="ql-list" value="bullet"></button>
+                <button class="ql-indent" value="-1"></button>
+                <button class="ql-indent" value="+1"></button>
+                <button class="ql-direction" value="rtl"></button>
+                <button class="ql-align" value=""></button>
+                <button class="ql-align" value="center"></button>
+                <button class="ql-align" value="right"></button>
+                <button class="ql-align" value="justify"></button>
+            </span>
+            
+            <span class="ql-formats">
+                <button class="ql-script" value="sub"></button>
+                <button class="ql-script" value="super"></button>
+            </span>
+      
+            <span class="ql-formats">
+                <select class="ql-header">
+                  <option value="1"></option>
+                  <option value="2"></option>
+                  <option value="3"></option>
+                  <option value="4"></option>
+                  <option value="5"></option>
+                  <option value="6"></option>
+                  <option selected></option>
+                </select>
+            </span>
+    
+            <span class="ql-formats">
+                <select class="ql-color"></select>
+                <select class="ql-background"></select>
+            </span>
+    
+            <span class="ql-formats">
+                <select class="ql-font">
+                    <option value="sans-serif">Sans Serif</option>
+                    <option value="serif">Serif</option>
+                    <option value="monospace">Monospace</option>
+                </select>
+            </span>
+    
+            <span class="ql-formats">
+                <button class="ql-image"></button>
+                <button id="figcaption-btn"><i class="fa-solid fa-hashtag"></i></button>
+                <button class="ql-video"></button>
+                <button class="ql-formula"></button>
+                <button class="ql-link"></button>
+            </span>
+            
+    
+            <span class="ql-formats">
+                <button class="ql-clean"></button>
+                <button id="display-preview-btn"><i class="fa-regular fa-eye"></i></button>
+            </span>
+
+          </div>
+     
+    </nav>
+
+    
+
+    <div class="container-fluid mt-5">
         <div class="row">
 
-            <div class="col-md-8 mx-auto">
+            <div class="col-8 mx-auto">
 
                 <% if (blog !== 'undefined' && blog !== null) { %>
                     <div class="mb-3">
@@ -233,6 +290,7 @@
                     <div class="mb-3">
                         <textarea class="form-control custom-textarea-subtitle" id="subtitle" name="subtitle" rows="1" placeholder="Enter Subtitle..."><%= blog.subtitle %></textarea>
                     </div>
+
         
                     <div class="editor" id="editor"><%- blog.body || '' %></div>
         
@@ -240,18 +298,9 @@
                         <textarea class="form-control custom-textarea-tags" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"><%= blog.tags && blog.tags.length > 0 ? blog.tags.join(', ') : '' %></textarea>
                     </div>
         
-                    <button class="btn btn-primary" id="previewButton" onclick="loadPreview()">Preview</button>
-        
                     <button type="button" class="btn btn-success" onclick="saveBlog(true, '<%= blog.id %>')">Publish Changes</button>
         
                     <button type="button" class="btn btn-secondary" onclick="cancel('<%= blog.id %>')">Cancel</button>
-
-                    <div class="preview" id="preview"></div>
-
-                    <div id="popup" class="hidden">
-                        <input class="popup-input" type="text" id="userInput" name="user_input" placeholder="Enter footnote...">
-                        <button class="btn btn-success" id="footnoteSubmit">Add</button>
-                    </div>
 
 
                 <% } else { %>
@@ -262,6 +311,8 @@
                     <div class="mb-3">
                         <textarea class="form-control custom-textarea-subtitle" id="subtitle" name="subtitle" rows="1" placeholder="Enter Subtitle..."></textarea>
                     </div>
+
+                    
         
                     <div class="editor" id="editor"></div>
         
@@ -269,30 +320,43 @@
                         <textarea class="form-control custom-textarea-tags" id="tags" name="tags" rows="1" placeholder="Add comma separated tags (Optional)"></textarea>
                     </div>
         
-                    <button class="btn btn-primary" id="previewButton" onclick="loadPreview()">Preview</button>
-        
                     <button type="button" class="btn btn-success" onclick="saveBlog(false, '')">Publish</button>
         
                     <button type="button" class="btn btn-secondary" onclick="cancel('')">Cancel</button>
 
-                    <div class="preview" id="preview"></div>
-
-                    <div id="popup" class="hidden">
-                        <input class="popup-input" type="text" id="userInput" name="user_input" placeholder="Enter footnote...">
-                        <button class="btn btn-success" id="footnoteSubmit">Add</button>
-                    </div>
+                    
 
 
                 <% } %>
         </div>
     </div>
 
+    <!-- Preview modal -->
+
+    <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="previewModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="previewModalTitle"></h5>
+            </div>
+            <div class="modal-body">
+              <div class="col-md-10 mx-auto">
+                    <div class="preview" id="preview"></div>
+              </div>
+            </div>
+            <!-- <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div> -->
+          </div>
+        </div>
+      </div>
+
+
   <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
 
   <script>
-
-    var htmldata;
 
     // Initialize Quill for the preview without a toolbar (readOnly)
     var quillpreview = new Quill('#preview', {
@@ -308,54 +372,79 @@
     }
 
 
+    // var toolbarOptions = [
+    //     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+    //     ['blockquote', 'code-block', 'code'],
 
-    const customButton = document.createElement('button');
-    customButton.className = 'ql-custom-button';
+    //     //[{ 'header': 1 }, { 'header': 2 }],               // custom button values
+    //     [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    //     [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+    //     [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+    //     [{ 'direction': 'rtl' }],                         // text direction
 
-    var Block = Quill.import('blots/block');
+    //     // [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
+    //     [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
 
-    class FootnoteBlot extends Block {
-        static blotName = 'footnote';
-        static tagName = 'footnote';
-    }
+    //     [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
+    //     [{ 'font': [] }],
+    //     [{ 'align': [] }],
 
-    Quill.register(FootnoteBlot);
+    //     ['clean'],                                         // remove formatting button
 
-    var toolbarOptions = [
-        ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
-        ['blockquote', 'code-block'],
+    //     ['link', 'image', 'video', 'formula'] 
+    // ];
 
-        //[{ 'header': 1 }, { 'header': 2 }],               // custom button values
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
-        [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
-        [{ 'direction': 'rtl' }],                         // text direction
 
-        // [{ 'size': ['small', false, 'large', 'huge'] }],  // custom dropdown
-        [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
-
-        [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
-        [{ 'font': [] }],
-        [{ 'align': [] }],
-
-        ['clean'],                                         // remove formatting button
-
-        ['link', 'image', 'video', 'formula', { 'custom-button': customButton }] 
-    ];
 
     var quill = new Quill('#editor', {
-    modules: {
-        toolbar: {
-            container: toolbarOptions,
-            handlers: {
-                'custom-button': function() {
-                    insertFootnote();
-                }
-            }
+        modules: {
+            // toolbar: toolbarOptions
+            toolbar: '#toolbar'
+        },
+        theme: 'snow'
+    });
+
+    var previewBtn = document.querySelector('#display-preview-btn');
+    previewBtn.addEventListener('click', function() {
+        var previewTitle = document.getElementById('previewModalTitle');
+        const title = document.getElementById('title').value;
+        const subtitle = document.getElementById('subtitle').value;
+        var editorContent = quill.root.innerHTML;
+        previewTitle.innerText = title;
+        quillpreview.clipboard.dangerouslyPasteHTML(editorContent);
+
+        var previewModal = new bootstrap.Modal(document.getElementById('previewModal'));
+        previewModal.toggle();
+    });
+
+    var figcaptionBtn = document.querySelector('#figcaption-btn');
+    figcaptionBtn.addEventListener('click', function() {
+        var selectedText = quill.getText(quill.getSelection());
+        if(selectedText && selectedText.trim() !== "") {
+            var cursorPosition = quill.getSelection().index;
+            var figureCount = countImgTagsBeforeCursor(quill, cursorPosition);
+            quill.deleteText(cursorPosition, selectedText.length);
+            quill.insertText(cursorPosition, `Fig-${figureCount}: ${selectedText}`, {
+                color: 'grey',
+                italic: true
+            });
+            quill.setSelection(cursorPosition + `Fig-${figureCount}: ${selectedText}`.length);
         }
-    },
-    theme: 'snow'
-});
+    });
+
+    function countImgTagsBeforeCursor(quill, cursorIndex) {
+        var contentBeforeCursor = quill.getContents(0, cursorIndex);
+        var imgCount = 0;
+        contentBeforeCursor.ops.forEach(function (op) {
+            if (op.insert && op.insert.image) {
+            imgCount++;
+            }
+        });
+
+        return imgCount;
+    }
+
+
 
 quill.on('editor-change', function(eventName, ...args) {
     if (eventName === 'text-change') {
@@ -383,7 +472,6 @@ function handleImageUpload(image) {
     .then(data => {
         // Replace base64 image source with the server response URL
         image.src = data.imageUrl;
-        console.log(`image url: ${data.imageUrl}`);
     })
     .catch(error => console.error('Error uploading image:', error));
 }
@@ -407,108 +495,14 @@ function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
     return new Blob(byteArrays, { type: contentType });
 }
 
-
-    const popup = document.getElementById('popup');
-    const footnoteSubmit = document.getElementById('footnoteSubmit');
-
-
-
     var selectedText;
-
-    function insertFootnote() {
-        selectedText = quill.getSelection();
-        if(selectedText.length > 0) {
-            popup.classList.toggle('hidden');
-        } 
-    }
-
-    footnoteSubmit.addEventListener('click', () => {
-          const userInput = document.getElementById('userInput').value;
-          popup.classList.toggle('hidden');
-
-          if(selectedText.length > 0) {
-            console.log('selectedText: ' + selectedText);
-            quill.insertText(selectedText.index + selectedText.length, `[^${userInput}]`, 'user');
-            quill.formatText(
-            selectedText.index + selectedText.length, // starting index
-            userInput.length + 3, // length of inserted text + brackets
-            {
-                color: 'grey', // maintain grey color
-                font: 'Times New Roman', // set font family
-                size: 15, // set font size
-            }
-            );
-            // var previewDiv = document.getElementById('preview');
-            var editorContent = quill.root.innerHTML;
-            quillpreview.clipboard.dangerouslyPasteHTML(recomputeRender(editorContent));
-          }
-
-        });
-
-    function loadPreview() {
-        var editorContent = quill.root.innerHTML;
-        quillpreview.clipboard.dangerouslyPasteHTML(recomputeRender(editorContent));
-    }
-
-    function recomputeRender(domstr) {
-        var counter = 1;
-        var regex = /\[\^(.*?)\]/g; // Capture the text inside `[^]` using capturing group
-        var previewContent = domstr.replace(regex, function(match, customFootnote) {
-            return `
-            <span class="ql-footnote" fntitle="${customFootnote}">
-                <sub>
-                    <a href="#">[${(counter++)}]</a>
-                </sub>
-            </span>
-            `;
-        });
-        console.log(`recompute render output: ${previewContent}`);
-        return replaceImgWithDivs(previewContent);
-    }
-
-    function replaceImgWithDivs(htmlString) {
-    var imgRegex = /<img([^>]*)>/g;
-
-    var modifiedHtml = htmlString.replace(imgRegex, function(match, imgAttributes) {
-            return '<div class="row justify-content-center">' +
-                    '<div class="col-md-11 mx-auto">' +
-                        '<div class="image-container text-center">' +
-                            '<img class="img-fluid" style="max-height: 100%;"' + imgAttributes + '>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>';
-        });
-
-        console.log(`After image manipulation: ${modifiedHtml}`);
-        htmldata = modifiedHtml;
-
-        return modifiedHtml;
-    }
-
-    quill.on('editor-change', function(eventName, ...args) {
-        if (eventName === 'text-change') {
-            var [delta, oldDelta, source] = args;
-            if (source === 'user') {
-                // Handle changes made by the user
-            }
-        }
-
-        if (eventName === 'selection-change') {
-            var [range, oldRange, source] = args;
-            if (range && source === 'user' && quill.getFormat(range.index, 1)['footnote']) {
-                
-            }
-        }
-    });
 
 
     function saveBlog(isUpdateOperation, blogid) {
-        console.log(isUpdateOperation);
-        console.log(blogid);
         const title = document.getElementById('title').value;
         const subtitle = document.getElementById('subtitle').value;
         const tags = document.getElementById('tags').value;
-        var body = htmldata ? htmldata : recomputeRender(quill.root.innerHTML);
+        var body = quill.root.innerHTML;
 
         const jsonData = {
                 title: title,
@@ -533,7 +527,6 @@ function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
                 return response.json();
             })
             .then(data => {
-                console.log('Blog saved successfully:', data.savedblogid);
                 window.location.href = '/index?id=' + data.savedblogid;
 
             })
@@ -557,7 +550,6 @@ function b64toBlob(b64Data, contentType = '', sliceSize = 512) {
                 return response.json();
             })
             .then(data => {
-                console.log('Blog saved successfully:', data.savedblogid);
                 window.location.href = '/index?id=' + data.savedblogid;
 
             })

@@ -837,7 +837,10 @@ app.get('/homepage/getbankdetails', isLoggedIn, async (req, res) => {
     }
 })
 
-// Handle the '/upload-image' route
+// Handle image file upload. This will trigger as soon as user pastes an image in the editor.
+// Below route will immediately store image files to 'uploads' directory and return the img url.
+// images are stored in 'uploads' as per multer config.
+// in future images will be stored in s3.
 app.post('/upload-image', isLoggedIn, upload.single('image'), (req, res) => {
     // 'image' is the field name specified when appending the file to FormData
     if (!req.file) {

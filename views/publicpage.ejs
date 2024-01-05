@@ -15,175 +15,143 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
     <style>
 
-      a {
-            color: #1c4175;
+        a {
+         color: #1c4175;
+         }
+         .custom-navbar {
+         padding-left: 20px;
+         padding-right: 20px;
+         /* border-bottom: 1px solid rgb(208, 203, 203); */
+         }
+         .profile-btn {
+         text-align: left;
+         display: flex;
+         flex-direction: column;
+         align-items: flex-start;
+         background-color: transparent;
+         color: #1c4175;
+         border: none;
+         }
+         .profile-btn:hover, .btn-ptr {
+         background-color: transparent;
+         color: #1c4175;
+         border: none;
+         }
+         .profile-btn:focus,
+         .profile-btn:active,
+         .btn-ptr:focus,
+         .btn-ptr:active {
+         border: none;
+         outline: none;
+         box-shadow: none;
+         }
+         .circle {
+         width: 40px; /* Adjust the size of the circle as needed */
+         height: 40px;
+         background-color: #1c4175; /* Set the color of the circle */
+         border-radius: 50%;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         color: white; /* Text color */
+         font-size: 20px; /* Adjust the font size as needed */
+         font-weight: bold; /* Adjust the font weight as needed */
+         }
+         .dropdown-menu {
+         border:1px solid rgb(208, 203, 203);
+         border-radius: 5px;
+         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+         }
+         .dropdown-item {
+         font-size: small;
+         color: gray;
+         }
+         .btn-primary {
+         background-color: transparent;
+         border-color: #4287f5;
+         color: #4287f5;
+         }
+         .btn-primary:hover {
+         background-color: #1c4175;
+         border-color: #1c4175;
+         color: #fff;
+         }
+         .btn-rounded {
+         display: inline-block;
+         border-radius: 15px;
+         background-color: #1c4175;
+         color: #fff;
+         border: none;
+         box-shadow: none;
+         font-size: smaller;
+         padding: 10 20px;
+         margin-right: 5px;
+         }
+         .ql-container {
+         border: none !important;
+         }
+         .ql-editor {
+          font-size: 17px;
+          font-family: 'Libre Baskerville', serif;
+          padding: 0;
+          line-height: 1.9;
+         }
+         
+         .blog-title {
+         color: #1c4175;
+         }
+         .ribbon-area {
+         color: #1c4175;
+         }
+
+         .tags-container {
+         display: inline-block;
+         padding: 0px 10px;
+         }
+         .monetization-banner {
+         padding: 15px;
+         margin-bottom: 20px;
+         border: 1px solid #b0c9eb;
+         background-color: rgba(78, 149, 241, 0.2); /* #0F9D58 with 70% transparency */
+         border-color: #1c4175; /* Border color to match */
+         /* color: #fff; */
+         border-radius: 5px;
+         }
+         .translucent-mask {
+         display: none;
+         position: fixed;
+         top: 0vh;
+         left: 0;
+         width: 100%;
+         height: 100vh;
+         background-color: rgba(255, 255, 255, 0.5);
+         backdrop-filter: blur(10px);
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         }
+         .center-content {
+         text-align: center;
+         }
+         img {
+         max-width: 100%; /* Resize proportionally to fit the screen, up to 100% of its container's width */
+         height: auto;   /* Maintain aspect ratio */
+         object-fit: contain;
         }
-
-        .btn-primary {
-            background-color: transparent;
-            border-color: #4287f5;
-            color: #4287f5;
-        }
-
-        .btn-primary:hover {
-            background-color: #1c4175;
-            border-color: #1c4175;
-            color: #fff;
-        }
-
-        .btn-rounded {
-            display: inline-block;
-            border-radius: 15px;
-            background-color: #1c4175;
-            color: #fff;
-            border: none;
-            box-shadow: none;
-            font-size: smaller;
-            padding: 10 20px;
-            margin-right: 5px;
-        }
-
-        .ql-footnote {
-            color: #999;
-        }
-
-        .ql-footnote {
-            position: relative;
-            cursor: help;
-        }
-
-        .ql-footnote:hover::after {
-            content: attr(fntitle);
-            display: block;
-            position: absolute;
-            left: 100%;
-            top: 0;
-            width: 600px;
-            max-width: 300px;
-            white-space: normal;
-            word-wrap: break-word;
-            padding: 0.5em;
-            background: #ffffff;
-            border: 1px solid #d7d0d0;
-            box-shadow: 2px 2px 5px rgba(41, 41, 41, 0.2);
-            z-index: 1;
-            border-radius: 15px;
-            font-size: 13px;
-            color: #333;
-            line-height: 1.4;
-        }
-
-        .left-section {
-            background-color: #fff;
-            padding: 15px;
-            height: 100vh;
-        }
-
-        .mid-section {
-            background-color: #fff;
-            padding: 15px;
-            height: 100vh;
-        }
-
-        .right-section {
-            background-color: #fff;
-            height: 100vh;
-            padding: 15px;
-        }
-
-        #footnoteList {
-            margin-top: auto; /* Push to the bottom */
-            list-style-type: none; /* Remove bullet points */
-            padding: 0;
-        }
-
-        #footnoteList li {
-            padding-left: 0px;
-            font-size: 15px;
-            font-family: 'Times New Roman', Times, serif;
-            color: #585858;
-        }
-
-        /* figcaption {
-            padding-left: 0px;
-            padding-top: 15px;
-            font-size: 15px;
-            font-family: 'Times New Roman', Times, serif;
-            color: #585858;
-        } */
-
-        .canvas {
-            font-family: 'Hedvig Letters Serif', serif;
-            line-height: 2.0;
-        }
-
-        .navbar {
-            padding-left: 20px;
-            padding-right: 20px;
-            font-weight: bold;
-        }
-
-        .blog-title {
-            color: #1c4175;
-        }
-
-        .ribbon-area {
-            color: #1c4175;
-        }
-
-        #bookmark-icon {
-            display: none;
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 24px;
-            color: #1c4175;
-            cursor: pointer;
-        }
-
-        #tags {
-            color: #1c4175;
-        }
-
-        .tags-container {
-            display: inline-block;
-            padding: 0px 10px;
-        }
-
-        .monetization-banner {
-            padding: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #b0c9eb;
-            background-color: rgba(78, 149, 241, 0.2); /* #0F9D58 with 70% transparency */
-            border-color: #1c4175; /* Border color to match */
-            /* color: #fff; */
-            border-radius: 5px;
-        }
-
-        .translucent-mask {
-            display: none;
-            position: fixed;
-            top: 0vh;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            background-color: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(10px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .center-content {
-            text-align: center;
-        }
-
-        .image-container {
+         .navbar-toggler:focus,
+         .navbar-toggler:active,
+         .navbar-toggler-icon:focus {
+         outline: none;
+         box-shadow: none;
+         }
+         .navbar-toggler {
+         border: none;
+         }
+         .image-container {
          padding: 10px;
          }
 
@@ -192,43 +160,43 @@
 <body>
   <body>
 
-    <nav class="navbar navbar navbar-expand-lg navbar-light" style="background-color: transparent;">
-        <a class="navbar-brand" href="/homepage"><i class="fa-solid fa-angle-left"></i></a></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+
+    <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
+        
+        <a class="navbar-brand mr-auto" href="/homepage" style="margin-left: 10px;">
+            <div class="d-flex align-items-center">
+                <div class="overflow-hidden" style="font-size:large; font-weight: bolder; color: #1c4175; margin-right: 10px;">
+                    My App
+                </div>
+                <div class="overflow-hidden" style="font-size: smaller; font-weight: normal; color: #1c4175;">
+                    <small>Subtitle</small>
+                </div>
+            </div>
+        </a>
+
+        <div class="position-relative mr-3 mt-2" id="navbarNav">
             <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
                 <a href="/" class="btn btn-primary">Join for free!</a>
             </ul>
         </div>
-    </nav>
+        
+        
+     </nav>
+
 
     <div class="container-fluid">
         <div class="row">
-            <!-- Left Section (25% width) -->
-            <div class="col-md-3 left-section">
-            </div>
-    
-            <!-- Middle Section (50% width) -->
-            <div class="col-md-6 mid-section">
+            <div class="col-md-6 mx-auto">
                 <div id="blogheader" class="container-fluid ribbon-area"></div>
-                <div id="preview" class="container-fluid canvas"></div>
+                <div id="preview" class="container-fluid"></div>
                 <br>
                 <% if (blog && blog.tags.length > 1) { %>
                 <div class="tags-container">
                     <div id="tags" class="container-fluid"><i class="fa-solid fa-tags"></i></div>
                 </div>
-                <hr>
                 <% } %>
-                <ul id="footnoteList"></ul>
                 <br>
             </div>
-    
-            <!-- Right Section (25% width) -->
-            <div class="col-md-3 right-section">
-            </div>
-
         </div>
     </div>
 
@@ -250,9 +218,20 @@
 
     <script>
 
+    var quillpreview = new Quill('#preview', {
+                readOnly: true,
+                theme: 'snow'
+    });
+
+    var previewContainer = document.querySelector('#preview');
+    var previewToolbar = previewContainer.previousElementSibling;
+
+    if (previewToolbar && previewToolbar.classList.contains('ql-toolbar')) {
+        previewToolbar.parentNode.removeChild(previewToolbar);
+    }
+
         var blogheader = document.getElementById('blogheader');
         var previewDiv = document.getElementById('preview');
-        var markedUpDom;
         var bloguserid;
         var blogid;
 
@@ -286,8 +265,6 @@
             var timeToread = calculateReadingTime(blogDetails.blog.body, 230);
             const formatString = { month: 'short', day: 'numeric', year: 'numeric' };
             const formattedTime = dateObj.toLocaleString("en-US", formatString).toUpperCase();
-            
-            markedUpDom = recomputeRender(editorContent);
 
             blogheader.innerHTML = `
                 <h1 class="mt-4 blog-title">${blogDetails.blog.title}</h1>
@@ -298,27 +275,7 @@
                     <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="far fa-clock"></i> ${timeToread}</p>
                 </div> `;
 
-            previewDiv.innerHTML = `
-                <div><p>${markedUpDom}</p></div>
-            `;
-            
-            // Parse footnotes markup and add to page
-            var footnotes = listFootnotes(markedUpDom);
-            if(footnotes.length > 0) {
-                var footnoteList = document.getElementById('footnoteList');
-                var heading = document.createElement('h4');
-                heading.innerText = 'Footnotes';
-                heading.style.fontWeight = 'bold';
-                heading.style.color = '#1c4175';
-                footnoteList.appendChild(heading);
-
-                footnotes.forEach(function (footnote) {
-                    var listItem = document.createElement('li');
-                    listItem.textContent = footnote;
-                    footnoteList.appendChild(listItem);
-
-                });
-            }
+            quillpreview.clipboard.dangerouslyPasteHTML(editorContent);
 
             // Insert tags
             var tags = blogDetails.blog.tags;
@@ -344,38 +301,6 @@
 
         }
 
-        // parse footnote markup and return updated html string
-        function recomputeRender(domstr) {
-            var counter = 1;
-            var regex = /\[\^(.*?)\]/g; // Capture the text inside `[^]` using capturing group
-            var previewContent = domstr.replace(regex, function(match, customFootnote) {
-                return `
-                <span class="ql-footnote" fntitle="${customFootnote}">
-                    <sub>
-                        <a href="#">[${(counter++)}]</a>
-                    </sub>
-                </span>
-                `;
-            });
-            return replaceImgWithDivs(previewContent);
-        }
-
-        function replaceImgWithDivs(htmlString) {
-        var imgRegex = /<img([^>]*)>/g;
-
-        var modifiedHtml = htmlString.replace(imgRegex, function(match, imgAttributes) {
-                return '<div class="row justify-content-center">' +
-                        '<div class="col-md-11 mx-auto">' +
-                            '<div class="image-container text-center">' +
-                                '<img class="img-fluid" style="max-height: 100%;"' + imgAttributes + '>' +
-                            '</div>' +
-                        '</div>' +
-                    '</div>';
-            });
-
-            return modifiedHtml;
-        }
-
 
         function calculateReadingTime(paragraph, wordsPerMinute) {
             // Assuming an average of 200 words per minute
@@ -385,26 +310,6 @@
             const readingTime = Math.ceil(wordCount / wpm);
 
             return readingTime + ' MIN READ';
-        }
-
-        function listFootnotes(domstr) {
-
-            const parser = new DOMParser();
-            const document = parser.parseFromString(domstr, "text/html");
-
-            const footnotes = [];
-            const footnoteElements = document.querySelectorAll('.ql-footnote');
-
-            for (const element of footnoteElements) {
-                const footnote_index = element.textContent;
-                const fntitle = element.getAttribute('fntitle');
-
-                if (fntitle) {
-                    footnotes.push(`${footnote_index} ${fntitle}`);
-                }
-            }
-
-            return footnotes;
         }
 
     </script>
