@@ -25,6 +25,9 @@ const userSchema = new mongoose.Schema({
     notiftext: String,
   }],
   unreadnotification: Boolean,
+  preferences: [{
+    theme: String,
+  }],
 });
 
 userSchema.methods.authenticate = function(password) {

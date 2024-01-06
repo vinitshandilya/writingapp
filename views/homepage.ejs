@@ -13,15 +13,71 @@
 </head>
 
 <style>
+    :root {
+          --color-primary: var(--color-primary, #3498db);
+          --color-secondary: var(--color-secondary, #2ecc71);
+          --color-card: var(--color-card, #2ecc71);
+          --color-accent: var(--color-accent, #e74c3c);
+          --color-background: var(--color-background, #ecf0f1);
+          --color-titletext: var(--color-titletext, #34495e);
+          --color-subtitletext: var(--color-subtitletext, #34495e);
+          --color-bodytext: var(--color-bodytext, #34495e);
+          
+      }
+
+      body {
+          background-color: var(--color-background);
+          color: var(--color-text);
+      }
 
     .custom-navbar {
       padding-left: 10px;
       padding-right: 10px;
-      border-bottom: 1px solid rgb(208, 203, 203);
+      /* border-bottom: 1px solid rgb(208, 203, 203); */
+    }
+
+    .brand {
+        font-size:large; 
+        font-weight: bolder; 
+        color: var(--color-titletext);
+    }
+
+    .brand-subtitle {
+        font-size: smaller; 
+        font-weight: normal; 
+        color: var(--color-subtitletext);
+    }
+
+    .start-new-button {
+        border: none;
+        border-radius: 3px;
+        color: #fff !important;
+        background-color: #34A853;
+        color: var(--color-bodytext);
+    }
+    
+    .start-new-button:focus,
+    .start-new-button:active {
+        border: 1px solid var(--color-card);
+        border-radius: 3px;
+        background-color: var(--color-card) !important;
+        color: var(--color-bodytext) !important;
+    }
+
+    .badge-button {
+        background-color: transparent;
+        border: none;
+        color: var(--color-bodytext) !important;
+        font-size: large;
+        font-weight: lighter;
+    }
+
+    .theme-switch {
+        color: var(--color-bodytext);
     }
 
     .container-fluid {
-        background-color: rgb(245, 246, 249);
+        background-color: var(--color-secondary);
     }
 
     .list-group-item {
@@ -32,12 +88,20 @@
 
     .user-list-title {
         font-size: small;
-        color: #1c4175;
+        color: var(--color-titletext);
         font-weight: bold;
     }
     
     .user-list-subtitle {
-        color: grey;
+        color: var(--color-subtitletext);
+    }
+
+    .timesince {
+        color: var(--color-subtitletext);
+    }
+
+    .dropdown-toggle {
+        color: var(--color-subtitletext) !important;
     }
 
     .big-list-item {
@@ -47,13 +111,16 @@
         background-color: transparent;
         font-weight: bold;
     }
+    .big-list-item:hover {
+        background-color: transparent;
+    }
 
     .btn-rounded {
         display: inline-block;
         border-radius: 15px;
         background-color: none;
-        color: #1c4175;
-        border: 1px solid #1c4175;
+        color: var(--color-titletext);
+        border: 1px solid var(--color-titletext);
         box-shadow: none;
         font-size: smaller;
         height: 30px;
@@ -65,8 +132,8 @@
     .button-not-following {
         font-size: small;
         background-color: transparent;
-        border: 1px solid #1c4175;
-        color: #1c4175;
+        border: 1px solid var(--color-titletext);
+        color: var(--color-titletext);
         width: 100px;
         height: 40px;
         padding: 0 10px;
@@ -76,9 +143,8 @@
 
     .button-not-following:hover {
         font-size: small;
-        background-color: rgb(219, 220, 222);
-        border: 1px solid #1c4175;
-        color: #1c4175;
+        border: 1px solid var(--color-titletext);
+        color: var(--color-titletext);
         width: 100px;
         height: 40px;
         padding: 0 10px;
@@ -88,7 +154,7 @@
 
     .button-following {
         font-size: small;
-        background-color: #1c4175;
+        background-color: var(--color-subtitletext);
         border: none;
         color: #fff;
         width: 100px;
@@ -100,8 +166,8 @@
 
     .button-following:hover{
         font-size: small;
-        background-color: #16345d;
-        border: none;
+        background-color: transparent;
+        border: 1px solid var(--color-titletext);
         color: #fff;
         width: 100px;
         height: 40px;
@@ -111,17 +177,18 @@
     }
 
     .blog-list-title {
-        color: #1c4175;
+        color: var(--color-titletext);
         font-weight: bold;
     }
     
     .blog-list-subtitle {
         padding-top: 0px;
-        color: #000;
+        color: var(--color-subtitletext);
         font-weight: normal;
     }
 
     .blog-list-body {
+        color: var(--color-bodytext);
         font-weight: normal;
         font-size: small;
         line-height: 1.5;
@@ -137,10 +204,16 @@
     }
 
     .card {
-     border: 1px solid #ddd; /* Optional: Add a border for a card-like appearance */
+    background-color: var(--color-card);
+     border: 1px solid var(--color-card); /* Optional: Add a border for a card-like appearance */
      border-radius: 8px; /* Optional: Add rounded corners */
      padding: 20px; /* Optional: Add padding for content */
      box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1); /* Add box shadow with 70% transparency */
+    }
+
+    .ribbon {
+        font-size: 11px;
+        color: var(--color-subtitletext);;
     }
 
     .profile-btn {
@@ -149,12 +222,12 @@
             flex-direction: column;
             align-items: flex-start;
             background-color: transparent;
-            color: #1c4175;
+            color: var(--color-titletext);
             border: none;
         }
         .profile-btn:hover, .btn-ptr {
             background-color: transparent;
-            color: #1c4175;
+            color: var(--color-titletext);
             border: none;
         }
 
@@ -169,12 +242,12 @@
         .circle {
             width: 40px; /* Adjust the size of the circle as needed */
             height: 40px;
-            background-color: #1c4175; /* Set the color of the circle */
+            background-color: var(--color-titletext); /* Set the color of the circle */
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: white; /* Text color */
+            color: var(--color-card);
             font-size: 20px; /* Adjust the font size as needed */
             font-weight: bold; /* Adjust the font weight as needed */
         }
@@ -189,30 +262,6 @@
 
         }
 
-        .badge-button {
-            background-color: transparent;
-            border: none;
-            color: #1c4175;
-            font-size: large;
-            font-weight: lighter;
-        }
-
-        .start-new-button {
-            border: 1px solid #000;
-            border-radius: 3px;
-            background-color: black;
-            color: white;
-
-        }
-        .start-new-button:focus,
-        .start-new-button:active {
-            border: 1px solid black;
-            background-color: white;
-            outline: none;
-            box-shadow: none;
-            color: black;
-        }
-
     
 </style>
 
@@ -222,21 +271,26 @@
       <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
 
         <a class="navbar-brand mr-auto" href="/homepage" style="margin-left: 10px;">
-            <div class="d-flex align-items-center">
-                <div class="overflow-hidden mr-2" style="font-size:large; font-weight: bolder; color: #1c4175;">
+            <div class="d-flex align-items-center brand">
+                <div class="overflow-hidden mr-2">
                     My App
                 </div>
-                <div class="overflow-hidden" style="font-size: smaller; font-weight: normal; color: #1c4175;">
+                <div class="overflow-hidden brand-subtitle">
                     <small>Subtitle</small>
                 </div>
             </div>
         </a>
 
+        <div class="form-check form-switch theme-switch mx-auto">
+            <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+            <label class="form-check-label" for="flexSwitchCheckDefault">Dark Mode</label>
+        </div>
+        
         <div class="col-auto">
             <a href="/index/createnew" class="start-new-button btn btn-sm ml-auto">
                 Create New
             </a>
-        </div> 
+        </div>
 
         <button id="badge-container" type="button" class="position-relative badge-button mr-3 mt-2" data-bs-toggle="modal" data-bs-target="#notificationModal">
             <i class="fa-regular fa-bell"></i>
@@ -347,7 +401,7 @@
                        
                        <!-- Render ribbon area -->
                         <div class="col">
-                            <small class="text-muted" style="font-size: 11px;">
+                            <small class="ribbon">
                                 <% if (personalblog.userid === loggedinuser._id) { %>
                                     YOU &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
                                 <% } else { %>
@@ -384,7 +438,7 @@
                                 var elapsedTime = calculateElapsedTime(personalblog.formatteddate);
                                 %>
 
-                              <small class="text-muted"><%= elapsedTime %></small>
+                              <small class="timesince"><%= elapsedTime %></small>
                             </div>
                             <p class="mb-1 blog-list-subtitle"><%= personalblog.subtitle %></p>
 
@@ -440,10 +494,10 @@
                     <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
                         <div class="d-flex w-100 justify-content-between">
                           <h5 class="mb-1"><%= notification.notiftext %></h5>
-                          <small class="text-muted">3 days ago</small>
+                          <small class="timesince">3 days ago</small>
                         </div>
                         <p class="mb-1"><%= notification.notiftext %></p>
-                        <small class="text-muted">Donec id elit non mi porta.</small>
+                        <small class="timesince">Donec id elit non mi porta.</small>
                       </a>
                 <% }) %>
             </div>
@@ -635,9 +689,9 @@ function manageNotificationDisplay() {
             console.error('Error sending data to server:', error.message);
         }
     }
-    
 
 </script>
+<script type="module" src="themeswitcher.js"></script>
 
 </body>
 </html>

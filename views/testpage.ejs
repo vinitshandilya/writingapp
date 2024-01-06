@@ -1,187 +1,35 @@
+<!-- index.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smooth Scroll to Headers</title>
+    <title>Color Scheme Example</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            scroll-behavior: smooth;
-        }
+      :root {
+          --color-primary: var(--color-primary, #3498db);
+          --color-secondary: var(--color-secondary, #2ecc71);
+          --color-accent: var(--color-accent, #e74c3c);
+          --color-background: var(--color-background, #ecf0f1);
+          --color-text: var(--color-text, #34495e);
+          /* Add more CSS variables as needed */
+      }
 
-        header {
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
-            text-align: center;
-        }
+      body {
+          background-color: var(--color-background);
+          color: var(--color-text);
+      }
 
-        section {
-            margin: 20px;
-        }
     </style>
 </head>
 <body>
-
-<header>
-    <h1>Main Header</h1>
-</header>
-
-<nav id="tableOfContents"></nav>
-
-<!-- Generate large random content -->
-<section>
-    <h1>Section 1</h1>
-    <p>
-      Title: "Exploring Our Cosmic Neighborhood: A Journey through the Solar System"
-
-      Introduction:
-      
-      The solar system, a mesmerizing cosmic ballet of planets, moons, asteroids, and comets, has captivated human imagination for centuries. As we gaze up at the night sky, the celestial bodies that make up our solar system offer a glimpse into the vastness and complexity of the universe. In this blog, we embark on a fascinating journey through our solar system, exploring its key components and unveiling the mysteries that surround them.
-      
-      The Sun: Our Radiant Star
-      At the heart of the solar system reigns the mighty Sun, a colossal ball of hot, ionized gas that provides light and energy to sustain life on Earth. Learn about the Sun's layers, nuclear fusion processes, and the solar wind that extends far beyond the outer planets.
-      
-      The Inner Planets: Rocky Worlds Close to Home
-      Mercury, Venus, Earth, and Mars constitute the inner planets, each with its unique characteristics. Discover the extreme temperatures of Mercury, the thick atmosphere of Venus, the diverse ecosystems of Earth, and the tantalizing possibilities of Mars as a future human outpost.
-      
-      The Asteroid Belt: Guardians of the Gaps
-      Between the orbits of Mars and Jupiter lies the asteroid belt, a region populated by rocky remnants from the early solar system. Uncover the role these celestial bodies play in shaping the architecture of our solar neighborhood and the ongoing exploration missions targeting them.
-      
-      The Gas Giants: Giants of the Outer Reaches
-      Jupiter, Saturn, Uranus, and Neptune, the gas giants, dominate the outer reaches of our solar system. Delve into the colossal storms of Jupiter, the iconic rings of Saturn, the icy atmospheres of Uranus and Neptune, and the peculiar characteristics that set them apart.
-      
-      Moons and Satellites: The Silent Companions
-      Many moons orbit the planets of our solar system, each with its own story to tell. Explore the icy geysers of Enceladus, the thick atmosphere of Titan, and the intriguing possibility of life on Europa. Learn about the diverse landscapes and unique features that make these moons captivating subjects of study.
-      
-      Comets and Kuiper Belt Objects: Icy Wanderers
-      Beyond the orbit of Neptune lies the Kuiper Belt, a region teeming with icy bodies and dwarf planets. Discover the origin of comets, their majestic tails, and the ongoing efforts to explore these distant and mysterious objects.
-      
-      Conclusion:
-      
-      Our solar system, a celestial tapestry woven with the threads of planets, moons, asteroids, and comets, continues to inspire scientific inquiry and spark the imagination of people around the world. As we gaze into the night sky, let us appreciate the beauty and complexity of the cosmic neighborhood we call home, and marvel at the ongoing efforts to unlock the secrets of the solar system.
-      Title: "Exploring Our Cosmic Neighborhood: A Journey through the Solar System"
-
-Introduction:
-
-The solar system, a mesmerizing cosmic ballet of planets, moons, asteroids, and comets, has captivated human imagination for centuries. As we gaze up at the night sky, the celestial bodies that make up our solar system offer a glimpse into the vastness and complexity of the universe. In this blog, we embark on a fascinating journey through our solar system, exploring its key components and unveiling the mysteries that surround them.
-
-The Sun: Our Radiant Star
-At the heart of the solar system reigns the mighty Sun, a colossal ball of hot, ionized gas that provides light and energy to sustain life on Earth. Learn about the Sun's layers, nuclear fusion processes, and the solar wind that extends far beyond the outer planets.
-
-The Inner Planets: Rocky Worlds Close to Home
-Mercury, Venus, Earth, and Mars constitute the inner planets, each with its unique characteristics. Discover the extreme temperatures of Mercury, the thick atmosphere of Venus, the diverse ecosystems of Earth, and the tantalizing possibilities of Mars as a future human outpost.
-
-The Asteroid Belt: Guardians of the Gaps
-Between the orbits of Mars and Jupiter lies the asteroid belt, a region populated by rocky remnants from the early solar system. Uncover the role these celestial bodies play in shaping the architecture of our solar neighborhood and the ongoing exploration missions targeting them.
-
-The Gas Giants: Giants of the Outer Reaches
-Jupiter, Saturn, Uranus, and Neptune, the gas giants, dominate the outer reaches of our solar system. Delve into the colossal storms of Jupiter, the iconic rings of Saturn, the icy atmospheres of Uranus and Neptune, and the peculiar characteristics that set them apart.
-
-Moons and Satellites: The Silent Companions
-Many moons orbit the planets of our solar system, each with its own story to tell. Explore the icy geysers of Enceladus, the thick atmosphere of Titan, and the intriguing possibility of life on Europa. Learn about the diverse landscapes and unique features that make these moons captivating subjects of study.
-
-Comets and Kuiper Belt Objects: Icy Wanderers
-Beyond the orbit of Neptune lies the Kuiper Belt, a region teeming with icy bodies and dwarf planets. Discover the origin of comets, their majestic tails, and the ongoing efforts to explore these distant and mysterious objects.
-
-Conclusion:
-
-Our solar system, a celestial tapestry woven with the threads of planets, moons, asteroids, and comets, continues to inspire scientific inquiry and spark the imagination of people around the world. As we gaze into the night sky, let us appreciate the beauty and complexity of the cosmic neighborhood we call home, and marvel at the ongoing efforts to unlock the secrets of the solar system.
-    </p>
-
-<h2>A sub heading</h2>
-<p>
-  Title: "Exploring Our Cosmic Neighborhood: A Journey through the Solar System"
-
-Introduction:
-
-The solar system, a mesmerizing cosmic ballet of planets, moons, asteroids, and comets, has captivated human imagination for centuries. As we gaze up at the night sky, the celestial bodies that make up our solar system offer a glimpse into the vastness and complexity of the universe. In this blog, we embark on a fascinating journey through our solar system, exploring its key components and unveiling the mysteries that surround them.
-
-The Sun: Our Radiant Star
-At the heart of the solar system reigns the mighty Sun, a colossal ball of hot, ionized gas that provides light and energy to sustain life on Earth. Learn about the Sun's layers, nuclear fusion processes, and the solar wind that extends far beyond the outer planets.
-
-The Inner Planets: Rocky Worlds Close to Home
-Mercury, Venus, Earth, and Mars constitute the inner planets, each with its unique characteristics. Discover the extreme temperatures of Mercury, the thick atmosphere of Venus, the diverse ecosystems of Earth, and the tantalizing possibilities of Mars as a future human outpost.
-
-The Asteroid Belt: Guardians of the Gaps
-Between the orbits of Mars and Jupiter lies the asteroid belt, a region populated by rocky remnants from the early solar system. Uncover the role these celestial bodies play in shaping the architecture of our solar neighborhood and the ongoing exploration missions targeting them.
-
-The Gas Giants: Giants of the Outer Reaches
-Jupiter, Saturn, Uranus, and Neptune, the gas giants, dominate the outer reaches of our solar system. Delve into the colossal storms of Jupiter, the iconic rings of Saturn, the icy atmospheres of Uranus and Neptune, and the peculiar characteristics that set them apart.
-
-Moons and Satellites: The Silent Companions
-Many moons orbit the planets of our solar system, each with its own story to tell. Explore the icy geysers of Enceladus, the thick atmosphere of Titan, and the intriguing possibility of life on Europa. Learn about the diverse landscapes and unique features that make these moons captivating subjects of study.
-
-Comets and Kuiper Belt Objects: Icy Wanderers
-Beyond the orbit of Neptune lies the Kuiper Belt, a region teeming with icy bodies and dwarf planets. Discover the origin of comets, their majestic tails, and the ongoing efforts to explore these distant and mysterious objects.
-
-Conclusion:
-
-Our solar system, a celestial tapestry woven with the threads of planets, moons, asteroids, and comets, continues to inspire scientific inquiry and spark the imagination of people around the world. As we gaze into the night sky, let us appreciate the beauty and complexity of the cosmic neighborhood we call home, and marvel at the ongoing efforts to unlock the secrets of the solar system.
-</p>
-</section>
-
-<section>
-    <h1>Section 2</h2>
-    <p>
-        <!-- Generate another large random string for content -->
-        Vivamus sit amet lacus nec turpis luctus vulputate. Ut sed velit vel justo consectetur sodales nec ut ligula.
-        <!-- Repeat the above string to make the content larger -->
-        <!-- ... (repeat as needed) ... -->
-    </p>
-</section>
-
-
-
-<script>
-
-document.addEventListener('DOMContentLoaded', generateTableOfContents);
-
-function generateTableOfContents() {
-        const tocContainer = document.getElementById('tableOfContents');
-        const headers = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
-
-        if (tocContainer && headers.length > 0) {
-            const ul = document.createElement('ul');
-            let currentList = ul;
-
-            headers.forEach((header, index) => {
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = '#';
-                a.textContent = `${header.textContent}`;
-                a.onclick = () => scrollToHeader(index);
-
-                li.appendChild(a);
-
-                // Determine the header level and adjust indentation
-                const headerLevel = parseInt(header.tagName.charAt(1)); // Extract the number from 'h2' or 'h3'
-                if (headerLevel > 1) {
-                    // Create nested ul elements for h3 and beyond
-                    const nestedUl = document.createElement('ul');
-                    currentList.lastElementChild.appendChild(nestedUl);
-                    currentList = nestedUl;
-                }
-
-                currentList.appendChild(li);
-            });
-
-            tocContainer.appendChild(ul);
-        }
-    }
-
-    // Smooth scroll to the header at the specified index
-    function scrollToHeader(index) {
-        const headers = document.querySelectorAll('section h2');
-
-        if (index >= 0 && index < headers.length) {
-            headers[index].scrollIntoView({ behavior: 'smooth' });
-        }
-    }
-</script>
-
+    <div id="app">
+        <!-- Your application content goes here -->
+        <h1>Hello, Color Scheme!</h1>
+        <!-- Button to change color scheme -->
+        <button id="changeColorScheme">Change Color Scheme</button>
+    </div>
+    <script type="module" src="themeswitcher.js"></script>
 </body>
 </html>

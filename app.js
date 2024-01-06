@@ -438,6 +438,65 @@ app.post('/index/updateuser', isLoggedIn, async (req, res) => {
 
 });
 
+// update user preference
+app.post('/index/user/updatepreference', isLoggedIn, async (req, res) => {
+    var loggedinuserid = req.session.user._id;
+    var theme = req.body.theme; // 'light' or 'dark'
+    console.log(`received theme: ${theme}`);
+  
+    try {
+      const loggedinuser = await User.findById(loggedinuserid);
+      if (!loggedinuser) {
+        return res.status(400).json({ message: 'user not found' });
+      }
+
+      const themePreference = loggedinuser.preferences.find(preference => preference.theme !== undefined);
+
+      if (themePreference) {
+        themePreference.theme = theme;
+      } else {
+        loggedinuser.preferences.push({ theme });
+      }
+
+      await loggedinuser.save();
+  
+      res.json({ message: 'Theme updated successfully' });
+  
+    } catch (err) {
+      console.error(err); // Log the error for debugging
+      return res.status(500).send('Internal Server Error');
+    }
+});
+
+// get user preference
+app.get('/index/user/getpreference', isLoggedIn, async (req, res) => {
+    var loggedinuserid = req.session.user._id;
+
+    try {
+        const loggedinuser = await User.findById(loggedinuserid);
+        if (!loggedinuser) {
+            return res.status(400).json({ message: 'User not found' });
+        }
+
+        // Find the theme preference
+        const themePreference = loggedinuser.preferences.find(preference => preference.theme !== undefined);
+
+        if (themePreference) {
+            const theme = themePreference.theme;
+            res.json({ theme });
+        } else {
+            // If theme preference doesn't exist, you can set a default theme or return an error message
+            res.status(404).json({ message: 'Theme preference not found' });
+        }
+
+    } catch (err) {
+        console.error(err); // Log the error for debugging
+        return res.status(500).send('Internal Server Error');
+    }
+});
+
+
+
 // Get user details
 app.get('/index/getuser/:id', isLoggedIn, async (req, res) => {
     const loggedinuserid = req.params.id;
