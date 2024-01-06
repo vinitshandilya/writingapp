@@ -151,6 +151,22 @@
          .image-container {
          padding: 10px;
          }
+
+        #tableOfContents ul {
+            padding-inline-start: 0px !important;
+        }
+
+        #tableOfContents li {
+        border: none;
+        color: #4287f5;
+        font-size: small;
+        }
+
+        #tableOfContents li a {
+        text-decoration: none; /* Remove underline */
+        color: inherit; /* Inherit the color from the parent (#333 in this case) */
+        }
+
       </style>
    </head>
    <body>
@@ -221,9 +237,16 @@
                </div>
             </button>
          </nav>
+
          <div class="container-fluid">
             <div class="row">
-               <div class="col-md-6 mx-auto">
+
+               <div class="col-md-2 ml-2 mt-4" id="toc-container">
+                <h6 style="color: #1c4175; font-weight: bolder;">Table of contents</h6>
+                    <div id="tableOfContents"></div>
+               </div>
+
+               <div class="col-md-8 mx-auto">
                   <div id="blogheader" class="container-fluid ribbon-area"></div>
                   <div class="monetization-banner" id="monetization-banner-id">You have monetized this article. Visit <a href="/homepage/dashboard">Author's Dashboard</a> to customize payout settings.</div>
                   <div id="preview" class="container-fluid"></div>
@@ -234,6 +257,7 @@
                      <hr>
                   </div>
                </div>
+
             </div>
          </div>
          <div class="translucent-mask" id="translucentMask">
@@ -321,7 +345,7 @@
             function updateBlogDetails(blogDetails) {
             
                 var editorContent = blogDetails.blog.body;
-                console.log(`html string from server: ${editorContent}`);
+                // console.log(`html string from server: ${editorContent}`);
                 const dateObj = new Date(blogDetails.blog.timestamp);
                 var timeToread = calculateReadingTime(blogDetails.blog.body, 230);
                 const formatString = { month: 'short', day: 'numeric', year: 'numeric' };
@@ -345,6 +369,8 @@
                     </div> `;
             
                 quillpreview.clipboard.dangerouslyPasteHTML(editorContent);
+
+                generateTableOfContents(editorContent);
             
                 // Generate nav-bar links for blog update and delete
                 var editLink = document.getElementById('editLink');
@@ -533,8 +559,6 @@
                     console.error('One or more required variables are undefined.');
                     return;
                 }
-            
-                console.log(`${loggedinuserid} will subscribe to ${bloguserid}, author name: ${blogauthor}, redirect blogid: ${blogid}`);
                 
                 // send request to subscribe user
                 const subscriptioninfo = {
@@ -564,6 +588,111 @@
                     // Handle the error as needed
                 }); 
             }
+
+            function scrollToHeader(index) {
+                const headers = document.querySelectorAll('#preview h1, #preview h2, #preview h3');
+
+                if (index >= 0 && index < headers.length) {
+                    headers[index].scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            function compareHeaderTags(headers) {
+                const booleanArray = [];
+
+                for (let i = 0; i < headers.length - 1; i++) {
+                    const currentTag = parseInt(headers[i].tagName[1]); // Extract the numeric part from the tag name
+                    const nextTag = parseInt(headers[i + 1].tagName[1]);
+
+                    booleanArray.push(currentTag < nextTag);
+                }
+
+                return booleanArray;
+            }
+
+            function generateTableOfContents(htmlString) {
+                const tocContainer = document.getElementById('tableOfContents');
+
+                if (tocContainer) {
+                    const tempContainer = document.createElement('div');
+                    tempContainer.innerHTML = htmlString;
+
+                    const headers = tempContainer.querySelectorAll('h1, h2, h3');
+                    const ul = document.createElement('ul');
+                    ul.classList.add('list-group'); // Add Bootstrap class for list group
+                    let currentList = ul;
+                    let previousLevel = 1;
+
+                    const hasChild = compareHeaderTags(headers);
+                    
+                    headers.forEach((header, index) => {
+                        const headerLevel = parseInt(header.tagName.charAt(1));
+                        const levelDiff = headerLevel - previousLevel;
+                        
+                        const li = document.createElement('li');
+                        li.classList.add('list-group-item');
+                        const indicator = document.createElement('span');
+                        indicator.classList.add('expand-indicator');
+                        
+                        if(hasChild[index]) {
+                            indicator.innerHTML = '<i class="fa-solid fa-angle-right" style="margin-right: 10px;"></i>';
+                        } else {
+                            indicator.innerHTML = '';
+                        }
+
+                        indicator.onclick = () => toggleChildren(li);
+
+                        const a = document.createElement('a');
+                        a.href = '#';
+                        a.classList.add('text-decoration-none');
+                        a.innerHTML = header.textContent;
+                        a.onclick = () => scrollToHeader(index);
+
+                        li.appendChild(indicator);
+                        li.appendChild(a);
+                        
+                        if (levelDiff > 0) {
+                            for (let i = 0; i < levelDiff; i++) {
+                                const nestedUl = document.createElement('ul');
+                                const indicator = li.querySelector('.expand-indicator');
+                                
+                                if (nestedUl) {
+                                    const isCollapsed = nestedUl.classList.toggle('d-none');
+                                    if(hasChild[index] && hasChild[index] !== undefined) {
+                                        indicator.innerHTML = isCollapsed ? '<i class="fa-solid fa-angle-right" style="margin-right: 10px;"></i>' : '<i class="fa-solid fa-angle-down" style="margin-right: 10px;"></i>';
+                                    } else {
+                                        indicator.innerHTML = `<span style="margin-right: 10px;"></span>`;
+                                    }
+                                    
+                                }
+                                currentList.lastElementChild.appendChild(nestedUl);
+                                currentList = nestedUl;
+                            }
+                        } else if (levelDiff < 0) {
+                            for (let i = 0; i < -levelDiff; i++) {
+                                currentList = currentList.parentElement.parentElement;
+                            }
+                        }
+
+                        currentList.appendChild(li);
+                        previousLevel = headerLevel;
+                    });
+
+                    tocContainer.appendChild(ul);
+                }
+            }
+
+
+            function toggleChildren(parent) {
+                const nestedUl = parent.querySelector('ul');
+                const indicator = parent.querySelector('.expand-indicator');
+                console.log(nestedUl);
+                if (nestedUl) {
+                    const isCollapsed = nestedUl.classList.toggle('d-none');
+                    indicator.innerHTML = isCollapsed ? '<i class="fa-solid fa-angle-right" style="margin-right: 10px;"></i>' : '<i class="fa-solid fa-angle-down" style="margin-right: 10px;"></i>';
+                }
+            }
+
             
             
          </script>
