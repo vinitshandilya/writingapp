@@ -247,7 +247,7 @@
             <div class="row">
 
                <div class="col-md-3 ml-3 mr-4 mt-4" id="toc-container">
-                <h6 style="color: #1c4175; font-weight: bolder;">Table of contents</h6>
+                    <h6 id="tocheader" style="color: #1c4175; font-weight: bolder;">Table of contents</h6>
                     <div id="tableOfContents"></div>
                </div>
 
@@ -617,12 +617,24 @@
 
             function generateTableOfContents(htmlString) {
                 const tocContainer = document.getElementById('tableOfContents');
+                const tocheader = document.getElementById('tocheader');
 
                 if (tocContainer) {
                     const tempContainer = document.createElement('div');
                     tempContainer.innerHTML = htmlString;
 
                     const headers = tempContainer.querySelectorAll('h1, h2, h3');
+
+                    if(headers.length > 0) {
+                        console.log('show tocheader');
+                        tocheader.style.display = 'block';
+                    } else {
+                        console.log("don't show tocheader");
+                        tocheader.style.display = 'none';
+                    }
+
+
+
                     const ul = document.createElement('ul');
                     ul.classList.add('list-group'); // Add Bootstrap class for list group
                     let currentList = ul;

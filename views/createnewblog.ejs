@@ -52,7 +52,7 @@
         border: none !important;
         box-shadow: none !important;
         outline: none !important;
-        min-height: 100vh;
+        min-height: 40vh;
         max-height: none;
         height: auto !important;
         overflow-y: hidden;
@@ -184,8 +184,12 @@
     }
 
     .modal-full .modal-dialog {
-    max-width: 90%;
-  }
+     max-width: 90%;
+    }
+
+    .ql-placeholder {
+     padding-left: 0px !important;
+    }
 
   </style>
 
@@ -308,11 +312,11 @@
 
                 <% } else { %>
                     <div class="mb-3">
-                        <textarea class="form-control custom-textarea-title" id="title" name="title" rows="1" placeholder="Enter Title..."></textarea>
+                        <textarea class="form-control custom-textarea-title" id="title" name="title" rows="1" placeholder="Title..."></textarea>
                     </div>
         
                     <div class="mb-3">
-                        <textarea class="form-control custom-textarea-subtitle" id="subtitle" name="subtitle" rows="1" placeholder="Enter Subtitle..."></textarea>
+                        <textarea class="form-control custom-textarea-subtitle" id="subtitle" name="subtitle" rows="1" placeholder="Subtitle..."></textarea>
                     </div>
 
                     
@@ -326,9 +330,6 @@
                     <button type="button" class="btn btn-success" onclick="saveBlog(false, '')">Publish</button>
         
                     <button type="button" class="btn btn-secondary" onclick="cancel('')">Cancel</button>
-
-                    
-
 
                 <% } %>
         </div>
@@ -405,7 +406,7 @@
             toolbar: '#toolbar'
         },
         theme: 'snow',
-        placeholder: 'Write something...',
+        placeholder: 'Start writing...',
     });
 
     var previewBtn = document.querySelector('#display-preview-btn');
