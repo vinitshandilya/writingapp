@@ -167,6 +167,11 @@
         color: inherit; /* Inherit the color from the parent (#333 in this case) */
         }
 
+        /* div#toc-container, div#carticle-container {
+        max-height: 100vh;
+        overflow-y: scroll;
+        } */
+
       </style>
    </head>
    <body>
@@ -241,12 +246,12 @@
          <div class="container-fluid">
             <div class="row">
 
-               <div class="col-md-2 ml-2 mt-4" id="toc-container">
+               <div class="col-md-3 mr-3 mt-4" id="toc-container">
                 <h6 style="color: #1c4175; font-weight: bolder;">Table of contents</h6>
                     <div id="tableOfContents"></div>
                </div>
 
-               <div class="col-md-8 mx-auto">
+               <div class="col-md-6" id="article-container">
                   <div id="blogheader" class="container-fluid ribbon-area"></div>
                   <div class="monetization-banner" id="monetization-banner-id">You have monetized this article. Visit <a href="/homepage/dashboard">Author's Dashboard</a> to customize payout settings.</div>
                   <div id="preview" class="container-fluid"></div>
@@ -661,7 +666,7 @@
                                     if(hasChild[index] && hasChild[index] !== undefined) {
                                         indicator.innerHTML = isCollapsed ? '<i class="fa-solid fa-angle-right" style="margin-right: 10px;"></i>' : '<i class="fa-solid fa-angle-down" style="margin-right: 10px;"></i>';
                                     } else {
-                                        indicator.innerHTML = `<span style="margin-right: 10px;"></span>`;
+                                        indicator.innerHTML = `<i class="fa-solid fa-angle-right" style="display: none;"></i>`;
                                     }
                                     
                                 }
