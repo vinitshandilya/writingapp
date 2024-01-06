@@ -246,7 +246,7 @@
          <div class="container-fluid">
             <div class="row">
 
-               <div class="col-md-3 mr-3 mt-4" id="toc-container">
+               <div class="col-md-3 ml-3 mr-4 mt-4" id="toc-container">
                 <h6 style="color: #1c4175; font-weight: bolder;">Table of contents</h6>
                     <div id="tableOfContents"></div>
                </div>
@@ -640,7 +640,7 @@
                         indicator.classList.add('expand-indicator');
                         
                         if(hasChild[index]) {
-                            indicator.innerHTML = '<i class="fa-solid fa-angle-right" style="margin-right: 10px;"></i>';
+                            indicator.innerHTML = '<i class="fa-solid fa-angle-right" style="margin-right: 7px;"></i>';
                         } else {
                             indicator.innerHTML = '';
                         }
@@ -664,18 +664,24 @@
                                 if (nestedUl) {
                                     const isCollapsed = nestedUl.classList.toggle('d-none');
                                     if(hasChild[index] && hasChild[index] !== undefined) {
-                                        indicator.innerHTML = isCollapsed ? '<i class="fa-solid fa-angle-right" style="margin-right: 10px;"></i>' : '<i class="fa-solid fa-angle-down" style="margin-right: 10px;"></i>';
+                                        indicator.innerHTML = isCollapsed ? '<i class="fa-solid fa-angle-right" style="margin-right: 7px;"></i>' : '<i class="fa-solid fa-angle-down" style="margin-right: 7px;"></i>';
                                     } else {
                                         indicator.innerHTML = `<i class="fa-solid fa-angle-right" style="display: none;"></i>`;
                                     }
                                     
                                 }
-                                currentList.lastElementChild.appendChild(nestedUl);
-                                currentList = nestedUl;
+                                if(currentList.lastElementChild) {
+                                    currentList.lastElementChild.appendChild(nestedUl);
+                                    currentList = nestedUl;
+                                }
+                                
                             }
                         } else if (levelDiff < 0) {
                             for (let i = 0; i < -levelDiff; i++) {
-                                currentList = currentList.parentElement.parentElement;
+                                if(currentList.parentElement) {
+                                    currentList = currentList.parentElement.parentElement;
+                                }
+                                
                             }
                         }
 
@@ -694,7 +700,7 @@
                 console.log(nestedUl);
                 if (nestedUl) {
                     const isCollapsed = nestedUl.classList.toggle('d-none');
-                    indicator.innerHTML = isCollapsed ? '<i class="fa-solid fa-angle-right" style="margin-right: 10px;"></i>' : '<i class="fa-solid fa-angle-down" style="margin-right: 10px;"></i>';
+                    indicator.innerHTML = isCollapsed ? '<i class="fa-solid fa-angle-right" style="margin-right: 7px;"></i>' : '<i class="fa-solid fa-angle-down" style="margin-right: 7px;"></i>';
                 }
             }
 

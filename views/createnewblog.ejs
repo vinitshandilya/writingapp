@@ -52,6 +52,7 @@
         border: none !important;
         box-shadow: none !important;
         outline: none !important;
+        min-height: 100vh;
         max-height: none;
         height: auto !important;
         overflow-y: hidden;
@@ -77,6 +78,7 @@
         resize: none;
         font-size: 35px;
         font-weight: bolder;
+        padding-inline-start: 0px !important;
     }
 
     .custom-textarea-title::placeholder {
@@ -97,6 +99,7 @@
         border: none;
         resize: none;
         font-size: 20px;
+        padding-inline-start: 0px !important;
     }
 
     .custom-textarea-subtitle::placeholder {
@@ -288,7 +291,7 @@
                     </div>
         
                     <div class="mb-3">
-                        <textarea class="form-control custom-textarea-subtitle" id="subtitle" name="subtitle" rows="1" placeholder="Enter Subtitle..."><%= blog.subtitle %></textarea>
+                        <textarea class="form-control custom-textarea-subtitle" id="subtitle" name="subtitle" rows="1" placeholder="Subtitle..."><%= blog.subtitle %></textarea>
                     </div>
 
         
@@ -361,7 +364,7 @@
     // Initialize Quill for the preview without a toolbar (readOnly)
     var quillpreview = new Quill('#preview', {
         readOnly: true,
-        theme: 'snow'
+        theme: 'snow',
     });
 
     var previewContainer = document.querySelector('#preview');
@@ -401,7 +404,8 @@
             // toolbar: toolbarOptions
             toolbar: '#toolbar'
         },
-        theme: 'snow'
+        theme: 'snow',
+        placeholder: 'Write something...',
     });
 
     var previewBtn = document.querySelector('#display-preview-btn');
