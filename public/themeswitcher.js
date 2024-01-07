@@ -1,14 +1,38 @@
 import colorSchemes from './colors.js';
 
+var modeSwitch = document.getElementById('flexSwitchCheckDefault');
+
 document.addEventListener('DOMContentLoaded', function () {
     const body = document.body;
     const changeColorSchemeButton = document.getElementById('changeColorScheme');
     applyColorScheme(colorSchemes.light); // default theme is light
     getUserThemePreference();
+
+    var colorOptions = document.querySelectorAll('.color-option');
+    colorOptions.forEach(function(option) {
+        option.addEventListener('click', function() {
+            var color = getComputedStyle(option).getPropertyValue('--color');
+            console.log(color);
+            document.body.style.backgroundColor = color;
+            if(color === 'black') {
+                console.log('turning on dark mode');
+                applyColorScheme(colorSchemes.dark);
+                saveThemePreference('dark');
+                modeSwitch.checked = true;
+            } else {
+                console.log('turning on light mode');
+                applyColorScheme(colorSchemes.light);
+                saveThemePreference('light');
+                modeSwitch.checked = false;
+            }
+        });
+    });
+
 });
 
-document.getElementById('flexSwitchCheckDefault').addEventListener('change', function() {
+modeSwitch.addEventListener('change', function() {
     const darkModeEnabled = this.checked;
+    console.log(`dark mode switch state: ${this.checked}`);
     if(darkModeEnabled) {
         applyColorScheme(colorSchemes.dark);
         saveThemePreference('dark');

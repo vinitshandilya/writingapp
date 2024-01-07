@@ -1,0 +1,423 @@
+:root {
+    --color-primary: var(--color-primary, #ecf0f1);
+    --color-secondary: var(--color-secondary, #edc6a6);
+    --color-card: var(--color-card, #e3deda);
+    --color-titletext: var(--color-titletext, #1c4175);
+    --color-subtitletext: var(--color-subtitletext, #566078);
+    --color-bodytext: var(--color-bodytext, #0c0d0d);
+    --color-toctext: var(--color-toctext, #4287f5);
+    --color-monetizationbannerborder: var(--color-monetizationbannerborder, #1c4175);
+    --color-monetizationbannerbg: var(--color-monetizationbannerbg, #4E95F133);
+    --color-roundbuttonbg: var(--color-roundbuttonbg, #f5f3f0);
+    --color-readerbackground: var(--color-readerbackground, #fff);
+}
+
+body {
+    background-color: var(--color-primary);
+    color: var(--color-bodytext);
+}
+
+.fullreaderarea {
+    background-color: var(--color-readerbackground);
+    transition: background-color 0.4s ease;
+}
+
+.brand {
+    font-size: large;
+    font-weight: bolder;
+    color: var(--color-titletext);
+}
+
+a {
+    color: var(--color-toctext);
+}
+
+.custom-navbar {
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color: transparent;
+    /* border-bottom: 1px solid rgb(208, 203, 203); */
+}
+
+.profile-btn {
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: transparent;
+    color: var(--color-titletext);
+    border: none;
+}
+
+.profile-btn:hover,
+.btn-ptr {
+    background-color: transparent;
+    color: var(--color-titletext);
+    border: none;
+}
+
+.profile-btn:focus,
+.profile-btn:active,
+.btn-ptr:focus,
+.btn-ptr:active {
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
+.circle {
+    width: 40px;
+    /* Adjust the size of the circle as needed */
+    height: 40px;
+    background-color: var(--color-titletext);
+    /* Set the color of the circle */
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-card);
+    /* Text color */
+    font-size: 20px;
+    /* Adjust the font size as needed */
+    font-weight: bold;
+    /* Adjust the font weight as needed */
+}
+
+.list-group-item {
+    border: none;
+    /* border-top: 0px solid rgba(0, 0, 0, 0.125); */
+    background-color: transparent;
+}
+
+.user-list-title {
+    font-size: small;
+    color: var(--color-titletext);
+    font-weight: bold;
+}
+
+.user-list-subtitle {
+    color: var(--color-subtitletext);
+}
+
+.timesince {
+    color: var(--color-subtitletext);
+}
+
+.dropdown-toggle {
+    color: var(--color-subtitletext) !important;
+}
+
+.big-list-item {
+    border: none;
+    line-height: 2.5;
+    /* border-top: 1px solid rgba(0, 0, 0, 0.125); */
+    background-color: transparent;
+    font-weight: bold;
+}
+
+.big-list-item:hover {
+    background-color: transparent;
+}
+
+.dropdown-menu {
+    background-color: var(--color-primary);
+    /* border:1px solid var(--color-subtitletext); */
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.dropdown-item {
+    font-size: small;
+    color: gray;
+}
+
+.dropdown-item:hover {
+    background-color: transparent;
+    color: gray;
+}
+
+.btn-primary {
+    background-color: transparent;
+    border-color: #4287f5;
+    color: #4287f5;
+}
+
+.btn-primary:hover {
+    background-color: #1c4175;
+    border-color: #1c4175;
+    color: #fff;
+}
+
+.btn-rounded {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 15px;
+    background-color: var(--color-roundbuttonbg) !important;
+    color: var(--color-titletext);
+    border: none;
+    box-shadow: none;
+    font-size: smaller;
+    height: 30px;
+    padding: 0 10px;
+    margin: 10px;
+    line-height: 30px;
+}
+
+.button-not-following {
+    font-size: small;
+    background-color: transparent;
+    border: 1px solid var(--color-titletext);
+    color: var(--color-titletext);
+    width: 100px;
+    height: 40px;
+    padding: 0 10px;
+    cursor: pointer;
+    border-radius: 50px;
+}
+
+.button-not-following:hover {
+    font-size: small;
+    border: 1px solid var(--color-titletext);
+    color: var(--color-titletext);
+    width: 100px;
+    height: 40px;
+    padding: 0 10px;
+    cursor: pointer;
+    border-radius: 50px;
+}
+
+.button-following {
+    font-size: small;
+    background-color: var(--color-subtitletext);
+    border: none;
+    color: #fff;
+    width: 100px;
+    height: 40px;
+    padding: 0 10px;
+    cursor: pointer;
+    border-radius: 50px;
+}
+
+.button-following:hover {
+    font-size: small;
+    background-color: var(--color-subtitletext);
+    border: none;
+    color: #fff;
+    width: 100px;
+    height: 40px;
+    padding: 0 10px;
+    cursor: pointer;
+    border-radius: 50px;
+}
+
+.blog-list-title {
+    color: var(--color-titletext);
+    font-weight: bold;
+}
+
+.blog-list-subtitle {
+    padding-top: 0px;
+    color: var(--color-subtitletext);
+    font-weight: normal;
+}
+
+.blog-list-body {
+    color: var(--color-bodytext);
+    font-weight: normal;
+    font-size: small;
+    line-height: 1.5;
+    padding-bottom: 10px;
+}
+
+.img-thumbnail {
+    margin-top: 50%;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.card {
+    background-color: var(--color-card);
+    border: 1px solid var(--color-card);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1);
+}
+
+.ql-container {
+    border: none !important;
+}
+
+.ql-editor {
+    font-size: 19px;
+    font-family: 'Source Serif 4', serif;
+    padding: 0;
+    line-height: 1.9;
+    color: var(--color-bodytext);
+}
+
+.blog-title {
+    color: var(--color-titletext);
+}
+
+.ribbon {
+    font-size: 11px;
+    color: var(--color-subtitletext);
+}
+
+.tags-container {
+    display: inline-block;
+    padding: 0px 10px;
+}
+
+.monetization-banner {
+    padding: 15px;
+    font-size: small;
+    margin-bottom: 20px;
+    border: 1px solid var(--color-monetizationbannerborder);
+    background-color: var(--color-monetizationbannerbg);
+    /* color: #fff; */
+    border-radius: 5px;
+}
+
+.translucent-mask {
+    display: none;
+    position: fixed;
+    top: 0vh;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.center-content {
+    text-align: center;
+}
+
+img {
+    max-width: 100%;
+    /* Resize proportionally to fit the screen, up to 100% of its container's width */
+    height: auto;
+    /* Maintain aspect ratio */
+    object-fit: contain;
+}
+
+.navbar-toggler:focus,
+.navbar-toggler:active,
+.navbar-toggler-icon:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+.image-container {
+    padding: 10px;
+}
+
+#tableOfContents ul {
+    padding-inline-start: 0px !important;
+    background-color: transparent !important;
+}
+
+#tableOfContents li {
+    border: none;
+    color: var(--color-toctext);
+    font-size: small;
+    background-color: transparent !important;
+}
+
+#tableOfContents li a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.theme-switch .form-check-input:checked {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.theme-switch .form-check-input:checked+.form-check-label::before {
+    background-color: transparent;
+    /* Checked toggle handle color */
+}
+
+.theme-switch .form-check-input+.form-check-label::before {
+    background-color: #6c757d;
+    /* Unchecked toggle handle color */
+}
+
+.theme-switch .form-check-input:disabled+.form-check-label {
+    color: #6c757d;
+    /* Disabled label color */
+}
+
+.theme-switch .form-check-input:disabled:checked {
+    background-color: #6c757d;
+    /* Disabled checked background color */
+    border-color: #6c757d;
+    /* Disabled checked border color */
+}
+
+.theme-switch .form-check-input:disabled:checked+.form-check-label::before {
+    background-color: transparent;
+    /* Disabled checked toggle handle color */
+}
+
+.form-check-label {
+    color: gray;
+    font-weight: normal;
+}
+
+.brand-subtitle {
+    font-size: smaller;
+    font-weight: normal;
+    color: var(--color-subtitletext);
+}
+
+.start-new-button {
+    border: none;
+    border-radius: 3px;
+    color: #fff !important;
+    background-color: #34A853;
+    color: var(--color-bodytext);
+}
+
+.color-option {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    background: radial-gradient(circle at center, var(--color) 50%, transparent 50%);
+    border: 1px solid #ccc;
+    display: inline-block;
+}
+
+
+.start-new-button:focus,
+.start-new-button:active {
+    border: 1px solid var(--color-card);
+    border-radius: 3px;
+    background-color: var(--color-card) !important;
+    color: var(--color-bodytext) !important;
+}
+
+.badge-button {
+    background-color: transparent;
+    border: none;
+    color: var(--color-bodytext) !important;
+    font-size: large;
+    font-weight: lighter;
+}
+
+.theme-switch {
+    color: var(--color-bodytext);
+    font-weight: bold;
+}
