@@ -12,11 +12,11 @@ const flash = require('connect-flash');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./user');
 const cheerio = require('cheerio');
+require('dotenv').config();
 
 const app = express();
 const port = 3000;
-const db_uri = 'mongodb+srv://vinitshandilya:CQozNpwwVhUOXSdT@cluster0.mgznywr.mongodb.net/?retryWrites=true&w=majority';
-mongoose.connect(db_uri);
+mongoose.connect(process.env.MONGODB_URI);
 
 // Multer configuration for handling image uploads
 const storage = multer.diskStorage({

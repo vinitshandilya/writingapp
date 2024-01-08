@@ -2,7 +2,7 @@
 
 const colorSchemes = {
   light: {
-      primary: '#faf9f7',
+      primary: '#fff',
       secondary: '#edc6a6',
       accent: '#e74c3c',
       titletext: '#1c4175',

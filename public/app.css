@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@500&display=swap');
+
 :root {
-    --color-primary: var(--color-primary, #ecf0f1);
+    --color-primary: var(--color-primary, #fff);
     --color-secondary: var(--color-secondary, #edc6a6);
     --color-card: var(--color-card, #e3deda);
     --color-titletext: var(--color-titletext, #1c4175);
@@ -16,6 +18,10 @@ body {
     background-color: var(--color-primary);
     color: var(--color-bodytext);
 }
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Rubik', sans-serif;
+  }
 
 .fullreaderarea {
     background-color: var(--color-readerbackground);
