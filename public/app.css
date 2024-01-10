@@ -12,6 +12,9 @@
     --color-monetizationbannerbg: var(--color-monetizationbannerbg, #4E95F133);
     --color-roundbuttonbg: var(--color-roundbuttonbg, #f5f3f0);
     --color-readerbackground: var(--color-readerbackground, #fff);
+    --color-contextmenubg: var(--color-contextmenubg, #000);
+    --color-contextmenubtncolor: var(--color-contextmenubtncolor, #fff);
+    
 }
 
 body {
@@ -436,15 +439,17 @@ img {
 #contextMenu {
     position: absolute;
     display: none;
-    background-color:#edc6a6;
-    color: white;
     padding: 10px;
-    border: none;
-    border-radius: 5px;
     cursor: pointer;
+    background-color: var(--color-contextmenubg);
+    border: 1px solid var(--color-contextmenubg);
+    border-radius: 8px;
+    box-shadow: 0 0px 6px rgba(0, 0, 0, 0.1);
 }
 
 .contextmenuoption-btn {
     border:none;
     background-color: transparent;
+    color: var(--color-contextmenubtncolor);
+    margin-inline: 10px;
 }

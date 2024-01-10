@@ -130,7 +130,9 @@
 
          <div class="contextMenu" id="contextMenu">
             <button class="contextmenuoption-btn" onclick="highlightText()"><i class="fa-regular fa-bookmark"></i></button>
-            <button class="contextmenuoption-btn" onclick="clearHighlight()"><i class="fa-solid fa-eraser"></i></button>
+            <button class="contextmenuoption-btn"><i class="fa-regular fa-comment-dots"></i></button>
+            <button class="contextmenuoption-btn"><i class="fa-solid fa-bullhorn"></i></button>
+            <button class="contextmenuoption-btn" onclick="clearHighlight()"><i class="fa-solid fa-trash-can"></i></button>
         </div>
          
 
@@ -725,7 +727,7 @@
                     const range = selection.getRangeAt(0);
                     const rect = range.getBoundingClientRect();
                     const scrollY = window.scrollY || window.pageYOffset;
-                    contextMenu.style.top = (rect.top + scrollY - 50) + 'px';
+                    contextMenu.style.top = (rect.top + scrollY - 55) + 'px';
                     contextMenu.style.left = (rect.left + rect.width / 2 - 50) + 'px';
 
                     contextMenu.style.display = 'block';

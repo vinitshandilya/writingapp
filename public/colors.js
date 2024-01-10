@@ -14,6 +14,8 @@ const colorSchemes = {
       monetizationbannerbg: '#4E95F133',
       roundbuttonbg: '#f5f3f0',
       readerbackground: '#fff',
+      contextmenubg: '#1c4175',
+      contextmenubtncolor: '#fff',
   },
   dark: {
       primary: '#141210',
@@ -28,6 +30,8 @@ const colorSchemes = {
       monetizationbannerbg: '#4E95F133;',
       roundbuttonbg: '#1d571d',
       readerbackground: '#111211',
+      contextmenubg: '#fff',
+      contextmenubtncolor: '#000',
   },
 };
 
