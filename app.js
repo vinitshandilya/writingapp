@@ -560,8 +560,6 @@ app.post('/deletebookmark', isLoggedIn, async (req, res) => {
 
             // Save the updated user object
             await loggedinuser.save();
-            highlightsToAdd = [];
-            indicesToRemove = [];
 
             console.log('Highlights removed successfully:');
             // Send a response indicating success
@@ -578,7 +576,7 @@ function subtractRanges(rangeA, rangeB) {
     console.log(`highlight found: ${rangeA}, deletion range: ${rangeB}`);
     if (rangeB[1] < rangeA[0] || rangeB[0] > rangeA[1]) {
         console.log('no overlap');
-        return [0,0];
+        return [];
     }
 
     // Overlapping scenarios
@@ -586,32 +584,24 @@ function subtractRanges(rangeA, rangeB) {
 
     if(rangeB[1] >= rangeA[0] && rangeB[1] <= rangeA[1]) {
         console.log('left overlap');
-        if(rangeA[1]-rangeB[1] > 0) {
-            result.push([rangeB[1], rangeA[1]]);
-        }  
+        result.push([rangeB[1], rangeA[1]]);  
     }
 
     if(rangeB[0] >= rangeA[0] && rangeB[1] <= rangeA[1]) {
         console.log('full overlap');
-        if(rangeB[0]-rangeA[0] > 0) {
-            result.push([rangeA[0], rangeB[0]]);
-        }
-        if(rangeA[1]-rangeB[1] > 0) {
-            result.push([rangeB[1], rangeA[1]]);
-        }  
+        result.push([rangeA[0], rangeB[0]]);
+        result.push([rangeB[1], rangeA[1]]); 
     }
 
     if (rangeB[0] >= rangeA[0] && rangeB[1] >= rangeA[1]) {
         console.log('right overlap');
-        if(rangeB[0]-rangeA[0] > 0) {
-            result.push([rangeA[0], rangeB[0]]);
-        }
+        result.push([rangeA[0], rangeB[0]]);
     }
 
-    if(rangeB[0] <= rangeA[0] && rangeB[1] >= rangeA[1]) {
-        console.log('delete range overlaps highlight');
-        return [0,0];
-    }
+    // if(rangeB[0] <= rangeA[0] && rangeB[1] >= rangeA[1]) {
+    //     console.log('delete range overlaps highlight');
+    //     return [];
+    // }
 
     return result;
 }

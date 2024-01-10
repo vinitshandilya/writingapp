@@ -165,6 +165,8 @@
             const monetizationbanner = document.getElementById("monetization-banner-id");
             const appPaywallLink = document.getElementById('appPaywallLink');
             const tagscontainer = document.getElementById('tags-container');
+            const markercolor = '#58f04180'
+            //const inkcolor = '#000';
             
             var blogDetails;
             var bloguserid;
@@ -172,6 +174,7 @@
             var loggedinuserid;
             var blogid;
             var selectedrange;
+
             
             document.addEventListener('DOMContentLoaded', function () {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -593,7 +596,8 @@
             // Function to highlight selected text
             function highlightText() {
                 if(selectedrange && selectedrange.length > 0) {
-                    quillpreview.formatText(selectedrange.index, selectedrange.length, 'background', 'yellow');
+                    quillpreview.formatText(selectedrange.index, selectedrange.length, 'background', markercolor);
+                    // quillpreview.formatText(selectedrange.index, selectedrange.length, 'color', inkcolor);
                     saveBookmarkToServer(selectedrange);
                     selectedrange = null;
                     const selection = window.getSelection();
@@ -696,7 +700,8 @@
 
                     if(bookmarkdata.highlights.length > 0) {
                         bookmarkdata.highlights.forEach((highlight) => {
-                            quillpreview.formatText(highlight.index, highlight.length, 'background', 'yellow');
+                            quillpreview.formatText(highlight.index, highlight.length, 'background', markercolor);
+                            //quillpreview.formatText(highlight.index, highlight.length, 'color', inkcolor);
                         })
 
                     } else {
