@@ -1,35 +1,56 @@
-<!-- index.html -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Scheme Example</title>
-    <style>
-      :root {
-          --color-primary: var(--color-primary, #3498db);
-          --color-secondary: var(--color-secondary, #2ecc71);
-          --color-accent: var(--color-accent, #e74c3c);
-          --color-background: var(--color-background, #ecf0f1);
-          --color-text: var(--color-text, #34495e);
-          /* Add more CSS variables as needed */
-      }
-
-      body {
-          background-color: var(--color-background);
-          color: var(--color-text);
-      }
-
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Text Selection Popup</title>
+  <style>
+    /* Style for the popup button */
+    #contextMenu {
+      position: absolute;
+      display: none;
+      background-color: #4CAF50;
+      color: white;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <div id="app">
-        <!-- Your application content goes here -->
-        <h1>Hello, Color Scheme!</h1>
-        <!-- Button to change color scheme -->
-        <button id="changeColorScheme">Change Color Scheme</button>
-    </div>
-    <script type="module" src="themeswitcher.js"></script>
+
+<!-- Sample content for demonstration -->
+<p>Select some text to see the popup button.</p>
+<p>This is another paragraph for testing.</p>
+
+
+<!-- Popup button element -->
+
+<div id="contextMenu">
+    <button id="addbookmark" onclick="alert('Button Clicked')">Popup Button</button>
+    <button>Another button</button>
+</div>
+
+<script>
+  document.addEventListener('selectionchange', function () {
+    const selection = window.getSelection();
+    const selectedText = selection.toString();
+    const contextMenu = document.getElementById('contextMenu');
+
+    if (selectedText) {
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+
+      contextMenu.style.top = (rect.top - 40) + 'px';
+      contextMenu.style.left = (rect.left + rect.width / 2 - 50) + 'px';
+
+      contextMenu.style.display = 'block';
+    } else {
+      contextMenu.style.display = 'none';
+    }
+  });
+</script>
+
 </body>
 </html>

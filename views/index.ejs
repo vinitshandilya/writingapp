@@ -14,6 +14,13 @@
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
       <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,300&display=swap" rel="stylesheet">
       <link rel="stylesheet" href="app.css">
+
+      <style>
+        #popup-button {
+        position: absolute;
+        display: none;
+        }
+      </style>
    </head>
 
     <body class="fullreaderarea">
@@ -119,6 +126,14 @@
                <a href="#!" class="btn btn-primary" id="subscribe-button" onclick=authorSubscribe()>Subscribe</a>
             </div>
          </div>
+
+
+         <div class="contextMenu" id="contextMenu">
+            <button class="contextmenuoption-btn" onclick="highlightText()"><i class="fa-regular fa-bookmark"></i></button>
+            <button class="contextmenuoption-btn" onclick="clearHighlight()"><i class="fa-solid fa-eraser"></i></button>
+        </div>
+         
+
          <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
          <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
          <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
@@ -156,6 +171,7 @@
             var blogauthor;
             var loggedinuserid;
             var blogid;
+            var selectedrange;
             
             document.addEventListener('DOMContentLoaded', function () {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -269,7 +285,7 @@
                 }
             
                 getPaywallStatus();
-                // maskUnmaskBlog(bloguserid, loggedinuserid);
+                applySavedBookmarks(blogid);
             }
             
             
@@ -563,6 +579,155 @@
                     indicator.innerHTML = isCollapsed ? '<i class="fa-solid fa-angle-right" style="margin-right: 7px;"></i>' : '<i class="fa-solid fa-angle-down" style="margin-right: 7px;"></i>';
                 }
             }
+
+            // Highlight and save bookmark
+
+            quillpreview.on('selection-change', function (range, oldRange, source) {
+                if (range && range.length > 0) {
+                    selectedrange = range;
+                } else {
+                    //clearAllHighlight();
+                }
+            });
+
+            // Function to highlight selected text
+            function highlightText() {
+                if(selectedrange && selectedrange.length > 0) {
+                    quillpreview.formatText(selectedrange.index, selectedrange.length, 'background', 'yellow');
+                    saveBookmarkToServer(selectedrange);
+                    selectedrange = null;
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                }
+                const contextMenu = document.getElementById('contextMenu');
+                contextMenu.style.display = 'none';
+            }
+
+            // Function to clear highlight
+            function clearHighlight() {
+                if(selectedrange && selectedrange.length > 0) {
+                    quillpreview.formatText(selectedrange.index, selectedrange.length, 'background', false);
+                    deleteBookmarkFromServer(selectedrange);
+                    selectedrange = null;
+                    const selection = window.getSelection();
+                    selection.removeAllRanges();
+                }
+                
+            }
+
+            function saveBookmarkToServer(range) {
+                const loggedinuserid = `<%= loggedinuser._id %>`;
+                const bookmark = {
+                    blogid: blogid,
+                    index: range.index,
+                    length: range.length
+                }
+
+                fetch('/savebookmark', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ bookmark: bookmark }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response from server:', data.message);
+                })
+                .catch(error => {
+                    console.error('Error saving bookmark to server:', error.message);
+                });
+            }
+
+            function deleteBookmarkFromServer(range) {
+                const loggedinuserid = `<%= loggedinuser._id %>`;
+                const bookmark = {
+                    blogid: blogid,
+                    index: range.index,
+                    length: range.length
+                }
+
+                fetch('/deletebookmark', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ bookmark: bookmark }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response from server:', data.message);
+                })
+                .catch(error => {
+                    console.error('Error saving bookmark to server:', error.message);
+                });
+
+            }
+
+
+
+            function applySavedBookmarks(blogid) {
+                // Make a GET request to fetch highlights for the specified blogid
+                fetch(`/gethighlights/${blogid}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // any additional headers if needed
+                    }
+                })
+                .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+                })
+                .then(bookmarkdata => {
+                    console.log(`highlights from server: ${JSON.stringify(bookmarkdata.highlights)}`);
+
+                    if(bookmarkdata.highlights.length > 0) {
+                        bookmarkdata.highlights.forEach((highlight) => {
+                            quillpreview.formatText(highlight.index, highlight.length, 'background', 'yellow');
+                        })
+
+                    } else {
+                        console.log('no bookmark data found');
+                    }
+                })
+                .catch(error => {
+                console.error('Error fetching highlights:', error);
+                });
+
+            }
+
+            // Display word context menu using native html text selection api
+
+            document.addEventListener('selectionchange', function () {
+                const selection = window.getSelection();
+                const selectedText = selection.toString();
+                const contextMenu = document.getElementById('contextMenu');
+
+                if (selectedText) {
+                    const range = selection.getRangeAt(0);
+                    const rect = range.getBoundingClientRect();
+                    const scrollY = window.scrollY || window.pageYOffset;
+                    contextMenu.style.top = (rect.top + scrollY - 50) + 'px';
+                    contextMenu.style.left = (rect.left + rect.width / 2 - 50) + 'px';
+
+                    contextMenu.style.display = 'block';
+                } else {
+                    contextMenu.style.display = 'none';
+                }
+            });
 
          </script>
 

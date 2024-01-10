@@ -468,6 +468,184 @@ app.post('/index/user/updatepreference', isLoggedIn, async (req, res) => {
     }
 });
 
+// save user bookmark
+app.post('/savebookmark', isLoggedIn, async (req, res) => {
+    const loggedinuserid = req.session.user._id;
+    const blogid = req.body.bookmark.blogid;
+    const index = req.body.bookmark.index;
+    const length = req.body.bookmark.length;
+  
+    try {
+      const loggedinuser = await User.findById(loggedinuserid);
+      if (!loggedinuser) {
+        return res.status(400).json({ message: 'User not found' });
+      }
+
+      const highlight = { index, length };
+      const existingBookmark = loggedinuser.bookmarks.find((bookmark) => bookmark.blogid === blogid);
+  
+      if (existingBookmark) {
+        existingBookmark.highlightes.push(highlight);
+      } else {
+        loggedinuser.bookmarks.push({ blogid, highlightes: [highlight] });
+      }
+
+      await loggedinuser.save();
+  
+      res.status(200).json({ message: 'Bookmark saved successfully' });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+    }
+});
+
+// delete user bookmark
+app.post('/deletebookmark', isLoggedIn, async (req, res) => {
+    const loggedinuserid = req.session.user._id;
+    const blogid = req.body.bookmark.blogid;
+    const index = req.body.bookmark.index;
+    const length = req.body.bookmark.length;
+
+    try {
+        const loggedinuser = await User.findById(loggedinuserid);
+        if (!loggedinuser) {
+            return res.status(400).json({ message: 'User not found' });
+        }
+        const existingBookmark = loggedinuser.bookmarks.find((bookmark) => bookmark.blogid === blogid);
+        if(existingBookmark) {
+            var indicesToRemove = [];
+            var highlightsToAdd = [];
+            for (let highlightIndex = 0; highlightIndex < existingBookmark.highlightes.length; highlightIndex++) {
+                const highlight = existingBookmark.highlightes[highlightIndex];
+                var remainingRanges = subtractRanges(
+                    [highlight.index, highlight.index + highlight.length],
+                    [index, index + length]
+                );
+
+                if (remainingRanges.length > 0) {
+                    // console.log('Existing highlighted range:');
+                    // console.log(highlight);
+                    // console.log('Delete request for range:');
+                    // console.log(`[${index}, ${index + length}]`);
+                    // console.log('Remaining ranges:');
+                    // console.log(remainingRanges);
+                    indicesToRemove.push(highlightIndex);
+
+                    // build new highlights from the remaining ranges
+                    // remainingRanges is an array of arrays
+
+                    remainingRanges.forEach((range) => {
+                        if(range.length == 2) {
+                            if(range[1]-range[0] > 0) {
+                                highlightsToAdd.push( {
+                                    index: range[0],
+                                    length: range[1]-range[0]
+                                });
+                            }
+                        }
+                    });
+
+                }
+            }
+
+            indicesToRemove.reverse().forEach((removeIndex) => {
+                existingBookmark.highlightes.splice(removeIndex, 1);
+            });
+
+            if(highlightsToAdd.length > 0) {
+                highlightsToAdd.forEach((highlight) => {
+                    existingBookmark.highlightes.push(highlight);
+                })
+            }
+
+            // Save the updated user object
+            await loggedinuser.save();
+            highlightsToAdd = [];
+            indicesToRemove = [];
+
+            console.log('Highlights removed successfully:');
+            // Send a response indicating success
+            res.status(200).json({ message: 'Highlights removed successfully' });
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+    }
+});
+
+
+function subtractRanges(rangeA, rangeB) {
+    console.log(`highlight found: ${rangeA}, deletion range: ${rangeB}`);
+    if (rangeB[1] < rangeA[0] || rangeB[0] > rangeA[1]) {
+        console.log('no overlap');
+        return [0,0];
+    }
+
+    // Overlapping scenarios
+    let result = [];
+
+    if(rangeB[1] >= rangeA[0] && rangeB[1] <= rangeA[1]) {
+        console.log('left overlap');
+        if(rangeA[1]-rangeB[1] > 0) {
+            result.push([rangeB[1], rangeA[1]]);
+        }  
+    }
+
+    if(rangeB[0] >= rangeA[0] && rangeB[1] <= rangeA[1]) {
+        console.log('full overlap');
+        if(rangeB[0]-rangeA[0] > 0) {
+            result.push([rangeA[0], rangeB[0]]);
+        }
+        if(rangeA[1]-rangeB[1] > 0) {
+            result.push([rangeB[1], rangeA[1]]);
+        }  
+    }
+
+    if (rangeB[0] >= rangeA[0] && rangeB[1] >= rangeA[1]) {
+        console.log('right overlap');
+        if(rangeB[0]-rangeA[0] > 0) {
+            result.push([rangeA[0], rangeB[0]]);
+        }
+    }
+
+    if(rangeB[0] <= rangeA[0] && rangeB[1] >= rangeA[1]) {
+        console.log('delete range overlaps highlight');
+        return [0,0];
+    }
+
+    return result;
+}
+
+
+  
+
+// Add a GET route to fetch highlights for a specific blogid
+app.get('/gethighlights/:blogid', isLoggedIn, async (req, res) => {
+    const loggedinuserid = req.session.user._id;
+    const blogid = req.params.blogid;
+  
+    try {
+      const loggedinuser = await User.findById(loggedinuserid);
+      if (!loggedinuser) {
+        return res.status(400).json({ message: 'User not found' });
+      }
+  
+      const bookmarkEntry = loggedinuser.bookmarks.find((bookmark) => bookmark.blogid === blogid);
+  
+      if (!bookmarkEntry) {
+        return res.status(404).json({ message: 'Bookmarks not found for the given blogid' });
+      }
+
+      res.status(200).json({ highlights: bookmarkEntry.highlightes });
+  
+    } catch (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+    }
+  });
+  
+  
+
 // get user preference
 app.get('/index/user/getpreference', isLoggedIn, async (req, res) => {
     var loggedinuserid = req.session.user._id;
@@ -909,7 +1087,7 @@ app.post('/upload-image', isLoggedIn, upload.single('image'), (req, res) => {
     res.json({ imageUrl });
 });
 
-  function findRemovedImageUrls(oldHtmlString, newHtmlString) {
+function findRemovedImageUrls(oldHtmlString, newHtmlString) {
     const oldImageUrls = extractImageUrls(oldHtmlString);
     const newImageUrls = extractImageUrls(newHtmlString);
   
@@ -933,9 +1111,9 @@ app.post('/upload-image', isLoggedIn, upload.single('image'), (req, res) => {
     });
   
     return imageUrls;
-  }
+}
 
-  function deleteImages(imageUrls) {
+function deleteImages(imageUrls) {
     const publicFolderPath = path.join(__dirname, 'uploads');
     if(imageUrls.length > 0) {
         imageUrls.forEach((imageUrl) => {
@@ -957,7 +1135,7 @@ app.post('/upload-image', isLoggedIn, upload.single('image'), (req, res) => {
     } else {
         console.log('no images to delete');
     }
-  }
+}
 
 
 app.listen(port, () => {

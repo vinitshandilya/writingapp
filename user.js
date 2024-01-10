@@ -14,11 +14,6 @@ const userSchema = new mongoose.Schema({
   paidsubscribers: [String],
   monthlysubscription: String,
   yearlysubscription: String,
-  bookmarks: [{
-    blogid: String,
-    startidx: Number,
-    endidx: Number,
-  }],
   notifications: [{
     senderuserid: String,
     receiveruserid: String,
@@ -28,6 +23,9 @@ const userSchema = new mongoose.Schema({
   preferences: [{
     theme: String,
   }],
+  bookmarks: [
+    { blogid: String, highlightes: [ { index: Number, length: Number }] }
+  ],
 });
 
 userSchema.methods.authenticate = function(password) {

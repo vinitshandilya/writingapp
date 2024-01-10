@@ -19,6 +19,11 @@ body {
     color: var(--color-bodytext);
 }
 
+.homepage-body {
+    background-color: var(--color-primary);
+    color: var(--color-bodytext);
+}
+
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Rubik', sans-serif;
   }
@@ -426,4 +431,20 @@ img {
 .theme-switch {
     color: var(--color-bodytext);
     font-weight: bold;
+}
+
+#contextMenu {
+    position: absolute;
+    display: none;
+    background-color:#edc6a6;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.contextmenuoption-btn {
+    border:none;
+    background-color: transparent;
 }
