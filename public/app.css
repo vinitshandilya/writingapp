@@ -12,7 +12,7 @@
     --color-monetizationbannerbg: var(--color-monetizationbannerbg, #4E95F133);
     --color-roundbuttonbg: var(--color-roundbuttonbg, #f5f3f0);
     --color-readerbackground: var(--color-readerbackground, #fff);
-    --color-contextmenubg: var(--color-contextmenubg, #000);
+    --color-contextmenubg: var(--color-contextmenubg, #031726);
     --color-contextmenubtncolor: var(--color-contextmenubtncolor, #fff);
     
 }
@@ -81,21 +81,31 @@ a {
 
 .circle {
     width: 40px;
-    /* Adjust the size of the circle as needed */
     height: 40px;
     background-color: var(--color-titletext);
-    /* Set the color of the circle */
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     color: var(--color-card);
-    /* Text color */
     font-size: 20px;
-    /* Adjust the font size as needed */
     font-weight: bold;
-    /* Adjust the font weight as needed */
 }
+
+.author-thumbnail {
+    width: 60px;
+    height: 60px;
+    background-color: var(--color-titletext);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    color: var(--color-card);
+    font-size: 20px;
+    font-weight: bold;
+}
+
 
 .list-group-item {
     border: none;
@@ -261,14 +271,20 @@ a {
 
 .ql-container {
     border: none !important;
+    height: auto !important;
+    overflow: hidden;
+
 }
 
 .ql-editor {
     font-size: 19px;
-    font-family: 'Source Serif 4', serif;
+    font-family: "Spectral", serif;
+    font-weight: 300;
     padding: 0;
-    line-height: 1.9;
+    height: auto !important;
+    line-height: 1.7;
     color: var(--color-bodytext);
+    overflow: hidden;
 }
 
 .blog-title {
@@ -452,4 +468,39 @@ img {
     background-color: transparent;
     color: var(--color-contextmenubtncolor);
     margin-inline: 10px;
+}
+
+.annotation-card {
+    font-size: smaller;
+    border-left: 5px solid #e73909; /* Set the color of the left border bar */
+    padding: 10px;
+    width: 200px;
+    background-color: #f2f2f2; /* Set the background color of the card */
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-textarea {
+    border: none;
+    resize: none;
+    padding-inline-start: 0px !important;
+}
+
+.custom-textarea:focus {
+    border:none;
+    box-shadow:none;
+    outline: none !important;
+}
+
+.likebar {
+    border-top: 1px solid #e3e5e6;
+    border-bottom: 1px solid #e3e5e6;
+    padding: 10px;
+    font-size: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.likebar-icons {
+    color: #b1b4b5;
 }

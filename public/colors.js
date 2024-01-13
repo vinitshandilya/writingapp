@@ -14,7 +14,7 @@ const colorSchemes = {
       monetizationbannerbg: '#4E95F133',
       roundbuttonbg: '#f5f3f0',
       readerbackground: '#fff',
-      contextmenubg: '#1c4175',
+      contextmenubg: '#031726',
       contextmenubtncolor: '#fff',
   },
   dark: {
