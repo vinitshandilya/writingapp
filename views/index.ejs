@@ -147,11 +147,6 @@
                     <div id="blogheader" class="container-fluid ribbon"></div>
                     <div class="monetization-banner" id="monetization-banner-id">You have monetized this article. Visit
                         <a href="/homepage/dashboard">Author's Dashboard</a> to customize payout settings.</div>
-                    <!-- <div class="likebar">
-                    <i class="fa-regular fa-heart likebar-icons" style="display: inline-block; margin-right: 20px;"></i>
-                    <i class="fa-regular fa-comment likebar-icons" style="display: inline-block; margin-right: 20px;"></i>
-                    <i class="fa-solid fa-retweet likebar-icons" style="display: inline-block; margin-right: 20px;"></i>
-                    </div> -->
                     
                     <div id="preview" class="container-fluid mt-4"></div>
                     <br>
@@ -164,10 +159,9 @@
                         <div class="center-content text-center">
                             <h3>Unlock a World of Exclusive Content! Start Your 30-Day Trial Today!</h3>
                             <p id="subscribe-banner"></p>
-                            <a href="#!" class="btn btn-primary" id="subscribe-button" onclick="authorSubscribe()">Subscribe</a>
+                            <a href="#!" class="btn btn-primary subscribe-button" id="subscribe-button" onclick="authorSubscribe()">Subscribe</a>
                         </div>           
-                    </div>
-                    
+                    </div>         
                 </div>
             </div>
         </div>
@@ -449,7 +443,7 @@
                             console.log('paywalled article');
                             appPaywallLink.style.color = '#0F9D58';
 
-                            if (bloguserid === loggedinuserid) { // display green banner only to the blog author
+                            if (bloguserid === loggedinuserid) { // display monetization banner only to the blog author
                                 // don't show translucent mask but show monetization banner
                                 translucentMask.style.display = 'none';
                                 monetizationbanner.style.display = 'block';
@@ -477,24 +471,27 @@
                                         return response.json();
                                     })
                                     .then(data => {
+                                        var articleContainer = document.getElementById('article-container');
+                                        var tocContainer = document.getElementById('toc-container');
                                         if (data.status !== 'subscribed') {
                                             // not subscribed, show translucent mask
                                             var bannermessage = data.bannermessage;
                                             translucentMask.style.display = 'block';
-                                            document.body.classList.add('no-scroll');
-                                            blogauthor = blogDetails.blog.author;
+                                            articleContainer.style.height = '100vh'; // Limit body height to one screen height
+                                            tocContainer.style.pointerEvents = 'none'; // disable table of contents links
+                                            blogauthor = blogDetails.blog.author; // used in authorSubscribe() call.
                                             var subscribebanner = document.getElementById('subscribe-banner');
                                             subscribebanner.innerText = bannermessage;
                                             return true;
                                         } else {
-                                            // subscribed to paywalled article
+                                            // subscribed to paywalled article, remove the mask
                                             translucentMask.style.display = 'none';
-                                            document.body.classList.remove('no-scroll');
+                                            articleContainer.style.height = 'auto';
+                                            tocContainer.style.pointerEvents = 'auto';
                                             monetizationbanner.style.display = 'none';
                                             premiumicon.style.display = 'block';
                                             return true;
                                         }
-
                                     })
                                     .catch(error => {
                                         console.error('Error sending data to server:', error.message);
@@ -522,7 +519,7 @@
                     return;
                 }
 
-                // send request to subscribe user
+                // send request to subscribe to the user
                 const subscriptioninfo = {
                     loggedinuserid: loggedinuserid,
                     authorid: bloguserid
@@ -544,10 +541,10 @@
                     .then(data => {
                         console.log('Response from server from authorSubscribe:', data.status);
                         window.location.href = `/index?id=${blogid}`;
+                        
                     })
                     .catch(error => {
                         console.error('Error sending data to server:', error.message);
-                        // Handle the error as needed
                     });
             }
 

@@ -1,168 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/03adeb66cc.js" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap JS (optional, if you need JavaScript features) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <title>The writing app</title>
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/simplemde@1.11.2/dist/simplemde.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/03adeb66cc.js" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+        integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+        integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8"
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/app.css">
 
-    <style>
 
-        a {
-         color: #1c4175;
-         }
-         .custom-navbar {
-         padding-left: 20px;
-         padding-right: 20px;
-         /* border-bottom: 1px solid rgb(208, 203, 203); */
-         }
-         .profile-btn {
-         text-align: left;
-         display: flex;
-         flex-direction: column;
-         align-items: flex-start;
-         background-color: transparent;
-         color: #1c4175;
-         border: none;
-         }
-         .profile-btn:hover, .btn-ptr {
-         background-color: transparent;
-         color: #1c4175;
-         border: none;
-         }
-         .profile-btn:focus,
-         .profile-btn:active,
-         .btn-ptr:focus,
-         .btn-ptr:active {
-         border: none;
-         outline: none;
-         box-shadow: none;
-         }
-         .circle {
-         width: 40px; /* Adjust the size of the circle as needed */
-         height: 40px;
-         background-color: #1c4175; /* Set the color of the circle */
-         border-radius: 50%;
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         color: white; /* Text color */
-         font-size: 20px; /* Adjust the font size as needed */
-         font-weight: bold; /* Adjust the font weight as needed */
-         }
-         .dropdown-menu {
-         border:1px solid rgb(208, 203, 203);
-         border-radius: 5px;
-         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-         }
-         .dropdown-item {
-         font-size: small;
-         color: gray;
-         }
-         .btn-primary {
-         background-color: transparent;
-         border-color: #4287f5;
-         color: #4287f5;
-         }
-         .btn-primary:hover {
-         background-color: #1c4175;
-         border-color: #1c4175;
-         color: #fff;
-         }
-         .btn-rounded {
-         display: inline-block;
-         border-radius: 15px;
-         background-color: #1c4175;
-         color: #fff;
-         border: none;
-         box-shadow: none;
-         font-size: smaller;
-         padding: 10 20px;
-         margin-right: 5px;
-         }
-         .ql-container {
-         border: none !important;
-         }
-         .ql-editor {
-          font-size: 17px;
-          font-family: 'Libre Baskerville', serif;
-          padding: 0;
-          line-height: 1.9;
-         }
-         
-         .blog-title {
-         color: #1c4175;
-         }
-         .ribbon-area {
-         color: #1c4175;
-         }
-
-         .tags-container {
-         display: inline-block;
-         padding: 0px 10px;
-         }
-         .monetization-banner {
-         padding: 15px;
-         margin-bottom: 20px;
-         border: 1px solid #b0c9eb;
-         background-color: rgba(78, 149, 241, 0.2); /* #0F9D58 with 70% transparency */
-         border-color: #1c4175; /* Border color to match */
-         /* color: #fff; */
-         border-radius: 5px;
-         }
-         .translucent-mask {
-         display: none;
-         position: fixed;
-         top: 0vh;
-         left: 0;
-         width: 100%;
-         height: 100vh;
-         background-color: rgba(255, 255, 255, 0.5);
-         backdrop-filter: blur(10px);
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         }
-         .center-content {
-         text-align: center;
-         }
-         img {
-         max-width: 100%; /* Resize proportionally to fit the screen, up to 100% of its container's width */
-         height: auto;   /* Maintain aspect ratio */
-         object-fit: contain;
-        }
-         .navbar-toggler:focus,
-         .navbar-toggler:active,
-         .navbar-toggler-icon:focus {
-         outline: none;
-         box-shadow: none;
-         }
-         .navbar-toggler {
-         border: none;
-         }
-         .image-container {
-         padding: 10px;
-         }
-
-    </style>
 </head>
-<body>
-  <body>
-
+<body class="fullreaderarea">
 
     <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
-        
         <a class="navbar-brand mr-auto" href="/homepage" style="margin-left: 10px;">
             <div class="d-flex align-items-center">
                 <div class="overflow-hidden" style="font-size:large; font-weight: bolder; color: #1c4175; margin-right: 10px;">
@@ -173,41 +42,46 @@
                 </div>
             </div>
         </a>
-
         <div class="position-relative mr-3 mt-2" id="navbarNav">
             <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
                 <a href="/" class="btn btn-primary">Join for free!</a>
             </ul>
-        </div>
-        
-        
-     </nav>
+        </div> 
+    </nav>
 
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-6 mx-auto">
-                <div id="blogheader" class="container-fluid ribbon-area"></div>
-                <div id="preview" class="container-fluid"></div>
-                <br>
-                <% if (blog && blog.tags.length > 1) { %>
-                <div class="tags-container">
-                    <div id="tags" class="container-fluid"><i class="fa-solid fa-tags"></i></div>
-                </div>
-                <% } %>
-                <br>
+            <div class="col-md-3 ml-3 mr-4 mt-4" id="toc-container" style="<%= blog && blog.paywall ? 'pointer-events: none;' : '' %>">
+                <h6 id="tocheader" style="color: var(--color-titletext); font-weight: bolder;">Table of contents
+                </h6>
+                <div id="tableOfContents"></div>
             </div>
+
+            <div class="col-md-6" id="article-container" style="position: relative; overflow: hidden; <%= blog && blog.paywall ? 'height: 100vh;' : '' %>">
+                <div id="blogheader" class="container-fluid ribbon"></div>
+                <div id="preview" class="container-fluid mt-4"></div>
+                <br>
+                <div class="tags-container" id="tags-container">
+                    <div id="tags" class="container-fluid"><i class="fa-solid fa-hashtag"
+                            style="color: var(--color-titletext);"></i></div>
+                </div>
+                <br>
+                <% if (blog && blog.paywall) { %>
+                    <div class="translucent-mask" id="translucentMask" style="width: 100%; height: 100%;">
+                        <div class="d-flex flex-column align-items-center center-content text-center">
+                            <h3>Unlock a World of Exclusive Content! Start Your 30-Day Trial Today!</h3>
+                            <a style="margin-top: 20px;" href="/" class="btn btn-primary">Create an account</a>
+                            <small style="margin-top: 20px;">Already a member? <a href="/login">Login</a></small>
+                        </div>           
+                    </div> 
+                <% } %>       
+            </div>
+
         </div>
     </div>
 
-    <% if (blog && blog.paywall) { %>
-        <div class="translucent-mask">
-            <div class="center-content">
-                <p>This is a paid article. Join today to get full access!</p>
-                <a href="/" class="btn btn-primary">Join for free!</a>
-            </div>
-        </div>
-    <% } %>
+    
 
     
 
@@ -217,6 +91,8 @@
 
 
     <script>
+
+    const tagscontainer = document.getElementById('tags-container');
 
     var quillpreview = new Quill('#preview', {
                 readOnly: true,
@@ -267,37 +143,54 @@
             const formattedTime = dateObj.toLocaleString("en-US", formatString).toUpperCase();
 
             blogheader.innerHTML = `
-                <h1 class="mt-4 blog-title">${blogDetails.blog.title}</h1>
-                <p style="font-size: 22px; color: #686868">${blogDetails.blog.subtitle}</p>
-                <div>
-                    <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-pen-to-square"></i> ${blogDetails.blog.author}</p>
-                    <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="fa-regular fa-calendar"></i> ${formattedTime}</p>
-                    <p style="font-size: smaller; display: inline-block; margin-right: 10px;"><i class="far fa-clock"></i> ${timeToread}</p>
-                </div> `;
+                    <h1 class="mt-4 blog-title">${blogDetails.blog.title}</h1>
+                    <div class="row" style="display: flex; justify-content: flex-start; align-items: center;">
+                        <div class="col" style="flex: 0;">
+                            <div class="author-thumbnail">
+                                <span class="initial" style="line-height: 1;">${blogDetails.blog.author.charAt(0).toUpperCase()}</span>
+                            </div>
+                        </div>
+
+                        <div class="col" style="flex: 1;">
+                            <h3 style="font-size: 20px; color: #919492">${blogDetails.blog.subtitle}</h3>
+                            <div class="ribbon">
+                                <p style="display: inline-block; margin-right: 10px;"><i class="fa-regular fa-pen-to-square"></i> ${blogDetails.blog.author}</p>
+                                <p style="display: inline-block; margin-right: 10px;"><i class="fa-regular fa-calendar"></i> ${formattedTime}</p>
+                                <p style="display: inline-block; margin-right: 10px;"><i class="far fa-clock"></i> ${timeToread}</p>
+                            </div>
+                        </div>
+                    </div>
+`;
 
             quillpreview.clipboard.dangerouslyPasteHTML(editorContent);
+            generateTableOfContents(editorContent);
 
             // Insert tags
             var tags = blogDetails.blog.tags;
-            var tagsDiv = document.getElementById('tags');
+                var tagsDiv = document.getElementById('tags');
 
-            if (tags.length > 0 && tagsDiv) {
-                tagsDiv.style.display = "block";
-                var tagsContainer = document.createElement('div');
-                tagsContainer.classList.add('tags-container');
+                if (tags.length > 1) {
+                    tagscontainer.style.display = 'block';
+                    tagsDiv.style.display = "block";
+                    var tagsContainer = document.createElement('div');
+                    tagsContainer.classList.add('tags-container');
 
-                tags.forEach(tag => {
-                    var tagElement = document.createElement('span');
-                    tagElement.classList.add('tag');
-                    tagElement.textContent = tag + ', ';
-                    tagsContainer.appendChild(tagElement);
-                });
+                    tags.forEach(tag => {
+                        var buttonElement = document.createElement('button');
+                        buttonElement.type = 'button';
+                        buttonElement.classList.add('btn-rounded');
+                        buttonElement.disabled = true;
+                        buttonElement.textContent = tag;
 
-                // Append the container to the tagsDiv
-                tagsDiv.appendChild(tagsContainer);
-            } else {
-                tagsDiv.style.display = "none";
-            }
+                        tagsContainer.appendChild(buttonElement);
+                    });
+
+                    // Append the container to the tagsDiv
+                    tagsDiv.appendChild(tagsContainer);
+                } else {
+                    tagscontainer.style.display = 'none';
+                    tagsDiv.style.display = "none";
+                }
 
         }
 
@@ -312,7 +205,130 @@
             return readingTime + ' MIN READ';
         }
 
+        function scrollToHeader(index) {
+                const headers = document.querySelectorAll('#preview h1, #preview h2, #preview h3');
+
+                if (index >= 0 && index < headers.length) {
+                    headers[index].scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            function compareHeaderTags(headers) {
+                const booleanArray = [];
+
+                for (let i = 0; i < headers.length - 1; i++) {
+                    const currentTag = parseInt(headers[i].tagName[1]); // Extract the numeric part from the tag name
+                    const nextTag = parseInt(headers[i + 1].tagName[1]);
+
+                    booleanArray.push(currentTag < nextTag);
+                }
+
+                return booleanArray;
+            }
+
+            function generateTableOfContents(htmlString) {
+                const tocContainer = document.getElementById('tableOfContents');
+                const tocheader = document.getElementById('tocheader');
+
+                if (tocContainer) {
+                    const tempContainer = document.createElement('div');
+                    tempContainer.innerHTML = htmlString;
+
+                    const headers = tempContainer.querySelectorAll('h1, h2, h3');
+
+                    if (headers.length > 0) {
+                        console.log('show tocheader');
+                        tocheader.style.display = 'block';
+                    } else {
+                        console.log("don't show tocheader");
+                        tocheader.style.display = 'none';
+                    }
+
+
+
+                    const ul = document.createElement('ul');
+                    ul.classList.add('list-group'); // Add Bootstrap class for list group
+                    let currentList = ul;
+                    let previousLevel = 1;
+
+                    const hasChild = compareHeaderTags(headers);
+
+                    headers.forEach((header, index) => {
+                        const headerLevel = parseInt(header.tagName.charAt(1));
+                        const levelDiff = headerLevel - previousLevel;
+
+                        const li = document.createElement('li');
+                        li.classList.add('list-group-item');
+                        const indicator = document.createElement('span');
+                        indicator.classList.add('expand-indicator');
+
+                        if (hasChild[index]) {
+                            indicator.innerHTML = '<i class="fa-solid fa-angle-right" style="margin-right: 7px;"></i>';
+                        } else {
+                            indicator.innerHTML = '';
+                        }
+
+                        indicator.onclick = () => toggleChildren(li);
+
+                        const a = document.createElement('a');
+                        a.href = '#';
+                        a.classList.add('text-decoration-none');
+                        a.innerHTML = header.textContent;
+                        a.onclick = () => scrollToHeader(index);
+
+                        li.appendChild(indicator);
+                        li.appendChild(a);
+
+                        if (levelDiff > 0) {
+                            for (let i = 0; i < levelDiff; i++) {
+                                const nestedUl = document.createElement('ul');
+                                const indicator = li.querySelector('.expand-indicator');
+
+                                if (nestedUl) {
+                                    const isCollapsed = nestedUl.classList.toggle('d-none');
+                                    if (hasChild[index] && hasChild[index] !== undefined) {
+                                        indicator.innerHTML = isCollapsed ? '<i class="fa-solid fa-angle-right" style="margin-right: 7px;"></i>' : '<i class="fa-solid fa-angle-down" style="margin-right: 7px;"></i>';
+                                    } else {
+                                        indicator.innerHTML = `<i class="fa-solid fa-angle-right" style="display: none;"></i>`;
+                                    }
+
+                                }
+                                if (currentList.lastElementChild) {
+                                    currentList.lastElementChild.appendChild(nestedUl);
+                                    currentList = nestedUl;
+                                }
+
+                            }
+                        } else if (levelDiff < 0) {
+                            for (let i = 0; i < -levelDiff; i++) {
+                                if (currentList.parentElement) {
+                                    currentList = currentList.parentElement.parentElement;
+                                }
+
+                            }
+                        }
+
+                        currentList.appendChild(li);
+                        previousLevel = headerLevel;
+                    });
+
+                    tocContainer.appendChild(ul);
+                }
+            }
+
+
+            function toggleChildren(parent) {
+                const nestedUl = parent.querySelector('ul');
+                const indicator = parent.querySelector('.expand-indicator');
+                console.log(nestedUl);
+                if (nestedUl) {
+                    const isCollapsed = nestedUl.classList.toggle('d-none');
+                    indicator.innerHTML = isCollapsed ? '<i class="fa-solid fa-angle-right" style="margin-right: 7px;"></i>' : '<i class="fa-solid fa-angle-down" style="margin-right: 7px;"></i>';
+                }
+            }
+
     </script>
+    <script type="module" src="/themeswitcher.js"></script>
 
 </body>
 </html>
