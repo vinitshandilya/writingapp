@@ -1,8 +1,6 @@
 import colorSchemes from './colors.js';
 
 document.addEventListener('DOMContentLoaded', function () {
-    const body = document.body;
-    const changeColorSchemeButton = document.getElementById('changeColorScheme');
     applyColorScheme(colorSchemes.light); // default theme is light
     getUserThemePreference();
 
@@ -15,6 +13,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('turning on dark mode');
                 applyColorScheme(colorSchemes.dark);
                 saveThemePreference('dark');
+            } else if(color === '#ecd7c2') {
+                console.log('turning on sepia mode');
+                applyColorScheme(colorSchemes.sepia);
+                saveThemePreference('sepia');
             } else {
                 console.log('turning on light mode');
                 applyColorScheme(colorSchemes.light);
@@ -87,10 +89,18 @@ async function getUserThemePreference() {
         if ('theme' in data) {
             const userTheme = data.theme;
             const themeswitch = document.getElementById('flexSwitchCheckDefault');
-            data.theme === 'light' ? applyColorScheme(colorSchemes.light) : applyColorScheme(colorSchemes.dark)
-            data.theme === 'light' ? themeswitch.checked = false : themeswitch.checked = true;
-
             console.log(`Fetched User theme preference from db: ${userTheme}`);
+
+            if(userTheme === 'light') {
+                applyColorScheme(colorSchemes.light);
+                themeswitch.checked = false;
+            } else if(userTheme === 'sepia') {
+                applyColorScheme(colorSchemes.sepia);
+                themeswitch.checked = false;
+            } else {
+                applyColorScheme(colorSchemes.dark);
+                themeswitch.checked = true;
+            }
         }
 
     } catch (error) {

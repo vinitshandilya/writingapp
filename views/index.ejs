@@ -1,176 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
-   <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-      <script src="https://kit.fontawesome.com/03adeb66cc.js" crossorigin="anonymous"></script>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-      <title>The writing app</title>
-      <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap" rel="stylesheet">
-      <link rel="stylesheet" href="app.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/03adeb66cc.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <title>The writing app</title>
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
-   </head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"
+        integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"
+        integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG+vnGctmUb0ZY0l8"
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+        integrity="sha384-+VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4+/RRE05" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
 
-    <body class="fullreaderarea">
-         <% var displayName = loggedinuser.firstname ? loggedinuser.firstname : loggedinuser.username; %>
-         <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="app.css">
+
+</head>
+
+<body class="fullreaderarea">
+    <% var displayName=loggedinuser.firstname ? loggedinuser.firstname : loggedinuser.username; %>
+        <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
             <a class="navbar-brand mr-auto" href="/homepage">
-               <div class="d-flex align-items-center">
-                  <div class="mr-2" style="color: var(--color-titletext);">
-                     <i class="fa-solid fa-arrow-left-long"></i>
-                  </div>
-                  <div class="overflow-hidden" style="font-size: smaller; color: var(--color-titletext);">
-                     <small>Back</small>
-                  </div>
-               </div>
+                <div class="d-flex align-items-center">
+                    <div class="mr-2" style="color: var(--color-titletext);">
+                        <i class="fa-solid fa-arrow-left-long"></i>
+                    </div>
+                    <div class="overflow-hidden" style="font-size: smaller; color: var(--color-titletext);">
+                        <small>Back</small>
+                    </div>
+                </div>
             </a>
 
-            <button class="border-0 navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <i class="fas fa-bars" style="color: var(--color-titletext)"></i>
+            <button class="border-0 navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars" style="color: var(--color-titletext)"></i>
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-               <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
-                  <li class="nav-item"><a class="nav-link" style="margin-right: 15px; color: var(--color-titletext); font-weight: light; font-size: smaller;" href="" id="appPaywallLink" onclick=updatePaywallStatus()><i class="fa-solid fa-dollar-sign"></i><span style="margin-left: 5px;">Monetize</span></a></li>
-                  <li class="nav-item"><a class="nav-link" style="margin-right: 15px; color: var(--color-titletext); font-weight: light; font-size: smaller;" href="#!" id="shareLink" target="_blank"><i class="fa-solid fa-share-nodes"></i><span style="margin-left: 5px;">Share</span></a></li>
-                  <li class="nav-item"><a class="nav-link" style="margin-right: 15px; color: var(--color-titletext); font-weight: light; font-size: smaller;" href="/index/createnew" id="createNewLink"><i class="fa-solid fa-plus"></i><span style="margin-left: 5px;">New</span></a></li>
-                  <li class="nav-item"><a class="nav-link" style="margin-right: 15px; color: var(--color-titletext); font-weight: light; font-size: smaller;" href="#!" id="editLink"><i class="fa-regular fa-pen-to-square"></i><span style="margin-left: 5px;">Edit</span style="margin-left: 5px;"></a></li>
-                  <li class="nav-item"><a class="nav-link" style="margin-right: 15px; color: rgb(230, 12, 96); font-weight: light; font-size: smaller;" href="#!" id="deleteLink" onclick="return confirm('Are you sure you want to delete this blog?')"><i class="fa-regular fa-trash-can"></i><span style="margin-left: 5px;">Delete</span></a></li>
-               </ul>
+                <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                    <li class="nav-item"><a class="nav-link"
+                            style="margin-right: 15px; color: var(--color-titletext); font-weight: light; font-size: smaller;"
+                            href="" id="appPaywallLink" onclick=updatePaywallStatus()><i
+                                class="fa-solid fa-dollar-sign"></i><span style="margin-left: 5px;">Monetize</span></a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link"
+                            style="margin-right: 15px; color: var(--color-titletext); font-weight: light; font-size: smaller;"
+                            href="#!" id="shareLink" target="_blank"><i class="fa-solid fa-share-nodes"></i><span
+                                style="margin-left: 5px;">Share</span></a></li>
+                    <li class="nav-item"><a class="nav-link"
+                            style="margin-right: 15px; color: var(--color-titletext); font-weight: light; font-size: smaller;"
+                            href="/index/createnew" id="createNewLink"><i class="fa-solid fa-plus"></i><span
+                                style="margin-left: 5px;">New</span></a></li>
+                    <li class="nav-item"><a class="nav-link"
+                            style="margin-right: 15px; color: var(--color-titletext); font-weight: light; font-size: smaller;"
+                            href="#!" id="editLink"><i class="fa-regular fa-pen-to-square"></i><span
+                                style="margin-left: 5px;">Edit</span style="margin-left: 5px;"></a></li>
+                    <li class="nav-item"><a class="nav-link"
+                            style="margin-right: 15px; color: rgb(230, 12, 96); font-weight: light; font-size: smaller;"
+                            href="#!" id="deleteLink"
+                            onclick="return confirm('Are you sure you want to delete this blog?')"><i
+                                class="fa-regular fa-trash-can"></i><span style="margin-left: 5px;">Delete</span></a>
+                    </li>
+                </ul>
             </div>
-            
+
             <button type="button ml-auto" class="btn profile-btn">
-               <div class="row no-gutters" style="display: flex; justify-content: center; align-items: center;">
-                  <div class="col" style="display: flex; justify-content: center; align-items: center;" onclick="window.location.href='/homepage'">
-                     <!-- profile pic ---------------------------------------------------------------->
-                     <div class="col">
-                        <div class="circle">
-                           <span class="initial" style="line-height: 1;"><%= displayName.charAt(0).toUpperCase() %></span>
+                <div class="row no-gutters" style="display: flex; justify-content: center; align-items: center;">
+                    <div class="col" style="display: flex; justify-content: center; align-items: center;"
+                        onclick="window.location.href='/homepage'">
+                        <!-- profile pic ---------------------------------------------------------------->
+                        <div class="col">
+                            <div class="circle">
+                                <span class="initial" style="line-height: 1;">
+                                    <%= displayName.charAt(0).toUpperCase() %>
+                                </span>
+                            </div>
                         </div>
-                     </div>
-                     <!-- name and email ---------------------------------------------------------->
-                     <div class="col">
-                        <div class="row no-gutters" style="white-space: nowrap; overflow: hidden; font-size: small;">
-                           <div class="col" style="font-weight: bold;">
-                              <%= `${loggedinuser.firstname} ${loggedinuser.lastname}` %>
-                           </div>
-                        </div>
-                        <div class="row no-gutters" style="font-size: smaller;">
-                           <div class="col">
-                              <small class="d-block"><%= `${loggedinuser.email}` %></small>
-                           </div>
-                        </div>
-                     </div>
-                  </div>
-                  <!-- dropdown menu -------------------------------------------------------------->
-                  <div class="col">
-                    <div class="dropdown show">
-                        <a class="btn dropdown-toggle btn-ptr" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
-                            <a class="dropdown-item" href="/homepage"><i class="fas fa-home" style="margin-right: 20px;"></i> Home</a>
-                            <a class="dropdown-item" href="/homepage/dashboard"><i class="fa-solid fa-chart-line" style="margin-right: 20px;"></i> Dashboard</a>
-                            <a class="dropdown-item" href="#"><i class="fa-solid fa-sliders" style="margin-right: 20px;"></i> Settings</a>
-                            <div class="dropdown-divider" style="background-color: #d7dbd7;"></div>
-                            <a class="dropdown-item" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right: 20px;"></i> Logout</a>
-                            <div class="dropdown-divider" style="background-color: #d7dbd7;"></div>
-                            <div class="dropdown-item">
-                                <div class="color-option" style="--color: white;"></div>
-                                <div class="color-option" style="--color: black;"></div>
-                                <div class="color-option" style="--color: #ecd7c2;"></div>
+                        <!-- name and email ---------------------------------------------------------->
+                        <div class="col">
+                            <div class="row no-gutters"
+                                style="white-space: nowrap; overflow: hidden; font-size: small;">
+                                <div class="col" style="font-weight: bold;">
+                                    <%= `${loggedinuser.firstname} ${loggedinuser.lastname}` %>
+                                </div>
+                            </div>
+                            <div class="row no-gutters" style="font-size: smaller;">
+                                <div class="col">
+                                    <small class="d-block">
+                                        <%= `${loggedinuser.email}` %>
+                                    </small>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                
-               </div>
-            </button>
-         </nav>
+                    <!-- dropdown menu -------------------------------------------------------------->
+                    <div class="col">
+                        <div class="dropdown show">
+                            <a class="btn dropdown-toggle btn-ptr" href="#" role="button" id="dropdownMenuLink"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuLink">
+                                <a class="dropdown-item" href="/homepage"><i class="fas fa-home"
+                                        style="margin-right: 20px;"></i> Home</a>
+                                <a class="dropdown-item" href="/homepage/dashboard"><i class="fa-solid fa-chart-line"
+                                        style="margin-right: 20px;"></i> Dashboard</a>
+                                <a class="dropdown-item" href="#"><i class="fa-solid fa-sliders"
+                                        style="margin-right: 20px;"></i> Settings</a>
+                                <div class="dropdown-divider" style="background-color: #d7dbd7;"></div>
+                                <a class="dropdown-item" href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"
+                                        style="margin-right: 20px;"></i> Logout</a>
+                                <div class="dropdown-divider" style="background-color: #d7dbd7;"></div>
+                                <div class="dropdown-item">
+                                    <div class="color-option" style="--color: white;"></div>
+                                    <div class="color-option" style="--color: black;"></div>
+                                    <div class="color-option" style="--color: #ecd7c2;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-         <div class="container-fluid">
+                </div>
+            </button>
+        </nav>
+
+        <div class="container-fluid">
             <div class="row">
 
-               <div class="col-md-3 ml-3 mr-4 mt-4" id="toc-container">
-                    <h6 id="tocheader" style="color: var(--color-titletext); font-weight: bolder;">Table of contents</h6>
+                <div class="col-md-3 ml-3 mr-4 mt-4" id="toc-container">
+                    <h6 id="tocheader" style="color: var(--color-titletext); font-weight: bolder;">Table of contents
+                    </h6>
                     <div id="tableOfContents"></div>
-               </div>
+                </div>
 
-               <div class="col-md-6" id="article-container">
-                  <div id="blogheader" class="container-fluid ribbon"></div>
-                  <hr>
-                  <div class="monetization-banner" id="monetization-banner-id">You have monetized this article. Visit <a href="/homepage/dashboard">Author's Dashboard</a> to customize payout settings.</div>
-                  <!-- <div class="likebar">
+                <div class="col-md-6" id="article-container" style="position: relative; overflow: hidden;">
+                    <div id="blogheader" class="container-fluid ribbon"></div>
+                    <div class="monetization-banner" id="monetization-banner-id">You have monetized this article. Visit
+                        <a href="/homepage/dashboard">Author's Dashboard</a> to customize payout settings.</div>
+                    <!-- <div class="likebar">
                     <i class="fa-regular fa-heart likebar-icons" style="display: inline-block; margin-right: 20px;"></i>
                     <i class="fa-regular fa-comment likebar-icons" style="display: inline-block; margin-right: 20px;"></i>
                     <i class="fa-solid fa-retweet likebar-icons" style="display: inline-block; margin-right: 20px;"></i>
-                  </div> -->
-                  <div id="preview" class="container-fluid mt-4"></div>
-                  <br>
-                  <div class="tags-container" id="tags-container">
-                     <div id="tags" class="container-fluid"><i class="fa-solid fa-hashtag" style="color: var(--color-titletext);"></i></div>
-                  </div> 
-                  <hr>
-                  <br>
-               </div>
-
+                    </div> -->
+                    
+                    <div id="preview" class="container-fluid mt-4"></div>
+                    <br>
+                    <div class="tags-container" id="tags-container">
+                        <div id="tags" class="container-fluid"><i class="fa-solid fa-hashtag"
+                                style="color: var(--color-titletext);"></i></div>
+                    </div>
+                    <br>
+                    <div class="translucent-mask" id="translucentMask">
+                        <div class="center-content text-center">
+                            <h3>Unlock a World of Exclusive Content! Start Your 30-Day Trial Today!</h3>
+                            <p id="subscribe-banner"></p>
+                            <a href="#!" class="btn btn-primary" id="subscribe-button" onclick="authorSubscribe()">Subscribe</a>
+                        </div>           
+                    </div>
+                    
+                </div>
             </div>
-         </div>
-         <div class="translucent-mask" id="translucentMask">
-            <div class="center-content">
-               <p id="subscribe-banner">This is a paid article.</p>
-               <a href="#!" class="btn btn-primary" id="subscribe-button" onclick=authorSubscribe()>Subscribe</a>
-            </div>
-         </div>
+        </div>
 
 
-         <div class="contextMenu" id="contextMenu">
-            <button class="contextmenuoption-btn" onclick="highlightText()"><i class="fa-solid fa-highlighter"></i></button>
-            <button class="contextmenuoption-btn" onclick="addCommentLabel()"><i class="fa-regular fa-comment-dots"></i></button>
+        <div class="contextMenu" id="contextMenu">
+            <button class="contextmenuoption-btn" onclick="highlightText()"><i
+                    class="fa-solid fa-highlighter"></i></button>
+            <button class="contextmenuoption-btn" onclick="addCommentLabel()"><i
+                    class="fa-regular fa-comment-dots"></i></button>
             <button class="contextmenuoption-btn"><i class="fa-solid fa-bullhorn"></i></button>
-            <button class="contextmenuoption-btn" onclick="clearHighlight()"><i class="fa-solid fa-trash-can"></i></button>
+            <button class="contextmenuoption-btn" onclick="clearHighlight()"><i
+                    class="fa-solid fa-trash-can"></i></button>
         </div>
 
 
-        <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalTitle" aria-hidden="true">
+        <div class="modal fade" id="commentModal" tabindex="-1" role="dialog" aria-labelledby="commentModalTitle"
+            aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-              <div class="modal-content">
-                
-                <div class="modal-header">
-                    <h4 class="modal-title">Sticky note<span style="margin-left: 20px; color: red;"><i class="fa-solid fa-thumbtack"></i></span></h4>
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="modal-content">
+
+                    <div class="modal-header">
+                        <h4 class="modal-title">Sticky note<span style="margin-left: 20px; color: red;"><i
+                                    class="fa-solid fa-thumbtack"></i></span></h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <textarea class="form-control custom-textarea" id="inputValue" rows="4"></textarea>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+
                 </div>
-                
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <textarea class="form-control custom-textarea" id="inputValue" rows="4"></textarea>
-                        </div>
-                    </form>
-                </div>
-                
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-              
-            </div>
             </div>
         </div>
-         
 
-         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
-         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-         <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-         <!-- Bootstrap core JS-->
-         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-         <!-- Core theme JS-->
-         <script>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script>
 
             // Initialize Quill for the preview without a toolbar (readOnly)
             var quillpreview = new Quill('#preview', {
@@ -195,8 +245,7 @@
             const appPaywallLink = document.getElementById('appPaywallLink');
             const tagscontainer = document.getElementById('tags-container');
             const markercolor = '#58f04180'
-            //const inkcolor = '#000';
-            
+
             var blogDetails;
             var bloguserid;
             var blogauthor;
@@ -204,21 +253,21 @@
             var blogid;
             var selectedrange;
 
-            
+
             document.addEventListener('DOMContentLoaded', function () {
                 const urlParams = new URLSearchParams(window.location.search);
                 var highlightBlogId = urlParams.get('id');
-            
+
                 if (highlightBlogId !== null && highlightBlogId !== undefined) {
                     loadBlogDetails(highlightBlogId);
-                } 
+                }
             });
-            
+
             function loadBlogDetails(blogId) {
                 tagscontainer.style.display = 'none';
                 translucentMask.style.display = 'none';
                 monetizationbanner.style.display = 'none';
-            
+
                 var xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function () {
                     if (xhr.readyState === 4 && xhr.status === 200) {
@@ -227,7 +276,7 @@
                         loggedinuserid = blogDetails.loggedinuserid;
                         blogid = blogDetails.blog._id;
                         updateBlogDetails(blogDetails);
-            
+
                         if (bloguserid !== loggedinuserid) {
                             document.getElementById('editLink').style.display = 'none';
                             document.getElementById('deleteLink').style.display = 'none';
@@ -242,23 +291,23 @@
                 xhr.open('GET', `/index/blogs/${blogId}`, true);
                 xhr.send();
             }
-            
+
             function updateBlogDetails(blogDetails) {
-            
+
                 var editorContent = blogDetails.blog.body;
                 // console.log(`html string from server: ${editorContent}`);
                 const dateObj = new Date(blogDetails.blog.timestamp);
                 var timeToread = calculateReadingTime(blogDetails.blog.body, 230);
                 const formatString = { month: 'short', day: 'numeric', year: 'numeric' };
                 const formattedTime = dateObj.toLocaleString("en-US", formatString).toUpperCase();
-            
+
                 var author = '';
-                if(blogDetails.blog.userid === loggedinuserid) {
+                if (blogDetails.blog.userid === loggedinuserid) {
                     author = 'YOU';
                 } else {
                     author = blogDetails.blog.author;
                 }
-            
+
                 blogheader.innerHTML = `
                     <h1 class="mt-4 blog-title">${blogDetails.blog.title}</h1>
                     <div class="row" style="display: flex; justify-content: flex-start; align-items: center;">
@@ -279,69 +328,69 @@
                         </div>
                     </div>
 `;
-            
+
                 quillpreview.clipboard.dangerouslyPasteHTML(editorContent);
 
                 generateTableOfContents(editorContent);
-            
+
                 // Generate nav-bar links for blog update and delete
                 var editLink = document.getElementById('editLink');
                 if (editLink) {
                     editLink.href = `/index/blogs/${blogDetails.blog._id}/edit`;
                 }
-            
+
                 var deleteLink = document.getElementById('deleteLink');
                 if (deleteLink) {
                     deleteLink.href = `/index/blogs/${blogDetails.blog._id}/delete`;
                 }
-            
+
                 var shareLink = document.getElementById('shareLink');
                 if (shareLink) {
                     shareLink.href = `/index/blogs/public/${blogDetails.blog._id}`;
                 }
-            
+
                 // Insert tags
                 var tags = blogDetails.blog.tags;
                 var tagsDiv = document.getElementById('tags');
-            
+
                 if (tags.length > 1) {
                     tagscontainer.style.display = 'block';
                     tagsDiv.style.display = "block";
                     var tagsContainer = document.createElement('div');
                     tagsContainer.classList.add('tags-container');
-            
+
                     tags.forEach(tag => {
                         var buttonElement = document.createElement('button');
                         buttonElement.type = 'button';
                         buttonElement.classList.add('btn-rounded');
                         buttonElement.disabled = true;
                         buttonElement.textContent = tag;
-            
+
                         tagsContainer.appendChild(buttonElement);
                     });
-            
+
                     // Append the container to the tagsDiv
                     tagsDiv.appendChild(tagsContainer);
                 } else {
                     tagscontainer.style.display = 'none';
                     tagsDiv.style.display = "none";
                 }
-            
+
                 getPaywallStatus();
                 applySavedBookmarks(blogid);
             }
-            
-            
+
+
             function calculateReadingTime(paragraph, wordsPerMinute) {
                 // Assuming an average of 200 words per minute
                 const defaultWordsPerMinute = 200;
                 const wpm = wordsPerMinute || defaultWordsPerMinute;
                 const wordCount = paragraph.split(/\s+/).length;
                 const readingTime = Math.ceil(wordCount / wpm);
-            
+
                 return readingTime + ' MIN READ';
             }
-            
+
             function updatePaywallStatus() {
                 const url = `/index/blogs/${blogid}/updatepaywall`;
                 fetch(url)
@@ -356,9 +405,9 @@
                         const appPaywallLink = document.getElementById('appPaywallLink');
                         const premiumicon = document.getElementById('premium-label');
                         const paywallStatus = data.paywallstatus;
-            
-                        if(paywallStatus) {
-                            if(bloguserid === loggedinuserid) { // display banner only to the blog author
+
+                        if (paywallStatus) {
+                            if (bloguserid === loggedinuserid) { // display banner only to the blog author
                                 appPaywallLink.style.color = '#0F9D58';
                                 monetizationbanner.style.display = 'block';
                                 premiumicon.style.display = 'none';
@@ -368,23 +417,23 @@
                                 monetizationbanner.style.display = 'none';
                                 appPaywallLink.style.color = 'gray';
                             }
-                            
+
                         } else {
                             premiumicon.style.display = 'none';
                             monetizationbanner.style.display = 'none';
                             appPaywallLink.style.color = 'gray';
                         }
-                        
+
                     })
                     .catch(error => {
                         console.error('Error updating paywall status:', error);
                     });
             }
-            
-            
+
+
             function getPaywallStatus() {
                 const url = `/index/blogs/blog/${blogid}/paywallstatus`;
-            
+
                 fetch(url)
                     .then(response => {
                         if (!response.ok) {
@@ -395,20 +444,20 @@
                     .then(data => {
                         const paywallStatus = data.paywallstatus;
                         const premiumicon = document.getElementById('premium-label');
-                        
-                        if(paywallStatus) {
+
+                        if (paywallStatus) {
                             console.log('paywalled article');
                             appPaywallLink.style.color = '#0F9D58';
-            
-                            if(bloguserid === loggedinuserid) { // display green banner only to the blog author
+
+                            if (bloguserid === loggedinuserid) { // display green banner only to the blog author
                                 // don't show translucent mask but show monetization banner
                                 translucentMask.style.display = 'none';
                                 monetizationbanner.style.display = 'block';
                                 premiumicon.style.display = 'none';
-                            } else {  
+                            } else {
                                 monetizationbanner.style.display = 'none';
                                 premiumicon.style.display = 'block';
-                                
+
                                 // show translucent mask based on subscription status.
                                 const subscriptioninfo = {
                                     authorid: bloguserid,
@@ -421,36 +470,37 @@
                                     },
                                     body: JSON.stringify({ subscriptioninfo }),
                                 })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-                                    }
-                                    return response.json();
-                                })
-                                .then(data => {
-                                    console.log('Response from server:', data.status);
-            
-                                    if(data.status !== 'subscribed') {
-                                        // not subscribed, show translucent mask
-                                        translucentMask.style.display = 'flex';
-                                        blogauthor = blogDetails.blog.author;
-                                        var subscribebanner = document.getElementById('subscribe-banner');
-                                        subscribebanner.innerText = `This is a paid article. Subscribe to ${blogDetails.blog.author} for full access!`;
-                                        return true;
-                                    } else {
-                                        // subscribed to paywalled article
-                                        translucentMask.style.display = 'none';
-                                        monetizationbanner.style.display = 'none';
-                                        premiumicon.style.display = 'block';
-                                        return true;
-                                    }
-                                    
-                                })
-                                .catch(error => {
-                                    console.error('Error sending data to server:', error.message);
-                                });
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(data => {
+                                        if (data.status !== 'subscribed') {
+                                            // not subscribed, show translucent mask
+                                            var bannermessage = data.bannermessage;
+                                            translucentMask.style.display = 'block';
+                                            document.body.classList.add('no-scroll');
+                                            blogauthor = blogDetails.blog.author;
+                                            var subscribebanner = document.getElementById('subscribe-banner');
+                                            subscribebanner.innerText = bannermessage;
+                                            return true;
+                                        } else {
+                                            // subscribed to paywalled article
+                                            translucentMask.style.display = 'none';
+                                            document.body.classList.remove('no-scroll');
+                                            monetizationbanner.style.display = 'none';
+                                            premiumicon.style.display = 'block';
+                                            return true;
+                                        }
+
+                                    })
+                                    .catch(error => {
+                                        console.error('Error sending data to server:', error.message);
+                                    });
                             }
-                            
+
                         } else {
                             // the blog is not paywalled in the first place. Nothing to hide.
                             console.log('Not paywalled article');
@@ -465,19 +515,19 @@
                         console.error('Error fetching paywall:', error);
                     });
             }
-            
+
             function authorSubscribe() {
                 if (!loggedinuserid || !bloguserid || !blogauthor || !blogid) {
                     console.error('One or more required variables are undefined.');
                     return;
                 }
-                
+
                 // send request to subscribe user
                 const subscriptioninfo = {
                     loggedinuserid: loggedinuserid,
                     authorid: bloguserid
                 };
-            
+
                 fetch('/index/addsubscription', {
                     method: 'POST',
                     headers: {
@@ -485,20 +535,20 @@
                     },
                     body: JSON.stringify({ subscriptioninfo }),
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response from server from authorSubscribe:', data.status);
-                    window.location.href = `/index?id=${blogid}`;
-                })
-                .catch(error => {
-                    console.error('Error sending data to server:', error.message);
-                    // Handle the error as needed
-                }); 
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Response from server from authorSubscribe:', data.status);
+                        window.location.href = `/index?id=${blogid}`;
+                    })
+                    .catch(error => {
+                        console.error('Error sending data to server:', error.message);
+                        // Handle the error as needed
+                    });
             }
 
             function scrollToHeader(index) {
@@ -532,7 +582,7 @@
 
                     const headers = tempContainer.querySelectorAll('h1, h2, h3');
 
-                    if(headers.length > 0) {
+                    if (headers.length > 0) {
                         console.log('show tocheader');
                         tocheader.style.display = 'block';
                     } else {
@@ -548,17 +598,17 @@
                     let previousLevel = 1;
 
                     const hasChild = compareHeaderTags(headers);
-                    
+
                     headers.forEach((header, index) => {
                         const headerLevel = parseInt(header.tagName.charAt(1));
                         const levelDiff = headerLevel - previousLevel;
-                        
+
                         const li = document.createElement('li');
                         li.classList.add('list-group-item');
                         const indicator = document.createElement('span');
                         indicator.classList.add('expand-indicator');
-                        
-                        if(hasChild[index]) {
+
+                        if (hasChild[index]) {
                             indicator.innerHTML = '<i class="fa-solid fa-angle-right" style="margin-right: 7px;"></i>';
                         } else {
                             indicator.innerHTML = '';
@@ -574,33 +624,33 @@
 
                         li.appendChild(indicator);
                         li.appendChild(a);
-                        
+
                         if (levelDiff > 0) {
                             for (let i = 0; i < levelDiff; i++) {
                                 const nestedUl = document.createElement('ul');
                                 const indicator = li.querySelector('.expand-indicator');
-                                
+
                                 if (nestedUl) {
                                     const isCollapsed = nestedUl.classList.toggle('d-none');
-                                    if(hasChild[index] && hasChild[index] !== undefined) {
+                                    if (hasChild[index] && hasChild[index] !== undefined) {
                                         indicator.innerHTML = isCollapsed ? '<i class="fa-solid fa-angle-right" style="margin-right: 7px;"></i>' : '<i class="fa-solid fa-angle-down" style="margin-right: 7px;"></i>';
                                     } else {
                                         indicator.innerHTML = `<i class="fa-solid fa-angle-right" style="display: none;"></i>`;
                                     }
-                                    
+
                                 }
-                                if(currentList.lastElementChild) {
+                                if (currentList.lastElementChild) {
                                     currentList.lastElementChild.appendChild(nestedUl);
                                     currentList = nestedUl;
                                 }
-                                
+
                             }
                         } else if (levelDiff < 0) {
                             for (let i = 0; i < -levelDiff; i++) {
-                                if(currentList.parentElement) {
+                                if (currentList.parentElement) {
                                     currentList = currentList.parentElement.parentElement;
                                 }
-                                
+
                             }
                         }
 
@@ -635,7 +685,7 @@
 
             // Function to highlight selected text
             function highlightText() {
-                if(selectedrange && selectedrange.length > 0) {
+                if (selectedrange && selectedrange.length > 0) {
                     quillpreview.formatText(selectedrange.index, selectedrange.length, 'background', markercolor);
                     // quillpreview.formatText(selectedrange.index, selectedrange.length, 'color', inkcolor);
                     saveBookmarkToServer(selectedrange);
@@ -649,14 +699,14 @@
 
             // Function to clear highlight
             function clearHighlight() {
-                if(selectedrange && selectedrange.length > 0) {
+                if (selectedrange && selectedrange.length > 0) {
                     quillpreview.formatText(selectedrange.index, selectedrange.length, 'background', false);
                     deleteBookmarkFromServer(selectedrange);
                     selectedrange = null;
                     const selection = window.getSelection();
                     selection.removeAllRanges();
                 }
-                
+
             }
 
             function saveBookmarkToServer(range) {
@@ -674,18 +724,18 @@
                     },
                     body: JSON.stringify({ bookmark: bookmark }),
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response from server:', data.message);
-                })
-                .catch(error => {
-                    console.error('Error saving bookmark to server:', error.message);
-                });
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Response from server:', data.message);
+                    })
+                    .catch(error => {
+                        console.error('Error saving bookmark to server:', error.message);
+                    });
             }
 
             function deleteBookmarkFromServer(range) {
@@ -703,18 +753,18 @@
                     },
                     body: JSON.stringify({ bookmark: bookmark }),
                 })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response from server:', data.message);
-                })
-                .catch(error => {
-                    console.error('Error saving bookmark to server:', error.message);
-                });
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Response from server:', data.message);
+                    })
+                    .catch(error => {
+                        console.error('Error saving bookmark to server:', error.message);
+                    });
 
             }
 
@@ -723,34 +773,34 @@
             function applySavedBookmarks(blogid) {
                 // Make a GET request to fetch highlights for the specified blogid
                 fetch(`/gethighlights/${blogid}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // any additional headers if needed
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // any additional headers if needed
                     }
                 })
-                .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                return response.json();
-                })
-                .then(bookmarkdata => {
-                    console.log(`highlights from server: ${JSON.stringify(bookmarkdata.highlights)}`);
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(bookmarkdata => {
+                        console.log(`highlights from server: ${JSON.stringify(bookmarkdata.highlights)}`);
 
-                    if(bookmarkdata.highlights.length > 0) {
-                        bookmarkdata.highlights.forEach((highlight) => {
-                            quillpreview.formatText(highlight.index, highlight.length, 'background', markercolor);
-                            //quillpreview.formatText(highlight.index, highlight.length, 'color', inkcolor);
-                        })
+                        if (bookmarkdata.highlights.length > 0) {
+                            bookmarkdata.highlights.forEach((highlight) => {
+                                quillpreview.formatText(highlight.index, highlight.length, 'background', markercolor);
+                                //quillpreview.formatText(highlight.index, highlight.length, 'color', inkcolor);
+                            })
 
-                    } else {
-                        console.log('no bookmark data found');
-                    }
-                })
-                .catch(error => {
-                console.error('Error fetching highlights:', error);
-                });
+                        } else {
+                            console.log('no bookmark data found');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching highlights:', error);
+                    });
 
             }
 
@@ -788,7 +838,7 @@
                 const selectedText = selection.toString();
                 var annotationContainer = document.createElement("div");
                 var labeltxt = document.createElement("p");
-                
+
                 labeltxt.textContent = selectedText;
                 annotationContainer.appendChild(labeltxt);
 
@@ -806,8 +856,9 @@
 
 
 
-         </script>
+        </script>
 
-         <script type="module" src="themeswitcher.js"></script>
-   </body>
+        <script type="module" src="themeswitcher.js"></script>
+</body>
+
 </html>

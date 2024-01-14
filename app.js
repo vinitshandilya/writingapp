@@ -881,7 +881,10 @@ app.post('/index/checksubscription', isLoggedIn, async (req, res) => {
             return res.status(200).json({ status: 'subscribed' })
         }
 
-        return res.status(200).json({ status: 'not subscribed' })
+        var loggedinuserdisplayname = req.session.user.firstname ? req.session.user.firstname : req.session.user.username;
+        const bannermessage = `${loggedinuserdisplayname}, love the captivating stories and insightful articles? Take your experience to the next level by subscribing to ${author.firstname}'s exclusive content!`;
+
+        return res.status(200).json({ status: 'not subscribed', bannermessage })
 
     } catch (error) {
         console.error(error);

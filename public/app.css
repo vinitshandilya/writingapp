@@ -14,7 +14,11 @@
     --color-readerbackground: var(--color-readerbackground, #fff);
     --color-contextmenubg: var(--color-contextmenubg, #031726);
     --color-contextmenubtncolor: var(--color-contextmenubtncolor, #fff);
-    
+
+    --color-subscribebannerbgstart: var(--color-subscribebannerbgstart, #ffffff00);
+    --color-subscribebannerbgmid: var(--color-subscribebannerbgmid, #ffffff80);
+    --color-subscribebannerbgend: var(--color-subscribebannerbgend, #ffffff);
+
 }
 
 body {
@@ -161,9 +165,9 @@ a {
 }
 
 .btn-primary {
-    background-color: transparent;
-    border-color: #4287f5;
-    color: #4287f5;
+    background-color: #1c4175;
+    border-color: #1c4175;
+    color: #fff;
 }
 
 .btn-primary:hover {
@@ -287,6 +291,11 @@ a {
     overflow: hidden;
 }
 
+.editor {
+    min-height: 60vh;
+    max-height: none;
+}
+
 .blog-title {
     color: var(--color-titletext);
 }
@@ -307,26 +316,42 @@ a {
     margin-bottom: 20px;
     border: 1px solid var(--color-monetizationbannerborder);
     background-color: var(--color-monetizationbannerbg);
-    /* color: #fff; */
     border-radius: 5px;
 }
 
 .translucent-mask {
     display: none;
-    position: fixed;
-    top: 0vh;
+    position: absolute;
+    bottom: 0;
     left: 0;
-    width: 100%;
-    height: 100vh;
-    background-color: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(10px);
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    background: linear-gradient(to bottom, 
+        var(--color-subscribebannerbgstart) 12%,
+        var(--color-subscribebannerbgmid) 15%, 
+        var(--color-subscribebannerbgend) 40%, 
+        var(--color-subscribebannerbgend) 60%, 
+        var(--color-subscribebannerbgend) 80%, 
+        var(--color-subscribebannerbgend) 100%
+    );
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+}
+.center-content {
+    position: absolute;
+    width: 90%;
+    color: var(--color-titletext);
+    background-color: var(--color-readerbackground);
+    top: 75vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
-.center-content {
-    text-align: center;
+.no-scroll {
+    overflow: hidden;
 }
 
 img {
@@ -503,4 +528,144 @@ img {
 
 .likebar-icons {
     color: #b1b4b5;
+}
+
+.custom-toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+     padding-left: 20px;
+     padding-right: 20px;
+     border-bottom: 1px solid rgb(208, 203, 203);
+     background-color: #faebd4;
+     color: black !important;
+}
+
+.ql-toolbar {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.ql-snow, .ql-stroke {
+    stroke: #000 !important;
+    /* stroke-width: 1 !important; */
+}
+
+.custom-textarea-title {
+    border: none;
+    resize: none;
+    font-size: 35px;
+    font-weight: bolder;
+    padding-inline-start: 0px !important;
+}
+
+.custom-textarea-title::placeholder {
+    border: none;
+    resize: none;
+    font-size: 35px;
+    font-weight: bold;
+    color: rgb(179, 173, 173);
+}
+
+.custom-textarea-title:focus {
+    border:none;
+    box-shadow:none;
+    outline: none !important;
+}
+
+.custom-textarea-subtitle {
+    border: none;
+    resize: none;
+    font-size: 20px;
+    padding-inline-start: 0px !important;
+}
+
+.custom-textarea-subtitle::placeholder {
+    border: none;
+    resize: none;
+    font-size: 20px;
+    color: rgb(179, 173, 173);
+}
+
+.custom-textarea-subtitle:focus {
+    border:none;
+    box-shadow:none;
+    outline: none !important;
+}
+
+.custom-textarea-tags {
+    border: none;
+    resize: none;
+    font-size: 15px;
+}
+        
+.custom-textarea-tags::placeholder {
+    border: none;
+    resize: none;
+    font-size: 15px;
+}
+
+.custom-textarea-tags:focus {
+    border:none;
+    box-shadow:none;
+    outline: none !important;
+}
+
+.btn-success {
+    background-color: #1c4175;
+    border-color: #1c4175;
+}
+
+.btn-primary {
+    background-color: #4287f5;
+    border-color: #4287f5;
+}
+
+.btn-primary:hover {
+    background-color: #1c4175;
+    border-color: #1c4175;
+    color: #fff;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    border-color: #1c4175;
+    color: #1c4175;
+}
+
+.btn-success:hover,
+.btn-success:focus {
+    background-color: #1c4175;
+    border-color: #1c4175;
+    color: #fff;
+}
+
+#preview {
+    margin-top: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.image-container {
+  padding: 10px;
+}
+
+#display-preview-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1;
+  width: 3;
+  margin: 0 5px; /* Adjust the margin as needed */
+}
+
+.modal-full .modal-dialog {
+ max-width: 90%;
+}
+
+.ql-placeholder {
+ padding-left: 0px !important;
 }
