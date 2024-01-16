@@ -5,191 +5,83 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/03adeb66cc.js" crossorigin="anonymous"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/03adeb66cc.js" crossorigin="anonymous"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/app.css">
     <title>My writing app</title>
-    
-    <style>
-        .custom-navbar {
-         background-color: #eef5db;
-         }
-         
-         .navbar-nav .nav-item .nav-link {
-         color: #1c4175;
-         font-size: small;
-         }
-
-        .banner {
-            height: 50vh;
-            background-color: #eef5db;
-            color: #000;
-            display: flex;
-            flex-direction: column;
-            align-items: left;
-            justify-content: center;
-            border-bottom: 1px solid black;
-        }
-
-        .heading-text {
-         font-family: 'Hedvig Letters Serif', serif;
-         font-family: 'Libre Baskerville', serif;
-         }
-         .sign-in {
-         color: #1c4175;
-         font-weight: bold;
-         }
-         .sign-in:hover {
-         color: #1c4175;
-         font-weight: bold;
-         }
-         .btn-primary {
-         background-color: transparent;
-         border-color: #1c4175;
-         color: #1c4175;
-         width: 200px;
-         height: 50px;
-         border-radius: 25px;
-         }
-         .btn-primary:hover {
-         background-color: #1c4175;
-         border-color: #1c4175;
-         color: #fff;
-         }
-
-        .list-container {
-            padding: 15px;
-        }
-
-        .text-container {
-            padding: 15px;
-        }
-
-        .list-group-item {
-         border: none;
-        }
-
-        .user-list-title {
-            font-size: small;
-            color: #0F9D58;
-            font-weight: bold;
-        }
-
-        .btn-rounded {
-         display: inline-block;
-         background-color: transparent;
-         border-color: #1c4175;
-         color: #1c4175;
-         border-width: 1px;
-         box-shadow: none;
-         border-radius: 15px;
-         font-size: smaller;
-         height: 30px;
-         padding: 0 10px;
-         margin: 3px;
-         line-height: 30px;
-         }
-         .seemore-btn {
-         border: none;
-         background-color: transparent;
-         color: #1c4175;
-         font-size: smaller;
-         height: 30px;
-         padding: 0 10px;
-         margin-right: 5px;
-         line-height: 30px;
-         }
-         .seemore-btn:focus {
-         outline: none; /* Remove the default focus outline */
-         }
-
-         .img-thumbnail {
-            margin-top: 50%;
-            border-radius: 50%;
-            width: 100px;
-            height: 100px;
-            object-fit: cover;
-         }
-
-         .blog-list-item-ribbon {
-            font-size: 11px;
-            color: gray;
-         }
-
-         .blog-list-title {
-         color: #1c4175;
-         font-weight: bold;
-         
-         }
-         .blog-list-subtitle {
-         padding-top: 0px;
-         color: #000;
-         font-weight: normal;
-         }
-         .blog-list-body {
-         font-weight: normal;
-         /* font-family: 'Hedvig Letters Serif', serif; */
-         font-size: small;
-         line-height: 2.0;
-         padding-bottom: 10px;
-         }
-
-        .footer {
-         height: 30vh; /* 50% of the viewport height */
-         background-color: #fff; /* Set your desired background color */
-         display: flex;
-         justify-content: center;
-         align-items: center;
-         }
-    </style>
 </head>
+
+<style>
+    body {
+        background-color: #120D48;
+    }
+</style>
 
 <body>
     <!-- Top Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-light custom-navbar">
-        <a class="navbar-brand" href="#">My app</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+    <nav class="navbar navbar-expand-lg navbar-light custom-homepage-navbar">
+
+        <a class="navbar-brand mr-auto" href="/homepage" style="margin-left: 10px;">
+            <div class="d-flex align-items-center brand">
+                <div class="overflow-hidden mr-2">
+                    My App
+                </div>
+                <div class="overflow-hidden brand-subtitle">
+                    <small>Subtitle</small>
+                </div>
+            </div>
+        </a>
+		
+		<button class="border-0 navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
+            <i class="fas fa-bars" style="color: white"></i>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                <li class="nav-item active mr-3" onclick="highlightNavItem(this)">
+                    <a class="nav-link" href="javascript:void(0);">Home</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
+                <li class="nav-item mr-3" onclick="highlightNavItem(this)">
+                    <a class="nav-link" href="javascript:void(0);">About Us</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Contact</a>
+                <li class="nav-item mr-3" onclick="highlightNavItem(this)">
+                    <a class="nav-link" href="javascript:void(0);">Monetization</a>
+                </li>
+                <li class="nav-item mr-3" onclick="highlightNavItem(this)">
+                    <a class="nav-link" href="javascript:void(0);">Explore</a>
                 </li>
             </ul>
         </div>
-    </nav>
+
+      </nav>
 
     <!-- Banner -->
     <div class="banner">
-        <div class="container">
-            <div class="row">
+        <div class="container" style="height: auto; display: flex; flex-direction: column; align-items: left; justify-content: center;">
+            <div class="row mt-5 mb-5">
                 <!-- left side of the banner -->
-                <div class="col-md-8 banner-text">
-                    <h1 class="heading-text">This is a placeholder!</h1>
-                    <p>Welcome to my app, where every thought finds a home. Explore, express, and connect through the power of words. Your story matters, and this is the place to tell it.</p>
-                    <button class="btn btn-primary" onclick="window.location.href='/register'">Get started</button>
-                    <p>Already a member? <a class="sign-in" href="/login">Sign in</a></p>
+                <div class="col-md-8">
+                    <h1 class="mb-3 mb-md-0 text-md">Empowering Thoughts, <span style="color: #03fc5e;">Crafting</span> Stories!</h1>
+                    <p class="banner-subtitle-text mb-3 mb-md-4">Welcome to my app, where every thought finds a home. Explore, express, and connect through the power of words. Your story matters, and this is the place to tell it.</p>
+                    <button class="get-started-btn mb-3 mb-md-4" onclick="window.location.href='/register'">Get started</button>
+                    <p style="font-size: small;">Already a member? <a class="sign-in" href="/login">Sign in</a></p>
                 </div>
-
-                 <!-- right side of the banner -->
+    
+                <!-- right side of the banner -->
                 <div class="col-md-4">
-
+    
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Responsive Layout using Bootstrap Grid -->
-    <div class="container mt-4">
+    <div class="container-fluid" style="background-color: white;">
         <div class="row">
             <!-- List on the left side -->
             <div class="col-md-8 list-container">
@@ -225,14 +117,14 @@
                        
                         
                         <div class="col">
-                           <small class="blog-list-item-ribbon">
+                           <small class="homepage-blog-list-item-ribbon">
                            <%= featuredblog.author %> &middot; <%= featuredblog.formatteddate %> &middot; <%= featuredblog.timetoread %>
                            <% if (featuredblog.paywall) { %>
-                           <i class="fa-solid fa-crown" style="padding-left: 10px; color: #1c4175;"></i>
+                           <i class="fa-solid fa-crown" style="padding-left: 10px; color: #120D48;"></i>
                            <% } %>
                            </small>
                            <div class="d-flex w-100 justify-content-between">
-                              <h5 class="mb-1 blog-list-title"><%= featuredblog.title %></h5>
+                              <h5 class="mb-1 homepage-blog-list-title"><%= featuredblog.title %></h5>
 
                               <%
                             // Define a function to calculate elapsed time
@@ -260,8 +152,8 @@
 
                               <small class="text-muted"><%= elapsedTime %></small>
                            </div>
-                           <p class="mb-1 blog-list-subtitle"><%= featuredblog.subtitle %></p>
-                           <p class="mb-1 blog-list-body">
+                           <p class="mb-1 homepage-blog-list-subtitle"><%= featuredblog.subtitle %></p>
+                           <p class="mb-1 homepage-blog-list-body">
                               <% 
                                  var plainText = featuredblog.body.replace(/<[^>]*>/g, '');
                                  plainText = plainText.replace(/\[[^\]]*\]/g, '');
@@ -272,7 +164,7 @@
                            <% if (featuredblog.tags.length > 0) { %>
                            <% featuredblog.tags.forEach(tag => { %>
                            <% if(tag.trim().length !== 0) { %>
-                              <button type="button" class="btn-rounded" disabled><%= tag %></button>
+                              <button type="button" class="homepage-btn-rounded" disabled><%= tag %></button>
                            <% } %>
                            <% }) %>
                            <% } %>
@@ -340,7 +232,7 @@
                          if(tag.trim().length !== 0) {
                             var buttonElement = document.createElement('button');
                             buttonElement.type = 'button';
-                            buttonElement.classList.add('btn-rounded');
+                            buttonElement.classList.add('homepage-btn-rounded');
                             buttonElement.textContent = tag;
                             buttonElement.style.marginBottom = '10px';
                             tagsContainer.appendChild(buttonElement); 
@@ -396,7 +288,7 @@
                      listItem.className = 'list-group-item d-flex justify-content-between align-items-center';
                      listItem.innerHTML = `
                      <div class="flex-shrink-0" style="width: 250px;">
-                         <h5 class="mb-1 user-list-title">${displayName}</h5>
+                         <h5 class="mb-1 homepage-user-list-title">${displayName}</h5>
                          <small class="user-list-subtitle">${bio}</small>
                      </div>
                      <button class="btn btn-sm ml-auto">
@@ -412,6 +304,15 @@
                  });
  
          }
+
+         function highlightNavItem(element) {
+            var navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(function (item) {
+                item.classList.remove('active');
+            });
+
+            element.classList.add('active');
+        }
           
        </script>
 </body>

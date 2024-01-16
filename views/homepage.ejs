@@ -62,8 +62,8 @@
                     <div class="col">
                         <div class="row no-gutters" style="white-space: nowrap; overflow: hidden; font-size: small;">
                             <div class="col" style="font-weight: bold;">
-                                <%= `${loggedinuser.firstname} ${loggedinuser.lastname}` %>
-                            </div>
+                                <%= `${loggedinuser.firstname === undefined ? loggedinuser.username : `${loggedinuser.firstname} ${loggedinuser.lastname}`}` %>
+                            </div>                            
                         </div>
                         <div class="row no-gutters" style="font-size: smaller;">
                             <div class="col">

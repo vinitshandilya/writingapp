@@ -1,97 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Writing App</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap JS (optional, if you need JavaScript features) -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hedvig+Letters+Serif:opsz@12..24&family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/03adeb66cc.js" crossorigin="anonymous"></script>
 
-    <style>
-      .card-bg {
-        background-color: #fff;
-        color: #000;
-        /* font-family: 'Hedvig Letters Serif', serif;
-         font-family: 'Libre Baskerville', serif; */
-      }
-      .form-input {
-        background-color: transparent;
-         border-color: #000;
-         color: #000;
-         border-radius: 25px;
-         font-weight: normal;
-      }
-      .submit-button {
-         background-color: transparent;
-         border-color: #000;
-         color: #000;
-         width: 200px;
-         height: 50px;
-         border-radius: 25px;
-         }
-         .submit-button:hover {
-         background-color: #000;
-         border-color: #000;
-         color: #fff;
-         }
-    </style>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Writing App</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap JS (optional, if you need JavaScript features) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://kit.fontawesome.com/03adeb66cc.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="/app.css">
+
 </head>
+
 <body>
 
-    <section class="vh-100">
-        <div class="container py-5 h-100">
-          <div class="row d-flex justify-content-center align-items-center h-100">
-            <div class="col-12 col-md-8 col-lg-6 col-xl-5">
-              <div class="card-bg">
-                <div class="card-body p-5 text-center">
-      
-                  <div class="mb-md-5 mt-md-4 pb-5">
-      
-                    <h2 class="fw-bold mb-2">Sign up</h2>
-                    <p class="mb-5">New user registration</p>
+  <div class="register-container-fluid">
+    <div class="row">
 
-                    <form action="/register" method="post">
-                        <div class="mb-4">
-                            <input type="text" id="username" name="username" class="form-control form-control-lg form-input" placeholder="username"/>
-                          </div>
+      <!-- Left Part -->
+      <div class="col-md-6 register-left-part text-center d-none d-md-block" style="width: 50%;">
 
-                          <div class="mb-4">
-                            <input type="email" id="email" name="email" class="form-control form-control-lg form-input" placeholder="email"/>
-                          </div>
-            
-                          <div class="mb-4">
-                            <input type="password" id="password" name="password" class="form-control form-control-lg form-input" placeholder="password"/>
-                          </div>
-            
-                          <button class="btn btn-lg px-5 submit-button" type="submit">Register</button>
-                    </form>
-                    <br>
+      </div>
 
-                    <% if (message) { %>
-                      <p><%= message %></p>
-                    <% } %>
-      
-                    <div class="d-flex justify-content-center text-center mt-4 pt-1">
-                      <a href="#!"><i class="fab fa-facebook-f fa-lg"></i></a>
-                      <a href="#!"><i class="fab fa-twitter fa-lg mx-4 px-2"></i></a>
-                      <a href="#!"><i class="fab fa-google fa-lg"></i></a>
-                    </div>
-                  </div>
-                  <div>
-                    <p class="mb-0">Go back to <a href="/login" class="fw-bold">Login</a></p>
-                  </div>
-                </div>
-              </div>
+      <!-- Right Part -->
+      <div class="col-md-6 register-right-part">
+        <div class="mb-md-5 mt-md-4 pb-5 text-center" style="width: 300px;">
+          <h2 class="fw-bold mb-2">Create an account</h2>
+          <p class="mb-4" style="color: gray; font-size: small;">Already a member? <a href="/login" class="fw-bold custom-link">Log in</a></p>
+
+          <div id="firstregisterpage">
+            <div class="mb-4">
+              <input type="email" id="email" name="email" class="form-control form-control-lg register-form-input"
+                placeholder="Enter Email Address" />
             </div>
+            <button class="btn btn-lg px-5 register-submit-button" onclick="proceedToNext()">Next</button>
           </div>
+
+          <div id="nextregisterpage" style="display: none;">
+            <div class="mb-4">
+              <input type="text" id="username" name="username" class="form-control form-control-lg register-form-input"
+                placeholder="Username (no special characters)" />
+            </div>
+  
+            <div class="mb-4">
+              <input type="password" id="password" name="password"
+                class="form-control form-control-lg register-form-input" placeholder="Password (at least 6 characters)" />
+            </div>
+            <button class="btn btn-lg px-5 register-submit-button" onclick="registerUser()">Register</button>
+          </div>
+
+          <div class="separator mt-5 mb-5">
+            <div class="separator-line"></div>
+            <div class="or-text">OR</div>
+            <div class="separator-line"></div>
+          </div>
+
+          <div style="font-size: x-small; color: gray; line-height: 2.0;">
+            <p>By clicking "Next", "Sign up with Google", or "Sign up with Apple" you agree to our <a class="custom-link" href="/">Terms of Use</a> and acknowledge that you've read and understood our <a class="custom-link" href="/">Privacy Policy</a>.</p>
+          </div>
+
+          <p id="servermessage"></p>
+
         </div>
-      </section>
+      </div>
+
+
+    </div>
+
+    <script>
+      const servermessageDiv = document.getElementById('servermessage');
+      const firstregisterpageDiv = document.getElementById('firstregisterpage');
+      const nextregisterpageDiv = document.getElementById('nextregisterpage');
+      var email, username, password;
+
+      document.addEventListener('DOMContentLoaded', function () {
+        firstregisterpageDiv.style.display = 'block';
+        nextregisterpageDiv.style.display = 'none';
+      });
+
+      function proceedToNext() {
+        email = document.getElementById('email').value;
+        firstregisterpageDiv.style.display = 'none';
+        nextregisterpageDiv.style.display = 'block';
+      }
+
+      function registerUser() {
+        username = document.getElementById('username').value;
+        password = document.getElementById('password').value;
+
+        // TODO: Validate registration fields before calling register API.
+        // Add server side validation XSS attack checks as well
+
+        var jsondata = {
+          email: email,
+          username: username,
+          password: password
+        };
+
+        fetch('/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(jsondata)
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log(JSON.stringify(data));
+            data.regstatus !== 'ok' ? servermessageDiv.style.color = 'red' : servermessageDiv.style.color = 'green';
+            servermessageDiv.innerText = data.servermessage;
+          })
+          .catch(error => {
+            console.error('There was a problem during registration:', error);
+            // Handle error, if needed
+          });
+
+      }
+
+    </script>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
 </body>
+
 </html>

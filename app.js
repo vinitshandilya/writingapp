@@ -88,8 +88,7 @@ app.get('/login', (req, res) => {
 
 // Render user registration page
 app.get('/register', (req, res) => {
-    const message = req.query.message || null;
-    res.status(200).render('registerpage', { message });
+    res.status(200).render('registerpage');
 });
 
 // Register new user
@@ -100,13 +99,17 @@ app.post('/register', async (req, res) => {
         // Check if username already exists
         const existingUsername = await User.findOne({ username });
         if (existingUsername) {
-            return res.redirect('/register/?message=User already exists with this username. Please login with your username.');
+            console.log('User already exists with this username. Please login with your username.');
+            // return res.redirect('/register/?message=User already exists with this username. Please login with your username.');
+            return res.status(200).json({ regstatus: 'nok', servermessage: 'User already exists with this username. Please login with your username.'});
         }
 
         // Check if email already exists
         const existingEmail = await User.findOne({ email });
         if (existingEmail) {
-            return res.redirect('/register/?message=Account already exists with this email. Please login with your username.');
+            console.log('Account already exists with this email. Please login with your username.');
+            // return res.redirect('/register/?message=Account already exists with this email. Please login with your username.');
+            return res.status(200).json({ regstatus: 'nok', servermessage: 'Account already exists with this email. Please login with your username.'});
         }
 
         // If both checks pass, proceed with user registration
@@ -116,7 +119,8 @@ app.post('/register', async (req, res) => {
             if (err) {
                 return res.status(500).json({ error: err.message });
             }
-            return res.redirect('/register/?message=Thank you for registering. Please login with your username and password.');
+            console.log('Thank you for registering. Please login with your username and password.');
+            return res.status(200).json({ regstatus: 'ok', servermessage: 'Thank you for registering. Please login with your username and password.'});
         });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -231,7 +235,7 @@ app.get('/index/createnew', isLoggedIn, async (req, res) => {
     const loggedinuser = req.session.user;
     if(loggedinuser.firstname === null || loggedinuser.firstname === undefined || loggedinuser.firstname.trim() === '') {
         // Redirect to user profile page to complete user profile
-        return res.status(200).render('userprofile', { user: loggedinuser });
+        return res.status(200).render('authordashboard', { loggedinuser, personalblogs: null, message: `You're one step away from writing your first blog. Complete your author's profile.` });
     } else {
         return res.status(200).render('createnewblog', { blog: null });
     }
@@ -1015,7 +1019,7 @@ app.get('/homepage/dashboard', isLoggedIn, async (req, res) => {
     const loggedinuser = req.session.user;
     try {
         const personalblogs = await Blog.find({ userid: loggedinuser._id });
-        res.render('authordashboard', { loggedinuser, personalblogs });
+        res.render('authordashboard', { loggedinuser, personalblogs, message: '' });
     } catch (error) {
         return res.status(500).json({ message: 'Internal server error' });
 
