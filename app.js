@@ -161,14 +161,15 @@ const isLoggedIn = (req, res, next) => {
 app.get('/homepage', isLoggedIn, async (req, res) => {
     const loggedinuser = req.session.user;
     try {
-        const personalblogs = await Blog.find({
-            $or: [
-              { userid: loggedinuser._id }, // Blogs by the logged-in user
-              { userid: { $in: loggedinuser.following } } // Blogs by users in following list
-            ]
-          });
+        // const personalblogs = await Blog.find({
+        //     $or: [
+        //       { userid: loggedinuser._id }, // Blogs by the logged-in user
+        //       { userid: { $in: loggedinuser.following } } // Blogs by users in following list
+        //     ]
+        //   });
+        const allblogs = await Blog.find({ });
         const communityusers = await User.find( { _id: { $ne: loggedinuser._id } }); // from community users, remove the loggedin user
-        res.status(200).render('homepage', { personalblogs, loggedinuser, communityusers });
+        res.status(200).render('homepage', { allblogs, loggedinuser, communityusers });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

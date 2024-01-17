@@ -42,18 +42,18 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item active mr-3" onclick="highlightNavItem(this)">
-                    <a class="nav-link" href="javascript:void(0);">Home</a>
+            <ul class="navbar-nav ml-auto" style="color: white;">
+                <li class="nav-item active mr-3" style="color: white;" onclick="highlightNavItem(this)">
+                    <a class="nav-link" style="color: white;" href="javascript:void(0);">Home</a>
                 </li>
-                <li class="nav-item mr-3" onclick="highlightNavItem(this)">
-                    <a class="nav-link" href="javascript:void(0);">About Us</a>
+                <li class="nav-item mr-3" style="color: white;" onclick="highlightNavItem(this)">
+                    <a class="nav-link" style="color: white;" href="javascript:void(0);">About Us</a>
                 </li>
-                <li class="nav-item mr-3" onclick="highlightNavItem(this)">
-                    <a class="nav-link" href="javascript:void(0);">Monetization</a>
+                <li class="nav-item mr-3" style="color: white;" onclick="highlightNavItem(this)">
+                    <a class="nav-link" style="color: white;" href="javascript:void(0);">Monetization</a>
                 </li>
-                <li class="nav-item mr-3" onclick="highlightNavItem(this)">
-                    <a class="nav-link" href="javascript:void(0);">Explore</a>
+                <li class="nav-item mr-3" style="color: white;" onclick="highlightNavItem(this)">
+                    <a class="nav-link" style="color: white;" href="javascript:void(0);">Explore</a>
                 </li>
             </ul>
         </div>
@@ -86,10 +86,11 @@
             <!-- List on the left side -->
             <div class="col-md-8 list-container">
                <h6><i class="fa-solid fa-chart-line"></i> Popular</h6>
-                <div class="list-group">
+                
+               <div class="list-group">
                   <% featuredblogs.forEach(featuredblog => { %>
                   <a href="/index/blogs/public/<%= featuredblog._id %>" data-blog-id="<%= featuredblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
-                     <div class="row">
+                     <div class="row" style="display: flex; align-items: center;">
 
                         <div class="col-auto">
                            <% 

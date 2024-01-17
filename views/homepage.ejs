@@ -113,19 +113,19 @@
                     </h6>
                     <!-- Dropdown Menu -->
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                        <a class="dropdown-item" href="#" data-value="last-updated" onclick="handleDropdownItemClick(event, this, `<%= JSON.stringify(personalblogs) %>`)">Last updated</a>
-                        <a class="dropdown-item" href="#" data-value="created-date" onclick="handleDropdownItemClick(event, this, `<%= JSON.stringify(personalblogs) %>`)">Created date</a>
-                        <a class="dropdown-item" href="#" data-value="a-to-z" onclick="handleDropdownItemClick(event, this, `<%= JSON.stringify(personalblogs) %>`)">A to Z</a>
-                        <a class="dropdown-item" href="#" data-value="z-to-a" onclick="handleDropdownItemClick(event, this, `<%= JSON.stringify(personalblogs) %>`)">Z to A</a>
+                        <a class="dropdown-item" href="#" data-value="last-updated" onclick="handleDropdownItemClick(event, this, `<%= JSON.stringify(allblogs) %>`)">Last updated</a>
+                        <a class="dropdown-item" href="#" data-value="created-date" onclick="handleDropdownItemClick(event, this, `<%= JSON.stringify(allblogs) %>`)">Created date</a>
+                        <a class="dropdown-item" href="#" data-value="a-to-z" onclick="handleDropdownItemClick(event, this, `<%= JSON.stringify(allblogs) %>`)">A to Z</a>
+                        <a class="dropdown-item" href="#" data-value="z-to-a" onclick="handleDropdownItemClick(event, this, `<%= JSON.stringify(allblogs) %>`)">Z to A</a>
                     </div>
                 </div>
                 
 
                 <div class="list-group">
-                    <% personalblogs.forEach(personalblog => { %>
+                    <% allblogs.forEach(personalblog => { %>
                     <a href="/index?id=<%= personalblog._id %>" data-blog-id="<%= personalblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
                 
-                        <div class="row">
+                        <div class="row" style="display: flex; align-items: center;">
 
                         <!-- Render blog image  -->
                         <div class="col-auto">
@@ -344,13 +344,13 @@ function manageNotificationDisplay() {
         });
     }
 
-    function handleDropdownItemClick(event, clickedoption, personalblogs) {
+    function handleDropdownItemClick(event, clickedoption, allblogs) {
             event.preventDefault();
             var selectedValue = clickedoption.getAttribute('data-value');
             // sort blogs
             if(selectedValue === 'a-to-z') {
                 console.log('a-to-z clicked');
-                console.log(personalblogs);
+                console.log(allblogs);
             }
     }
 
