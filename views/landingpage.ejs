@@ -18,6 +18,7 @@
 <style>
     body {
         background-color: #120D48;
+        height: 30vh;
     }
 </style>
 
@@ -82,98 +83,106 @@
 
     <!-- Responsive Layout using Bootstrap Grid -->
     <div class="container-fluid" style="background-color: white;">
-        <div class="row">
+        <div class="row d-flex align-items-start pt-4">
             <!-- List on the left side -->
             <div class="col-md-8 list-container">
                <h6><i class="fa-solid fa-chart-line"></i> Popular</h6>
                 
                <div class="list-group">
-                  <% featuredblogs.forEach(featuredblog => { %>
-                  <a href="/index/blogs/public/<%= featuredblog._id %>" data-blog-id="<%= featuredblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
-                     <div class="row" style="display: flex; align-items: center;">
 
-                        <div class="col-auto">
-                           <% 
-                               const bodyHtml = featuredblog.body || ''; // Ensure featuredblog.body is defined
-                               // Define a regular expression to match the src attribute in an img tag
-                               const imgSrcRegex = /<img[^>]*src=["']([^"']+)["']/i;
-                       
-                               // Use the regular expression to find the src attribute
-                               const match = bodyHtml.match(imgSrcRegex);
-                       
-                               // Check if a match is found
-                               if (match) {
-                                   const src = match[1];
-                           %>
-                                   <img src="<%= src %>" alt="Image" class="img-thumbnail">
-                           <%
-                               } else {
-                                   // Display the default picture if no img tags are found
-                           %>
-                                   <img src="https://ak-d.tripcdn.com/images/1mi3e2224vymivgpcC549.jpg?proc=source/trip" alt="Default Image" class="img-thumbnail">
-                           <%
-                               }
-                           %>
-                       </div>
-                       
-                        
-                        <div class="col">
-                           <small class="homepage-blog-list-item-ribbon">
-                           <%= featuredblog.author %> &middot; <%= featuredblog.formatteddate %> &middot; <%= featuredblog.timetoread %>
-                           <% if (featuredblog.paywall) { %>
-                           <i class="fa-solid fa-crown" style="padding-left: 10px; color: #120D48;"></i>
-                           <% } %>
-                           </small>
-                           <div class="d-flex w-100 justify-content-between">
-                              <h5 class="mb-1 homepage-blog-list-title"><%= featuredblog.title %></h5>
+                <% allblogs.forEach(personalblog => { %>
+                    
+                    <div class="row align-items-start">
 
-                              <%
-                            // Define a function to calculate elapsed time
-                            function calculateElapsedTime(formattedDate) {
-                                var currentDate = new Date();
-                                var date = new Date(formattedDate);
-
-                                var timeDifference = currentDate - date;
-                                var daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
-                                if (daysDifference === 0) {
-                                return 'today';
-                                } else if (daysDifference === 1) {
-                                return 'yesterday';
-                                } else if (daysDifference < 7) {
-                                return daysDifference + ' days ago';
-                                } else {
-                                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                                }
-                            }
-
-                            // Call the function with the formatted date from featuredblog
-                            var elapsedTime = calculateElapsedTime(featuredblog.formatteddate);
+                        <!-- Render blog image  -->
+                        <div class="col-md-3 mb-2">
+                            <% 
+                                const bodyHtml = personalblog.body || ''; // Ensure personalblog.body is defined
+                                // Define a regular expression to match the src attribute in an img tag
+                                const imgSrcRegex = /<img[^>]*src=["']([^"']+)["']/i;
+                                const match = bodyHtml.match(imgSrcRegex);
+                                if (match) {
+                                    // Extract the src attribute value
+                                    const src = match[1];
                             %>
-
-                              <small class="text-muted"><%= elapsedTime %></small>
-                           </div>
-                           <p class="mb-1 homepage-blog-list-subtitle"><%= featuredblog.subtitle %></p>
-                           <p class="mb-1 homepage-blog-list-body">
-                              <% 
-                                 var plainText = featuredblog.body.replace(/<[^>]*>/g, '');
-                                 plainText = plainText.replace(/\[[^\]]*\]/g, '');
-                                 var truncatedText = plainText.length <= 200 ? plainText : plainText.substring(0, 200) + '...';
-                                 %>
-                              <%= truncatedText %>
-                           </p>
-                           <% if (featuredblog.tags.length > 0) { %>
-                           <% featuredblog.tags.forEach(tag => { %>
-                           <% if(tag.trim().length !== 0) { %>
-                              <button type="button" class="homepage-btn-rounded" disabled><%= tag %></button>
-                           <% } %>
-                           <% }) %>
-                           <% } %>
+                                    <img src="<%= src %>" alt="Image" class="img-thumbnail">
+                            <%
+                                } else {
+                                    // Display the default picture if no img tags are found
+                            %>
+                                    <img src="https://ak-d.tripcdn.com/images/1mi3e2224vymivgpcC549.jpg?proc=source/trip" alt="Default Image" class="img-thumbnail">
+                            <%
+                                }
+                            %>
                         </div>
-                     </div>
-                  </a>
-                  <% }); %>
-               </div>
+                   
+                   
+                        <div class="col-md-9">
+                            <!-- Render ribbon area -->
+                            <small class="ribbon">
+                                <%= personalblog.author %> &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
+                                
+                                <% if (personalblog.paywall) { %>
+                                    <i class="fa-solid fa-crown" style="padding-left: 10px; color: var(--color-titletext);"></i>
+                                <% } %>
+                                <button class="homepage-follow-btn-small" id="blog-list-round-btn" data-toggle="modal" data-target="#loginModalCenter">Follow</button>
+                            </small>
+                            
+                            <a href="/index/blogs/public/<%= personalblog._id %>" data-blog-id="<%= personalblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1 blog-list-title"><%= personalblog.title %></h5>
+                                    <%
+                                    function calculateElapsedTime(formattedDate) {
+                                        var currentDate = new Date();
+                                        var date = new Date(formattedDate);
+
+                                        var timeDifference = currentDate - date;
+                                        var daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+                                        if (daysDifference === 0) {
+                                        return 'today';
+                                        } else if (daysDifference === 1) {
+                                        return 'yesterday';
+                                        } else if (daysDifference < 7) {
+                                        return daysDifference + ' days ago';
+                                        } else {
+                                        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                                        }
+                                    }
+
+                                    // Call the function with the formatted date from featuredblog
+                                    var elapsedTime = calculateElapsedTime(personalblog.formatteddate);
+                                    %>
+
+                                <small class="timesince"><%= elapsedTime %></small>
+                            </div>
+                            <p class="mb-1 blog-list-subtitle"><%= personalblog.subtitle %></p>
+
+                            <p class="mb-1 blog-list-body">
+                                <% 
+                                var plainText = personalblog.body.replace(/<[^>]*>/g, '');
+                                plainText = plainText.replace(/\[[^\]]*\]/g, '');
+                                var truncatedText = plainText.length <= 200 ? plainText : plainText.substring(0, 200) + '...';
+                                %>
+                                <%= truncatedText %>
+                            </p>
+
+
+                            <% if (personalblog.tags.length > 0) { %>
+                                <% personalblog.tags.forEach(tag => { %>
+                                    <% if(tag.trim().length !== 0) { %>
+                                        <button type="button" class="homepage-btn-rounded" disabled><%= tag %></button>
+                                    <% } %>
+                                <% }) %>
+                            <% } %>
+                            
+                        </div>
+            
+                    </div>
+                </a>
+                <% }); %>
+            </div>
+
             </div>
 
             <!-- Text on the right side (moved below on smaller screens) -->
@@ -183,9 +192,69 @@
                <button class="seemore-btn" id="seemore-btn" onclick=toggleTagsview(this)>see more</button>
                <hr>
                <h6><i class="fa-solid fa-user-plus"></i> Top Voices</h6>
-               <ul class="user-list-group" id="userList"></ul>
+               <ul class="user-list-group" id="userList" style="padding-inline-start: 0px;"></ul>
             </div>
         </div>
+
+        <!-- Login Modal -->
+        <div class="modal fade" id="loginModalCenter" tabindex="-1" role="dialog" aria-labelledby="loginModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <!-- <div class="modal-header">
+                  <h5 class="modal-title" id="loginModalLongTitle">Modal title</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div> -->
+                <div class="modal-body" style="display: flex; justify-content: center; align-items: center;">
+                    <div class="mb-md-5 mt-md-4 pb-5 text-center" style="width: 300px;">
+                        <h2 class="fw-bold mb-2">Create an account</h2>
+                        <p class="mb-4" style="color: gray; font-size: small;">Already a member? <a href="/login" class="fw-bold custom-link">Log in</a></p>
+              
+                        <div id="firstregisterpage">
+                          <div class="mb-4">
+                            <input type="email" id="email" name="email" class="form-control form-control-lg register-form-input"
+                              placeholder="Enter Email Address" />
+                          </div>
+                          <button class="btn btn-lg px-5 register-submit-button" onclick="proceedToNext()">Next</button>
+                        </div>
+              
+                        <div id="nextregisterpage" style="display: none;">
+                          <div class="mb-4">
+                            <input type="text" id="username" name="username" class="form-control form-control-lg register-form-input"
+                              placeholder="Username (no special characters)" />
+                          </div>
+                
+                          <div class="mb-4">
+                            <input type="password" id="password" name="password"
+                              class="form-control form-control-lg register-form-input" placeholder="Password (at least 6 characters)" />
+                          </div>
+                          <button class="btn btn-lg px-5 register-submit-button" onclick="registerUser()">Register</button>
+                        </div>
+              
+                        <div class="separator mt-5 mb-5">
+                          <div class="separator-line"></div>
+                          <div class="or-text">OR</div>
+                          <div class="separator-line"></div>
+                        </div>
+              
+                        <div style="font-size: x-small; color: gray; line-height: 2.0;">
+                          <p>By clicking "Next", "Sign up with Google", or "Sign up with Apple" you agree to our <a class="custom-link" href="/">Terms of Use</a> and acknowledge that you've read and understood our <a class="custom-link" href="/">Privacy Policy</a>.</p>
+                        </div>
+              
+                        <p id="servermessage"></p>
+              
+                      </div>
+                </div>
+                <!-- <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  <button type="button" class="btn btn-primary">Save changes</button>
+                </div> -->
+              </div>
+            </div>
+          </div>
+
+
         <div class="footer"></div>
     </div>
 
@@ -314,6 +383,55 @@
 
             element.classList.add('active');
         }
+
+        const servermessageDiv = document.getElementById('servermessage');
+        const firstregisterpageDiv = document.getElementById('firstregisterpage');
+        const nextregisterpageDiv = document.getElementById('nextregisterpage');
+        var email, username, password;
+
+        function proceedToNext() {
+            email = document.getElementById('email').value;
+            firstregisterpageDiv.style.display = 'none';
+            nextregisterpageDiv.style.display = 'block';
+        }
+
+        function registerUser() {
+        username = document.getElementById('username').value;
+        password = document.getElementById('password').value;
+
+        // TODO: Validate registration fields before calling register API.
+        // Add server side validation XSS attack checks as well
+
+        var jsondata = {
+          email: email,
+          username: username,
+          password: password
+        };
+
+        fetch('/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(jsondata)
+        })
+          .then(response => {
+            if (!response.ok) {
+              throw new Error('Network response was not ok');
+            }
+            return response.json();
+          })
+          .then(data => {
+            console.log(JSON.stringify(data));
+            data.regstatus !== 'ok' ? servermessageDiv.style.color = 'red' : servermessageDiv.style.color = 'green';
+            servermessageDiv.innerText = data.servermessage;
+          })
+          .catch(error => {
+            console.error('There was a problem during registration:', error);
+            // Handle error, if needed
+          });
+
+      }
           
        </script>
 </body>

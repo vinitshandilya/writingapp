@@ -134,6 +134,8 @@ a {
 
 .timesince {
     color: var(--color-subtitletext);
+    font-size: smaller;
+    white-space: nowrap;
 }
 
 .dropdown-toggle {
@@ -146,6 +148,7 @@ a {
     /* border-top: 1px solid rgba(0, 0, 0, 0.125); */
     background-color: transparent;
     font-weight: bold;
+    padding-left: 0px;
 }
 
 .big-list-item:hover {
@@ -180,7 +183,7 @@ a {
     font-size: smaller;
     height: 30px;
     padding: 0 10px;
-    margin: 10px;
+    margin-right: 10px;
     line-height: 30px;
 }
 
@@ -251,11 +254,10 @@ a {
 }
 
 .img-thumbnail {
-    /* margin-top: 50%; */
-    /* border-radius: 50%; */
-    width: 200px;
-    height: 150px;
+    width: 100%;
+    height: 200px;
     object-fit: cover;
+    padding: 0px;
 }
 
 .card {
@@ -296,11 +298,11 @@ a {
 .ribbon {
     font-size: 11px;
     color: var(--color-subtitletext);
+    white-space: nowrap;
 }
 
 .tags-container {
     display: inline-block;
-    padding: 0px 10px;
 }
 
 .monetization-banner {
@@ -975,7 +977,7 @@ img {
 .seemore-btn {
     border: none;
     background-color: transparent;
-    color: #120D48;
+    color: green;
     font-size: smaller;
     height: 30px;
     padding: 0 10px;
@@ -985,7 +987,12 @@ img {
 
 .seemore-btn:focus {
     outline: none;
-    /* Remove the default focus outline */
+    color: #120D48;
+}
+
+.seemore-btn:hover {
+    outline: none;
+    color: #120D48;
 }
 
 
@@ -1023,4 +1030,46 @@ img {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.following-btn-small {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 11px;
+    background-color: #318eeb !important;
+    color: white;
+    border: 1px solid #318eeb;
+    box-shadow: none;
+    height: 22px;
+    padding: 0 10px;
+    line-height: 30px;
+    margin-left: 10px;
+}
+
+.follow-btn-small {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 11px;
+    background-color: transparent;
+    color: var(--color-titletext);
+    border: 1px solid var(--color-titletext);
+    box-shadow: none;
+    height: 22px;
+    padding: 0 10px;
+    line-height: 30px;
+    margin-left: 10px;
+}
+
+.homepage-follow-btn-small {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 11px;
+    background-color: #03fc5e;
+    color: #1c4175;
+    border: 1px solid #03fc5e;
+    box-shadow: none;
+    height: 22px;
+    padding: 0 10px;
+    line-height: 30px;
+    margin-left: 10px;
 }

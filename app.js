@@ -57,8 +57,8 @@ passport.deserializeUser(User.deserializeUser());
 app.get('/', async (req, res) => {
     // featured articles
     try {
-        const featuredblogs = await Blog.find({ });
-        return res.render('landingpage', { featuredblogs });
+        const allblogs = await Blog.find({ });
+        return res.render('landingpage', { allblogs });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

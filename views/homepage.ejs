@@ -122,95 +122,106 @@
                 
 
                 <div class="list-group">
+
                     <% allblogs.forEach(personalblog => { %>
-                    <a href="/index?id=<%= personalblog._id %>" data-blog-id="<%= personalblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
-                
-                        <div class="row" style="display: flex; align-items: center;">
+                        
+                        <div class="row align-items-start">
 
-                        <!-- Render blog image  -->
-                        <div class="col-auto">
-                           <% 
-                               const bodyHtml = personalblog.body || ''; // Ensure personalblog.body is defined
-                               // Define a regular expression to match the src attribute in an img tag
-                               const imgSrcRegex = /<img[^>]*src=["']([^"']+)["']/i;
-                               const match = bodyHtml.match(imgSrcRegex);
-                               if (match) {
-                                   // Extract the src attribute value
-                                   const src = match[1];
-                           %>
-                                   <img src="<%= src %>" alt="Image" class="img-thumbnail">
-                           <%
-                               } else {
-                                   // Display the default picture if no img tags are found
-                           %>
-                                   <img src="https://ak-d.tripcdn.com/images/1mi3e2224vymivgpcC549.jpg?proc=source/trip" alt="Default Image" class="img-thumbnail">
-                           <%
-                               }
-                           %>
-                       </div>
-                       
-                       <!-- Render ribbon area -->
-                        <div class="col">
-                            <small class="ribbon">
-                                <% if (personalblog.userid === loggedinuser._id) { %>
-                                    YOU &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
-                                <% } else { %>
-                                    <%= personalblog.author %> &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
-                                <% } %>
-                                
-                                
-                                <% if (personalblog.paywall) { %>
-                                    <i class="fa-solid fa-crown" style="padding-left: 10px; color: var(--color-titletext);"></i>
-                                <% } %>
-                            </small>
-                            <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1 blog-list-title"><%= personalblog.title %></h5>
-                                <%
-                                function calculateElapsedTime(formattedDate) {
-                                    var currentDate = new Date();
-                                    var date = new Date(formattedDate);
-
-                                    var timeDifference = currentDate - date;
-                                    var daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
-                                    if (daysDifference === 0) {
-                                    return 'today';
-                                    } else if (daysDifference === 1) {
-                                    return 'yesterday';
-                                    } else if (daysDifference < 7) {
-                                    return daysDifference + ' days ago';
-                                    } else {
-                                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                                    }
-                                }
-
-                                // Call the function with the formatted date from featuredblog
-                                var elapsedTime = calculateElapsedTime(personalblog.formatteddate);
-                                %>
-
-                              <small class="timesince"><%= elapsedTime %></small>
-                            </div>
-                            <p class="mb-1 blog-list-subtitle"><%= personalblog.subtitle %></p>
-
-                            <p class="mb-1 blog-list-body">
+                            <!-- Render blog image  -->
+                            <div class="col-md-3 mb-2">
                                 <% 
-                                   var plainText = personalblog.body.replace(/<[^>]*>/g, '');
-                                   plainText = plainText.replace(/\[[^\]]*\]/g, '');
-                                   var truncatedText = plainText.length <= 200 ? plainText : plainText.substring(0, 200) + '...';
-                                   %>
-                                <%= truncatedText %>
-                             </p>
-
-
-                            <% if (personalblog.tags.length > 0) { %>
-                                <% personalblog.tags.forEach(tag => { %>
-                                    <% if(tag.trim().length !== 0) { %>
-                                        <button type="button" class="btn-rounded" disabled><%= tag %></button>
+                                    const bodyHtml = personalblog.body || ''; // Ensure personalblog.body is defined
+                                    // Define a regular expression to match the src attribute in an img tag
+                                    const imgSrcRegex = /<img[^>]*src=["']([^"']+)["']/i;
+                                    const match = bodyHtml.match(imgSrcRegex);
+                                    if (match) {
+                                        // Extract the src attribute value
+                                        const src = match[1];
+                                %>
+                                        <img src="<%= src %>" alt="Image" class="img-thumbnail">
+                                <%
+                                    } else {
+                                        // Display the default picture if no img tags are found
+                                %>
+                                        <img src="https://ak-d.tripcdn.com/images/1mi3e2224vymivgpcC549.jpg?proc=source/trip" alt="Default Image" class="img-thumbnail">
+                                <%
+                                    }
+                                %>
+                            </div>
+                       
+                       
+                            <div class="col-md-9">
+                                <!-- Render ribbon area -->
+                                <small class="ribbon">
+                                    <% if (personalblog.userid === loggedinuser._id) { %>
+                                        YOU &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
+                                    <% } else { %>
+                                        <%= personalblog.author %> &middot; <%= personalblog.formatteddate %> &middot; <%= personalblog.timetoread %>
                                     <% } %>
-                                <% }) %>
-                            <% } %>
-                              
-                        </div>
+                                    
+                                    
+                                    <% if (personalblog.paywall) { %>
+                                        <i class="fa-solid fa-crown" style="padding-left: 10px; color: var(--color-titletext);"></i>
+                                    <% } %>
+
+                                    <% if (loggedinuser._id !== personalblog.userid) { %>
+                                        <% if (loggedinuser.following.includes(personalblog.userid)) { %>
+                                            <button class="following-btn-small" id="blog-list-round-btn" onclick="toggleFollowingFollowers(this, `<%= personalblog.userid %>`, `<%= loggedinuser._id %>`)">Following</button>
+                                        <% } else { %>
+                                            <button class="follow-btn-small" id="blog-list-round-btn" onclick="toggleFollowingFollowers(this, `<%= personalblog.userid %>`, `<%= loggedinuser._id %>`)">Follow</button>
+                                        <% } %>
+                                    <% } %>
+                                </small>
+                                
+                                <a href="/index?id=<%= personalblog._id %>" data-blog-id="<%= personalblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1 blog-list-title"><%= personalblog.title %></h5>
+                                        <%
+                                        function calculateElapsedTime(formattedDate) {
+                                            var currentDate = new Date();
+                                            var date = new Date(formattedDate);
+
+                                            var timeDifference = currentDate - date;
+                                            var daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+                                            if (daysDifference === 0) {
+                                            return 'today';
+                                            } else if (daysDifference === 1) {
+                                            return 'yesterday';
+                                            } else if (daysDifference < 7) {
+                                            return daysDifference + ' days ago';
+                                            } else {
+                                            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                                            }
+                                        }
+
+                                        // Call the function with the formatted date from featuredblog
+                                        var elapsedTime = calculateElapsedTime(personalblog.formatteddate);
+                                        %>
+
+                                    <small class="timesince"><%= elapsedTime %></small>
+                                </div>
+                                <p class="mb-1 blog-list-subtitle"><%= personalblog.subtitle %></p>
+
+                                <p class="mb-1 blog-list-body">
+                                    <% 
+                                    var plainText = personalblog.body.replace(/<[^>]*>/g, '');
+                                    plainText = plainText.replace(/\[[^\]]*\]/g, '');
+                                    var truncatedText = plainText.length <= 200 ? plainText : plainText.substring(0, 200) + '...';
+                                    %>
+                                    <%= truncatedText %>
+                                </p>
+
+
+                                <% if (personalblog.tags.length > 0) { %>
+                                    <% personalblog.tags.forEach(tag => { %>
+                                        <% if(tag.trim().length !== 0) { %>
+                                            <button type="button" class="btn-rounded" disabled><%= tag %></button>
+                                        <% } %>
+                                    <% }) %>
+                                <% } %>
+                                
+                            </div>
                 
                         </div>
                     </a>
@@ -244,10 +255,10 @@
                     <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
                         <div class="d-flex w-100 justify-content-between">
                           <h5 class="mb-1"><%= notification.notiftext %></h5>
-                          <small class="timesince">3 days ago</small>
+                          <small class="timesince"></small>
                         </div>
                         <p class="mb-1"><%= notification.notiftext %></p>
-                        <small class="timesince">Donec id elit non mi porta.</small>
+                        <small class="timesince"></small>
                       </a>
                 <% }) %>
             </div>
@@ -410,6 +421,16 @@ function manageNotificationDisplay() {
     }
 
     async function toggleFollowingFollowers(button, communityUserId, loggedInUserId) {
+
+        if(button.classList.contains('following-btn-small')) {
+            button.classList.remove('following-btn-small');
+            button.classList.add('follow-btn-small');
+        } else if(button.classList.contains('follow-btn-small')) {
+            button.classList.remove('follow-btn-small');
+            button.classList.add('following-btn-small');
+        }
+
+
         const url = '/index/toggleFollowingAndFollowers';
         const data = {
             loggedInUserId: loggedInUserId,
