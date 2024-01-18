@@ -69,8 +69,8 @@
                 <div class="col-md-8">
                     <h1 class="mb-3 mb-md-0 text-md">Empowering Thoughts, <span style="color: #03fc5e;">Crafting</span> Stories!</h1>
                     <p class="banner-subtitle-text mb-3 mb-md-4">Welcome to my app, where every thought finds a home. Explore, express, and connect through the power of words. Your story matters, and this is the place to tell it.</p>
-                    <button class="get-started-btn mb-3 mb-md-4" onclick="window.location.href='/register'">Get started</button>
-                    <p style="font-size: small;">Already a member? <a class="sign-in" href="/login">Sign in</a></p>
+                    <button class="get-started-btn mb-3 mb-md-4" onclick="showRegisterModal()">Get started</button>
+                    <p style="font-size: small;">Already a member? <a class="sign-in" href="javascript:void(0);" onclick="showLoginModal('')">Sign in</a></p>
                 </div>
     
                 <!-- right side of the banner -->
@@ -125,7 +125,7 @@
                                 <% if (personalblog.paywall) { %>
                                     <i class="fa-solid fa-crown" style="padding-left: 10px; color: var(--color-titletext);"></i>
                                 <% } %>
-                                <button class="homepage-follow-btn-small" id="blog-list-round-btn" data-toggle="modal" data-target="#loginModalCenter">Follow</button>
+                                <button class="homepage-follow-btn-small" id="blog-list-round-btn" onclick="showRegisterModal()">Follow</button>
                             </small>
                             
                             <a href="/index/blogs/public/<%= personalblog._id %>" data-blog-id="<%= personalblog._id %>" class="list-group-item list-group-item-action flex-column align-items-start big-list-item">
@@ -200,17 +200,13 @@
         <div class="modal fade" id="loginModalCenter" tabindex="-1" role="dialog" aria-labelledby="loginModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
               <div class="modal-content">
-                <!-- <div class="modal-header">
-                  <h5 class="modal-title" id="loginModalLongTitle">Modal title</h5>
-                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div> -->
                 <div class="modal-body" style="display: flex; justify-content: center; align-items: center;">
                     <div class="mb-md-5 mt-md-4 pb-5 text-center" style="width: 300px;">
-                        <h2 class="fw-bold mb-2">Create an account</h2>
-                        <p class="mb-4" style="color: gray; font-size: small;">Already a member? <a href="/login" class="fw-bold custom-link">Log in</a></p>
-              
+                        <h2 class="fw-bold mb-2" id="modal-title">Create an account</h2>
+                        <!-- <p class="mb-4" style="color: gray; font-size: small;">Already a member? <a href="/login" class="fw-bold custom-link">Log in</a></p> -->
+                        <p id="modal-subtitle" class="mb-4" style="color: gray; font-size: small;"></p>
+                        
+                        <!-- First register page -->
                         <div id="firstregisterpage">
                           <div class="mb-4">
                             <input type="email" id="email" name="email" class="form-control form-control-lg register-form-input"
@@ -218,7 +214,8 @@
                           </div>
                           <button class="btn btn-lg px-5 register-submit-button" onclick="proceedToNext()">Next</button>
                         </div>
-              
+                        
+                        <!-- Second register page -->
                         <div id="nextregisterpage" style="display: none;">
                           <div class="mb-4">
                             <input type="text" id="username" name="username" class="form-control form-control-lg register-form-input"
@@ -230,6 +227,25 @@
                               class="form-control form-control-lg register-form-input" placeholder="Password (at least 6 characters)" />
                           </div>
                           <button class="btn btn-lg px-5 register-submit-button" onclick="registerUser()">Register</button>
+                        </div>
+
+                        <!-- Login page -->
+                        <div id="loginpage" style="display: none;">
+                            <form action="/login" method="post">
+                                <div class="mb-4">
+                                  <input type="text" id="username" name="username" class="form-control form-control-lg register-form-input"
+                                    placeholder="username" />
+                                </div>
+                    
+                                <div class="mb-4">
+                                  <input type="password" id="password" name="password"
+                                    class="form-control form-control-lg register-form-input" placeholder="password" />
+                                </div>
+                    
+                                <p class="small mb-4" style="font-size: small;"><a class="custom-link" href="#!">Forgot password?</a></p>
+                    
+                                <button class="btn btn-lg px-5 register-submit-button" type="submit">Login</button>
+                            </form>
                         </div>
               
                         <div class="separator mt-5 mb-5">
@@ -270,11 +286,38 @@
          var tagsDiv = document.getElementById('tags');
          var tagsContainer = document.createElement('div');
          tagsContainer.classList.add('tags-container');
+
+         const loginModal = new bootstrap.Modal(document.getElementById('loginModalCenter'));
  
           document.addEventListener('DOMContentLoaded', function () {
               fetchTags();
               buildSuggestedPeopleList();
+              startRegisterPage(); // prepare the register modal
+
+              // check if invalid credentials message present in the url
+              var urlParams = new URLSearchParams(window.location.search);
+              var messageParameter = urlParams.get('message');
+              console.log(messageParameter);
+              if(messageParameter && messageParameter === 'Invalid credentials.') {
+                showLoginModal(messageParameter);
+              }
+
           });
+
+          function showLoginModal(addonMessage) {
+            if(addonMessage.trim() !== '') {
+                const servermessageDiv = document.getElementById('servermessage');
+                servermessageDiv.style.color = 'red';
+                servermessageDiv.innerText = addonMessage;
+            }
+            loginModal.show();
+            proceedToLogin(); 
+          }
+
+          function showRegisterModal() {
+            startRegisterPage();
+            loginModal.show();
+          }
  
           function fetchTags() {
               fetch('/gettags')
@@ -387,53 +430,78 @@
         const servermessageDiv = document.getElementById('servermessage');
         const firstregisterpageDiv = document.getElementById('firstregisterpage');
         const nextregisterpageDiv = document.getElementById('nextregisterpage');
+        const loginpage = document.getElementById('loginpage');
+        const modaltitle = document.getElementById('modal-title');
+        const modalsubtitle = document.getElementById('modal-subtitle');
         var email, username, password;
+
+        function startRegisterPage() {
+            firstregisterpageDiv.style.display = 'block';
+            nextregisterpageDiv.style.display = 'none';
+            loginpage.style.display = 'none';
+            modaltitle.innerText = 'Create an Account';
+            modalsubtitle.innerHTML = `Already a member? <a href="javascript:void(0);" class="fw-bold custom-link" onclick="proceedToLogin()">Log in</a>`;
+            servermessageDiv.innerText = '';
+        }
 
         function proceedToNext() {
             email = document.getElementById('email').value;
             firstregisterpageDiv.style.display = 'none';
             nextregisterpageDiv.style.display = 'block';
+            loginpage.style.display = 'none';
+            modaltitle.innerText = 'Create an Account';
+            modalsubtitle.innerHTML = `Already a member? <a href="javascript:void(0);" class="fw-bold custom-link" onclick="proceedToLogin()">Log in</a>`;
+
+        }
+
+        function proceedToLogin() {
+            console.log('proceed to login');
+            firstregisterpageDiv.style.display = 'none';
+            nextregisterpageDiv.style.display = 'none';
+            loginpage.style.display = 'block';
+            modaltitle.innerText = 'Login';
+            modalsubtitle.innerHTML = `Don't have an account? <a href="javascript:void(0);" class="fw-bold custom-link" onclick="startRegisterPage()">Register</a>`;
         }
 
         function registerUser() {
-        username = document.getElementById('username').value;
-        password = document.getElementById('password').value;
+            username = document.getElementById('username').value;
+            password = document.getElementById('password').value;
 
-        // TODO: Validate registration fields before calling register API.
-        // Add server side validation XSS attack checks as well
+            // TODO: Validate registration fields before calling register API.
+            // Add server side validation XSS attack checks as well
 
-        var jsondata = {
-          email: email,
-          username: username,
-          password: password
-        };
+            var jsondata = {
+            email: email,
+            username: username,
+            password: password
+            };
 
-        fetch('/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(jsondata)
-        })
-          .then(response => {
-            if (!response.ok) {
-              throw new Error('Network response was not ok');
-            }
-            return response.json();
-          })
-          .then(data => {
-            console.log(JSON.stringify(data));
-            data.regstatus !== 'ok' ? servermessageDiv.style.color = 'red' : servermessageDiv.style.color = 'green';
-            servermessageDiv.innerText = data.servermessage;
-          })
-          .catch(error => {
-            console.error('There was a problem during registration:', error);
-            // Handle error, if needed
-          });
+            fetch('/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(jsondata)
+            })
+            .then(response => {
+                if (!response.ok) {
+                throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(JSON.stringify(data));
+                data.regstatus !== 'ok' ? servermessageDiv.style.color = 'red' : servermessageDiv.style.color = 'green';
+                servermessageDiv.innerText = data.servermessage;
+            })
+            .catch(error => {
+                console.error('There was a problem during registration:', error);
+                // Handle error, if needed
+            });
 
-      }
+        }
           
-       </script>
+    </script>
 </body>
 
 </html>

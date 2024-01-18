@@ -55,10 +55,12 @@ passport.deserializeUser(User.deserializeUser());
 
 // Landing page
 app.get('/', async (req, res) => {
+    const message = req.query.message || null;
+
     // featured articles
     try {
         const allblogs = await Blog.find({ });
-        return res.render('landingpage', { allblogs });
+        return res.render('landingpage', { allblogs, message });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -79,17 +81,6 @@ app.get('/gettags', async (req, res) => {
     }
 })
 
-
-// Login page for user login
-app.get('/login', (req, res) => {
-    const message = req.query.message || null;
-    res.render('loginpage', { message }); // Create loginpage.ejs in your views folder
-});
-
-// Render user registration page
-app.get('/register', (req, res) => {
-    res.status(200).render('registerpage');
-});
 
 // Register new user
 app.post('/register', async (req, res) => {
@@ -130,7 +121,7 @@ app.post('/register', async (req, res) => {
 // Log in existing user
 app.post('/login', passport.authenticate('local', {
     successRedirect: '/set-username-and-redirect',
-    failureRedirect: '/login/?message=Invalid credentials.',
+    failureRedirect: '/?message=Invalid credentials.',
     failureFlash: true,
 }));
 
