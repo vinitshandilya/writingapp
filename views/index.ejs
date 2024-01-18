@@ -250,6 +250,8 @@
             var loggedinuserid;
             var blogid;
             var selectedrange;
+            var headerarray;
+            var tocitems;
 
 
             document.addEventListener('DOMContentLoaded', function () {
@@ -330,6 +332,8 @@
                 quillpreview.clipboard.dangerouslyPasteHTML(editorContent);
 
                 generateTableOfContents(editorContent);
+
+                headerarray = previewDiv.querySelectorAll('h1, h2, h3');
 
                 // Generate nav-bar links for blog update and delete
                 var editLink = document.getElementById('editLink');
@@ -553,16 +557,58 @@
             }
             
 
-            function scrollToHeader(index) {
+            function scrollToHeader(index, elem) {
                 const previewDiv = document.getElementById('preview');
                 const headers = previewDiv.querySelectorAll('h1, h2, h3');
+                const toccontainer = document.getElementById('tableOfContents');
+
+                var listItems = document.querySelectorAll('#tableOfContents ul.list-group li');
+                console.log(listItems[0]);
+                listItems.forEach(function (item) {
+                    item.style.color = '';
+                    item.style.fontWeight = 'normal';
+                });
+                
+                elem.style.color = '#44b84a';
+                elem.style.fontWeight = 'bold';
 
                 if (index >= 0 && index < headers.length) {
                     setTimeout(() => {
-                        headers[index].scrollIntoView({ behavior: 'smooth' });
+                        headers[index].scrollIntoView({ behavior: 'auto' });
                     }, 0);
                 }
             }
+
+            const articlecc = document.getElementById('article-container');
+
+            articlecc.addEventListener("scroll", function() {
+                if(headerarray.length > 0) {
+                    headerarray.forEach(function(header, index) {
+                        var rect = header.getBoundingClientRect();
+
+                        var listitem = tocitems[index];
+
+                        
+                        if (rect.top >= 100 && rect.bottom >= 100) {
+                            listitem.style.fontWeight = 'normal';
+                            listitem.style.color = '';
+                        } else {
+
+                            tocitems.forEach((item) => {
+                                item.style.fontWeight = 'normal';
+                                item.style.color = '';
+                            })
+
+                            listitem.style.fontWeight = 'bold';
+                            listitem.style.color = '#44b84a'; 
+
+
+                            
+                        }
+                    });
+                }
+
+            });
 
             function compareHeaderTags(headers) {
                 const booleanArray = [];
@@ -596,10 +642,8 @@
                         tocheader.style.display = 'none';
                     }
 
-
-
                     const ul = document.createElement('ul');
-                    ul.classList.add('list-group'); // Add Bootstrap class for list group
+                    ul.classList.add('list-group');
                     let currentList = ul;
                     let previousLevel = 1;
 
@@ -631,7 +675,7 @@
                         a.innerHTML = header.textContent;
                         a.onclick = (event) => {
                             event.preventDefault();
-                            scrollToHeader(index);
+                            scrollToHeader(index, li);
                         };
 
                         li.appendChild(indicator);
@@ -672,6 +716,7 @@
 
                     tocContainer.appendChild(ul);
                 }
+                tocitems = document.querySelectorAll('#tableOfContents ul.list-group li');
             }
 
 
