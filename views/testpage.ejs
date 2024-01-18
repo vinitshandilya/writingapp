@@ -1,46 +1,116 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fade Text</title>
-  <style>
-    #textContainer {
-      position: relative;
-    }
-    .curtain {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      height: 40px; /* Adjust the height of the curtain as needed */
-      background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
-      pointer-events: none;
-      transition: height 1s;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Your Page Title</title>
+    <style>
+        /* Custom styles for your layout */
+        body {
+            padding-top: 56px; /* Adjust based on your navbar height if you have one */
+        }
+        #toc-column {
+            position: fixed;
+            top: 56px; /* Adjust based on your navbar height if you have one */
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+        }
+        #content-column {
+            margin-left: 250px; /* Adjust based on the width of your TOC column */
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
 
-  <div id="textContainer">
-    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-    <p>Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-    <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
-    <p>Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-    <p>Additional line 1</p>
-    <p>Additional line 2</p>
-    <!-- Add more paragraphs as needed -->
-    <div class="curtain"></div>
-  </div>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Table of Contents Column -->
+            <div class="col-md-3" id="toc-column">
+                <!-- Your table of contents goes here -->
+                <h2>Table of Contents</h2>
+                <ul>
+                    <li><a href="#section1">Section 1</a></li>
+                    <li><a href="#section2">Section 2</a></li>
+                    <!-- Add more sections as needed -->
+                </ul>
+            </div>
 
-  <button onclick="fadeText()">Fade Text</button>
+            <!-- Content Column -->
+            <div class="col-md-9" id="content-column">
+                <div id="section1">
+                    <h2>Section 1</h2>
+                    <!-- Your content for Section 1 goes here -->
+                    <p>Taylor Swift is your best friend, and my best friend, and millions of other fans’ best friends. She’s created a cult following of millions of people, harnessing the power of parasociality to sell countless records and tickets. Anyone that writes about Taylor includes several references to her lyrics, and probably some allusions to her personal life too, leaving easter eggs mirroring Taylor’s own love of callbacks. Her music is modern folklore, not just for her way with storytelling, but for its ubiquity, permeating every facet of pop culture.
 
-  <script>
-    function fadeText() {
-      var curtain = document.querySelector('.curtain');
-      curtain.style.height = '100%';
-    }
-  </script>
+                      Last October, Taylor Swift released her re-recorded version of 1989, still her most popular album to date. It’s still a great, if exceptionally frontloaded album, but one nearly impossible to recreate. 1989 superproducer Max Martin isn’t on board, so it’s up to her long-time engineer Christopher Rowe to craft soundalikes. Like the other pop-era re-records, it’s fascinating, but ultimately diminishing returns; they often sound like cheap karaoke recreations.
+                      
+                      But I’m not interested in talking about the technicalities of the re-records. Here, I’m interested in what happened when the new 1989 “prologue” leaked. Before every Taylor’s Version album, she reflects on her life at the time of release. This prologue denigrated anyone speculating about her relationships (a frequent theme), but she saved specific cynicism for those speculating about her relationships with other women:
+                      
+                      Being a consummate optimist, I assumed I could fix [their speculation] if I simply changed my behavior. I swore off dating and decided to focus only on myself, my music, my growth, and my female friendships. If I only hung out with my female friends, people couldn’t sensationalize or sexualize that — right? I would learn later on that people could and people would.
+                      
+                      It was uncharacteristically bitter, righteous toward paparazzi but implicitly condemning anyone who thought she might be queer Later, she talks about the “seeds of her allyship” being planted with the clumsy “boys-and-boys-and-girls-and-girls” line in “Welcome To New York.” In a sense, this is her reacting to her own fame as much as it is directed at any specific person, looking upon her parasocial empire and fearing what it’s become. But for anyone who thought she was like them, this was devastating.
+                      
+                      I don’t know if there’s a way she could have done this nicely, other than going to every Swiftie individually, caressing their face, and saying “I’m straight, but I still love and care about you.” For years, there’s been an ongoing movement of Gaylors, people who think Taylor Swift is either closeted or has already come out through her music. Sometimes, these are straight fans, sometimes these are queer fans sharing their interpretations of songs, and sometimes, it’s people who wonder what really happened with her and certain other female celebrities. There’s a reason for that investment: to Gaylors, Taylor being queer could potentially change the world, ushering in greater LGBTQ acceptance, confirming that gay stories are being told on the biggest stages possible.
+                      
+                      After the prologue leaked, I was going to leave it alone. Then The New York Times article happened. “Look What We Made Taylor Swift Do” is a 5,000 word Hail Mary for Gaylors, one I commend for not mentioning her love interests (or ‘muses’, as the subreddit calls them) by name, but one that, in its willful misinterpretation of lyrics, mistakes speculation for fact. According to CNN, Taylor Swift’s team was furious at the transgressed boundaries. And in a lot of ways, it is indeed difficult — look at Billie Eilish, who had to confirm her queerness because accusations of ‘queerbaiting’ were getting too intense.
+                      
+                      With that report, an unsettling number of people were celebrating the impending death of Gaylorism — she was straight the whole time, those gays can stop being so nosy! People who can’t express their identity often did through talking about and participating in Gaylor conversation — and they’re watching their lifeline slip away. Sure, there’s other other queer art, but in the mainstream, it’s often too tasteful to resonate like Taylor’s messiness.
+                      
+                      For many queer Gaylors, the palpably angry rejection of Taylor Swift and her team likely brings up painful memories of unrequited crushes, of being deeply in love with your best friend and realizing they don’t and won’t feel the same. The delusion shatters, as it finally registers they never cared about you like you did about them. It was the song and dance every queer woman plays on a massive, conspiratorial scale. It hits different because it’s her.
+                      
+                      The Gaylor trajectory parallels the trajectory of any other online phenomenon. Things started out reasonably enough; Jennifer Lawrence’s offhand jokes about Taylor Swift and her bestie doppelgänger Karlie Kloss, or listeners noticing the theme of forbidden relationships in songs like “I Know Places.” (To say nothing of “Dress”, where the chorus goes “I only bought this dress so you could take it off.”) Coupled with Swift’s constant shoutouts to queer musicians — Girl in Red on her Instagram story, Hayley Kiyoko at her live shows — fans started to think they were on to something big. Folklore added fuel to that fire, with the introduction of Taylor’s “male perspective”, a young boy named James caught in a love triangle.
+                      
+                      Around the time Midnights was announced with the track title “Lavender Haze”, things flew off the rails: Taylor is secretly a lesbian, Taylor isn’t actually dating anyone she’s dating, Joe Alwyn is A.I. (that last part was a joke, but I wouldn’t put it past the subreddit.) It went from harmless, thoughtful queer readings with the occasional ‘hey, this is an interesting coincidence!’ to fans playing detective, to fans obsessing over Taylor’s personal life in a way that doesn’t discourage her comparison to tabloids and paparazzi. Nobody invites parasociality quite like her, and nobody hates it like her either.
+                      
+                      I’m not going to act above this. In my teens and early 20s, I was deeply invested in Kaylor — the speculated relationship between Karlie and Taylor — to cope with gender dysphoria. And in some ways, referencing Gaylor is as effective a tell as the classic queer question “do you listen to Girl in Red?” At my Swiftie-heavy part time job, I’d make a joke about Kloss on the bleachers of the Eras Tour, and the Gaylors in my vicinity would laugh in recognition. I even used to joke that Taylor IS bi, but she just never figured it out — which is horribly intrusive and weird to say about anyone, especially someone I don’t know. People need space to explore their identity, whether they’re friends or superstars (again, Billie Eilish), and I can’t imagine figuring it out with the whole world watching.
+                      
+                      Everyone knows it’s not okay to speculate, but everyone does it — think of anyone that’s ever set off anyone else’s gaydar. We can’t claim to understand people through their art, yet artists can’t control people thinking they understand them through their art.
+                      
+                      In hindsight, Gaylor theories would often cover up quirks in Taylor’s songwriting. Fans considered “you could hear a hairpin drop” from “Right Where You Left Me” to be subtle queercoding; maybe Taylor just needed the extra syllable! I considered the sensitive James (of “Betty”) as a closeted trans girl; maybe Taylor just struggled at writing from a male perspective! Every weird thing Taylor did was just weird, down to the out-of-context quote in her documentary Miss Americana when she declares, “Gay Pride… makes me, me!” while brainstorming the critically reviled video for “ME!”
+                      
+                      I still think plenty of Taylor songs have valid queer readings, regardless of her intention — to me, “Wonderland” still sounds like the dissolution of a homoerotic friendship. Straight women have those close friendships all the time, and as writer Sadie Graham says in her all-time great article about female friendships, the eroticism is never lost on anyone: “They do realize [it’s homoerotic], and that’s what gives it that sweet thrill of nearness: near forbidden, nearly true.” Taylor calls her friends “hot girls” right after she condemns speculation on her sexuality, and accidentally sums up the reason so many believed in Gaylor — straight women can proclaim their love for other women, and the queer ones are left to wonder whether it means something more.
+                      
+                      As Dave Moore writes in his exemplary “How You Get The World” series, Taylor Swift has remade pop music in her image. Every life is folklore. To quote her sworn enemy, every album is the Album of the Life. With Taylor, there can be no Death of the Author, because the music depends on your metatextual knowledge of the very-much-alive author. It’s the more cynical side of parasociality — more relatability means you’re supporting your fave by giving them money.
+                      
+                      That’s why it’s spread everywhere. Now we have chaotic lesbian Fletcher, who openly obsesses over her ex’s new girlfriend using her actual name on “Becky’s So Hot,” or viral star Katie Gregson MacLeod, whose EP was titled Big Red after a bar she used to frequent with her ex, even filming a video there. You need to make your own life content, and that’s always been true for any celebrity, but thanks to Taylor, it’s even more true now. My friend Rose Mournighan, who inspired a bunch of this essay, said: “you aren’t just sharing the emotions, you are sharing the memories, which creates so much projection.”
+                      
+                      Some musicians are more playful around their relationship with women. I love how Olivia Rodrigo approaches it, making a whole persona-swap music video with director Allie Avital about mutual female obsession and writing a song like the gloriously unhinged “Lacy.” Whether they’re specifically queer doesn’t matter; they’re unambiguously about admiring women in a way that’s more matter-of-fact than suggestive. Sadie Graham’s article on the insufficiency of heterosexuality once again comes into play; sometimes those things exist outside of any labels or easy explanations.
+                      
+                      Yet for Gaylors, it doesn’t matter that MUNA exists, or Girl in Red, or Renee Rapp (or Tracy Chapman, or Norma Tanega, or…). It doesn’t matter that Boygenius is selling out Madison Square Garden. Most Gaylors have a working knowledge of queer musicians, but their first love was Taylor, and we can only hope Taylor has the capacity to love us back, platonically or otherwise.
+                      
+                      Is the only destination of fandom “too far”?
+                      
+                      I don’t know what the answer is, or how to move forward. Ethel Cain’s “fans” make Hayden Anhedonia uncomfortable by joking about everything but her music, all the Boygenius members have spoken about creeps on their trail, someone threw their mom’s ashes at P!nk on stage (?!). Taylor herself can’t go to a wedding without fans swarming the house.
+                      
+                      Despite that, I think there’s some good to come from the theorizing. Taylor Swift may not be gay, but someone figured out they were because they related to the yearning in her music. Someone felt validated by “You Need To Calm Down,” as corny as that song is, someone had an awakening hearing “Dress”, even if the song’s double entendre wasn’t intended. It doesn’t change the turn toward hostility, but that hostility doesn’t change the inclusion of a trans man in her “Lavender Haze” music video. Through Gaylor, I’ve been able to find other queer people, and it’s a gateway to deeper conversations about identity, music, and gender.
+                      
+                      Maybe there are other queer artists to listen to, or straight artists that don’t care what people think of them. Sometimes, straight art does capture messy queer feelings better than finely manicured “representation.” It’s ultimately not a famous person’s orientation we’re looking for, but understanding and validation.
+                      
+                      So we get over our heartbreak, find other ways to connect with queer people that have nothing to do with the biggest pop star in the world, and life goes on, never worse, but never better.
+                      
+                      A special thanks to Elliot Klug, Dave Moore, Holly Boson, and everyone else who read this before publication and offered feedback. If you like this, please subscribe to my newsletter Transient Peak, launching February 1st on Ghost.
+                      
+                      By the way, counting the title and subtitle (and not counting this epilogue), the essay is exactly 1,989 words. One last easter egg for the road ;-)</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. ...</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. ...</p>
+                </div>
 
+                <div id="section2">
+                    <h2>Section 2</h2>
+                    <!-- Your content for Section 2 goes here -->
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. ...</p>
+                </div>
+                <!-- Add more sections as needed -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js (if needed) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -1073,3 +1073,18 @@ img {
     line-height: 30px;
     margin-left: 10px;
 }
+
+div#toc-container, div#article-container {
+    max-height: 90vh;
+    overflow-y: scroll;
+}
+
+.article-container {
+    padding-right: 20%;
+}
+
+@media (max-width: 767px) {
+    #article-container {
+        padding-right: 0; /* Remove padding for mobile phones */
+    }
+}

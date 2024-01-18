@@ -134,17 +134,19 @@
             </button>
         </nav>
 
-        <div class="container-fluid">
+        <div class="container-fluid no-gutters">
             <div class="row">
 
-                <div class="col-md-3 ml-3 mr-4 mt-4" id="toc-container">
-                    <h6 id="tocheader" style="color: var(--color-titletext); font-weight: bolder;">Table of contents
+                <!-- Table of contents -->
+                <div class="col-md-3 d-none d-md-block" id="toc-container">
+                    <h6 class="mt-4" id="tocheader" style="color: var(--color-titletext); font-weight: bolder;">Table of contents
                     </h6>
                     <div id="tableOfContents"></div>
                 </div>
 
-                <div class="col-md-6" id="article-container" style="position: relative; overflow: hidden;">
-                    <div id="blogheader" class="container-fluid ribbon"></div>
+                <!-- Article text area -->
+                <div class="col-md-9 article-container" id="article-container">
+                    <div id="blogheader" class="container-fluid ribbon" style="white-space: normal;"></div>
                     <div class="monetization-banner" id="monetization-banner-id">You have monetized this article. Visit
                         <a href="/homepage/dashboard">Author's Dashboard</a> to customize payout settings.</div>
                     
@@ -163,6 +165,8 @@
                         </div>           
                     </div>         
                 </div>
+
+
             </div>
         </div>
 
@@ -547,12 +551,16 @@
                         console.error('Error sending data to server:', error.message);
                     });
             }
+            
 
             function scrollToHeader(index) {
-                const headers = document.querySelectorAll('#preview h1, #preview h2, #preview h3');
+                const previewDiv = document.getElementById('preview');
+                const headers = previewDiv.querySelectorAll('h1, h2, h3');
 
                 if (index >= 0 && index < headers.length) {
-                    headers[index].scrollIntoView({ behavior: 'smooth' });
+                    setTimeout(() => {
+                        headers[index].scrollIntoView({ behavior: 'smooth' });
+                    }, 0);
                 }
             }
 
@@ -568,6 +576,7 @@
 
                 return booleanArray;
             }
+
 
             function generateTableOfContents(htmlString) {
                 const tocContainer = document.getElementById('tableOfContents');
@@ -597,6 +606,9 @@
                     const hasChild = compareHeaderTags(headers);
 
                     headers.forEach((header, index) => {
+
+                        console.log(`header: ${header.textContent}, index: ${index}`);
+
                         const headerLevel = parseInt(header.tagName.charAt(1));
                         const levelDiff = headerLevel - previousLevel;
 
@@ -614,10 +626,13 @@
                         indicator.onclick = () => toggleChildren(li);
 
                         const a = document.createElement('a');
-                        a.href = '#';
+                        a.href = 'javascript:void(0);';
                         a.classList.add('text-decoration-none');
                         a.innerHTML = header.textContent;
-                        a.onclick = () => scrollToHeader(index);
+                        a.onclick = (event) => {
+                            event.preventDefault();
+                            scrollToHeader(index);
+                        };
 
                         li.appendChild(indicator);
                         li.appendChild(a);
