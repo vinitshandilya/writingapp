@@ -153,17 +153,27 @@
                     <div id="preview" class="container-fluid mt-4"></div>
                     <br>
                     <div class="tags-container" id="tags-container">
-                        <div id="tags" class="container-fluid"><i class="fa-solid fa-hashtag mr-2"
-                                style="color: var(--color-titletext);"></i></div>
+                        <div id="tags" class="container-fluid"></div>
                     </div>
                     <br>
+
+                    <div style="padding: 20px;">
+                        <i class="fa-regular fa-thumbs-up mr-4" style="color: var(--color-titletext); font-size:larger;"></i>
+                        <i class="fa-regular fa-comment mr-4" style="color: var(--color-titletext); font-size:larger;"></i>
+                    </div>
+                    
+                    <div class="mt-4" style="height: 50vh; background-color: aliceblue; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <h3>Like what you just read?</h3>
+                        <p>Discover more from <%= displayName %></p>
+                    </div> 
+                    
                     <div class="translucent-mask" id="translucentMask">
-                        <div class="center-content text-center">
+                        <div class="center-content text-center" style="padding-right: 20%;">
                             <h3>Unlock a World of Exclusive Content! Start Your 30-Day Trial Today!</h3>
                             <p id="subscribe-banner"></p>
                             <a href="#!" class="btn btn-primary subscribe-button" id="subscribe-button" onclick="authorSubscribe()">Subscribe</a>
                         </div>           
-                    </div>         
+                    </div>
                 </div>
 
 
@@ -486,6 +496,7 @@
                                             var bannermessage = data.bannermessage;
                                             translucentMask.style.display = 'block';
                                             articleContainer.style.height = '100vh'; // Limit body height to one screen height
+                                            articleContainer.style.overflow = 'hidden';
                                             tocContainer.style.pointerEvents = 'none'; // disable table of contents links
                                             blogauthor = blogDetails.blog.author; // used in authorSubscribe() call.
                                             var subscribebanner = document.getElementById('subscribe-banner');
@@ -495,6 +506,7 @@
                                             // subscribed to paywalled article, remove the mask
                                             translucentMask.style.display = 'none';
                                             articleContainer.style.height = 'auto';
+                                            articleContainer.style.overflow = 'visible';
                                             tocContainer.style.pointerEvents = 'auto';
                                             monetizationbanner.style.display = 'none';
                                             premiumicon.style.display = 'block';

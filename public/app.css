@@ -314,27 +314,6 @@ a {
     border-radius: 5px;
 }
 
-.translucent-mask {
-    display: none;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(to bottom,
-            var(--color-subscribebannerbgstart) 28%,
-            var(--color-subscribebannerbgmid) 50%,
-            var(--color-subscribebannerbgend) 60%,
-            var(--color-subscribebannerbgend) 70%,
-            var(--color-subscribebannerbgend) 80%,
-            var(--color-subscribebannerbgend) 100%);
-    width: 100%;
-    height: 100%;
-    z-index: 999;
-}
-
 .center-content {
     position: absolute;
     width: 90%;
@@ -1081,6 +1060,27 @@ div#toc-container, div#article-container {
 
 .article-container {
     padding-right: 20%;
+}
+
+.translucent-mask {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(to bottom,
+            var(--color-subscribebannerbgstart) 28%,
+            var(--color-subscribebannerbgmid) 50%,
+            var(--color-subscribebannerbgend) 60%,
+            var(--color-subscribebannerbgend) 70%,
+            var(--color-subscribebannerbgend) 80%,
+            var(--color-subscribebannerbgend) 100%);
+    width: 100%;
+    height: 100%;
+    z-index: 999;
 }
 
 @media (max-width: 767px) {
