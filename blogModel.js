@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 
+const commentSchema = new mongoose.Schema({
+    displayname: String,
+    comment: String,
+    timestamp: String
+});
+
 const blogSchema = new mongoose.Schema({
     userid: String,
     title: String,
@@ -11,9 +17,8 @@ const blogSchema = new mongoose.Schema({
     previewtext: String,
     timetoread: String,
     tags: [String],
-    // images: [String],
-    // footnotes: [String],
     paywall: Boolean,
+    comments: [commentSchema],
 });
 
 const Blog = mongoose.model('Blog', blogSchema);

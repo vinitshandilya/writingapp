@@ -237,11 +237,11 @@ app.get('/index/createnew', isLoggedIn, async (req, res) => {
 // save new blog
 app.post('/index/saveblog', isLoggedIn, async (req, res) => {
     const today = new Date();
-        const options = {
+    const options = {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
-        };
+    };
     const formattedDate = today.toLocaleDateString('en-US', options);
 
     try {
@@ -984,9 +984,6 @@ app.get('/index/blogs/getuserblogmetadata/:userid/:blogid', isLoggedIn, async (r
   });
   
   
-
-
-
 function calculateReadingTime(paragraph, wordsPerMinute) {
     // Assuming an average of 200 words per minute
     const defaultWordsPerMinute = 200;
@@ -1089,7 +1086,7 @@ function findRemovedImageUrls(oldHtmlString, newHtmlString) {
     return removedImageUrls;
   }
   
-  function extractImageUrls(htmlString) {
+function extractImageUrls(htmlString) {
     const $ = cheerio.load(htmlString);
     const imageUrls = [];
   
@@ -1126,6 +1123,74 @@ function deleteImages(imageUrls) {
         console.log('no images to delete');
     }
 }
+
+// Route to save blog comments
+app.post('/homepage/index/addcomment', isLoggedIn, async (req, res) => {
+    const loggedinuserid = req.session.user._id;
+    const blogid = req.body.commentObj.blogid;
+    const comment = req.body.commentObj.comment;
+    console.log(JSON.stringify(req.body.commentObj));
+
+    try {
+        const user = await User.findById(loggedinuserid);
+        if(!user) {
+            return res.status(404).json('user not found');
+        }
+
+        const options = {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+        };
+
+        const formattedDate = (new Date()).toLocaleDateString('en-US', options);
+
+        const commentObj = {
+            displayname: user.firstname ? `${user.firstname} ${user.lastname}` : user.username,
+            comment: comment,
+            timestamp: formattedDate.toUpperCase()
+        }
+
+        try {
+            const blog = await Blog.findById(blogid);
+
+            if(!blog) {
+                return res.status(404).json('blog not found');
+            }
+
+            blog.comments.push(commentObj);
+            await blog.save();
+            return res.status(200).json( { commentObj: commentObj });
+
+        } catch (error) {
+            return res.status(500).json({ message: 'Error saving comment' });
+        }
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Error saving comment' });
+    }
+
+});
+
+app.post('/homepage/index/getcomments', isLoggedIn, async (req, res) => {
+    const blogid = req.body.queryparams.blogid;
+    console.log(`request body for get comments: ${JSON.stringify(req.body)}`);
+    console.log(`fetching comments for blogid: ${blogid}`);
+
+    try {
+        const blog = await Blog.findById(blogid);
+        if(!blog) {
+            return res.status(404).json('blog not found');
+        }
+        
+        blog.comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        return res.status(200).json({ comments: blog.comments });
+
+    } catch (error) {
+        return res.status(500).json({ message: 'blog not found' });
+    }
+
+});
 
 
 app.listen(port, () => {

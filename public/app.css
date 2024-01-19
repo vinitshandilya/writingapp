@@ -1112,3 +1112,29 @@ div#toc-container, div#article-container {
     justify-content: center;
     border-radius: 5px;
 }
+
+.comment-input-box {
+    border: 0.5px solid rgb(225, 220, 220);
+    border-radius: 2px;
+    resize: none;
+}
+
+.comment-input-box:focus {
+    border: 0.5px solid rgb(225, 220, 220);
+    border-radius: 2px;
+    box-shadow: none;
+    outline: none !important;
+}
+
+.comment-author-thumbnail {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+    color: var(--color-card);
+    font-size: 20px;
+    font-weight: bold;
+}

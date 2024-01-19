@@ -211,7 +211,19 @@
                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
-                ...
+                <!-- Comment input box -->
+                <div style="display: flex; flex-direction: column; align-items: end;">
+                    <textarea class="form-control comment-input-box" id="comment-box" rows="3" placeholder="Add your comment"></textarea>
+                    <div style="display: flex; align-items: end; padding-top: 10px;">
+                        <button type="button" class="btn btn-secondary me-2">Cancel</button>
+                        <button type="button" class="btn btn-success" onclick="addComment()">Add</button>
+                    </div>
+                </div>
+                <!-- Comments from other users, filled with api -->
+                <div>
+                    <h5 style="margin-top: 10px; margin-bottom: 10px;">Latest</h5>
+                    <ul class="list-group commentlist" id="commentlist"></ul>
+                </div>
             </div>
         </div>
 
@@ -300,7 +312,6 @@
             function updateBlogDetails(blogDetails) {
 
                 var editorContent = blogDetails.blog.body;
-                // console.log(`html string from server: ${editorContent}`);
                 const dateObj = new Date(blogDetails.blog.timestamp);
                 var timeToread = calculateReadingTime(blogDetails.blog.body, 230);
                 const formatString = { month: 'short', day: 'numeric', year: 'numeric' };
@@ -337,6 +348,7 @@
                 quillpreview.clipboard.dangerouslyPasteHTML(editorContent);
 
                 generateTableOfContents(editorContent);
+                fetchAndfillComments();
 
                 headerarray = previewDiv.querySelectorAll('h1, h2, h3');
 
@@ -453,7 +465,6 @@
                         const premiumicon = document.getElementById('premium-label');
 
                         if (paywallStatus) {
-                            console.log('paywalled article');
                             appPaywallLink.style.color = '#0F9D58';
 
                             if (bloguserid === loggedinuserid) { // display monetization banner only to the blog author
@@ -515,7 +526,6 @@
 
                         } else {
                             // the blog is not paywalled in the first place. Nothing to hide.
-                            console.log('Not paywalled article');
                             const premiumicon = document.getElementById('premium-label');
                             premiumicon.style.display = 'none';
                             translucentMask.style.display = 'none';
@@ -570,7 +580,6 @@
                 const toccontainer = document.getElementById('tableOfContents');
 
                 var listItems = document.querySelectorAll('#tableOfContents ul.list-group li');
-                console.log(listItems[0]);
                 listItems.forEach(function (item) {
                     item.style.color = '';
                     item.style.fontWeight = 'normal';
@@ -642,10 +651,8 @@
                     const headers = tempContainer.querySelectorAll('h1, h2, h3');
 
                     if (headers.length > 0) {
-                        console.log('show tocheader');
                         tocheader.style.display = 'block';
                     } else {
-                        console.log("don't show tocheader");
                         tocheader.style.display = 'none';
                     }
 
@@ -657,8 +664,6 @@
                     const hasChild = compareHeaderTags(headers);
 
                     headers.forEach((header, index) => {
-
-                        console.log(`header: ${header.textContent}, index: ${index}`);
 
                         const headerLevel = parseInt(header.tagName.charAt(1));
                         const levelDiff = headerLevel - previousLevel;
@@ -730,7 +735,6 @@
             function toggleChildren(parent) {
                 const nestedUl = parent.querySelector('ul');
                 const indicator = parent.querySelector('.expand-indicator');
-                console.log(nestedUl);
                 if (nestedUl) {
                     const isCollapsed = nestedUl.classList.toggle('d-none');
                     indicator.innerHTML = isCollapsed ? '<i class="fa-solid fa-angle-right" style="margin-right: 7px;"></i>' : '<i class="fa-solid fa-angle-down" style="margin-right: 7px;"></i>';
@@ -887,6 +891,125 @@
                     contextMenu.style.display = 'none';
                 }
             });
+
+            function addComment() {
+                const usercomment = document.getElementById('comment-box');
+                if(usercomment.value && usercomment.value.trim() !== '') {
+                    saveComment(usercomment.value); // save to server
+                    usercomment.value = '';
+                }
+            }
+
+            function saveComment(comment) {
+                const commentObj = {
+                    blogid: blogid,
+                    comment: comment
+                };
+                fetch('/homepage/index/addcomment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ commentObj }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const ul = document.getElementById('commentlist');
+                    const li = buildCommentEntry(data.commentObj.displayname, data.commentObj.timestamp, data.commentObj.comment);
+                    if (ul.firstChild) {
+                        ul.insertBefore(li, ul.firstChild);
+                    } else {
+                        ul.appendChild(li);
+                    }
+                })
+
+                .catch(error => {
+                    console.error('Error saving comment:', error.message);
+                });
+
+            }
+
+            function fetchAndfillComments() {
+                const queryparams = { blogid };
+
+                fetch('/homepage/index/getcomments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ queryparams }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const ul = document.getElementById('commentlist');
+                    data.comments.forEach((commentObj) => {
+                        ul.appendChild(buildCommentEntry(commentObj.displayname, commentObj.timestamp, commentObj.comment));
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching comments from server', error.message);
+                });
+                
+            }
+
+            function buildCommentEntry(displayname, timestamp, comment) {
+                const li = document.createElement('li');
+                li.classList.add('list-group-item');
+                li.classList.add('flex-column');
+                li.classList.add('align-items-start');
+                li.style.borderBottom = '0.4px solid grey';
+                var timesince = calculateElapsedTime(timestamp);
+                const imgtxt = displayname.charAt(0).toUpperCase();
+                const colors = ['red', 'blue', 'green', 'purple', 'orange', 'olive'];
+                var bg = colors[Math.floor(Math.random() * 6)];
+
+                li.innerHTML = `
+                        <div class="row">
+
+                            <div class="col-md-2" style="flex: 0; padding-top: 5px;">
+                                <div class="comment-author-thumbnail" style="background-color: ${bg};">
+                                    <span class="initial" style="line-height: 1;">${imgtxt}</span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-10 d-flex flex-column align-items-start">
+                                <div class="fw-bold">${displayname}</div>
+                                <span style="font-size: smaller;">${timesince}</span>
+                                <span style="font-size: smaller;">${comment}</span>
+                            </div>
+
+                        </div>  
+                `;
+                return li;
+            }
+
+            function calculateElapsedTime(formattedDate) {
+                var currentDate = new Date();
+                var date = new Date(formattedDate);
+
+                var timeDifference = currentDate - date;
+                var daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+                if (daysDifference === 0) {
+                    return 'today';
+                } else if (daysDifference === 1) {
+                    return 'yesterday';
+                } else if (daysDifference < 7) {
+                    return daysDifference + ' days ago';
+                } else {
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                }
+            }
 
 
         </script>
