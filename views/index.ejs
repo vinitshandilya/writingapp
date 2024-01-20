@@ -174,7 +174,8 @@
                             <i class="fa-regular fa-thumbs-up like-button-icon mr-2"></i>Like
                         </button>
                         <button class="like-button mr-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
-                            <i class="fa-regular fa-comment like-button-icon mr-2"></i>Comment
+                            <i class="fa-regular fa-comment like-button-icon mr-2"></i>Comments
+                            <span class="noofcomments ms-1" id="noofcomments"></span>
                         </button>
                     </div>
                     
@@ -259,6 +260,7 @@
             const monetizationbanner = document.getElementById("monetization-banner-id");
             const appPaywallLink = document.getElementById('appPaywallLink');
             const tagscontainer = document.getElementById('tags-container');
+            const noofcommentsDiv = document.getElementById('noofcomments');
             const markercolor = '#58f04180'
 
             var blogDetails;
@@ -269,6 +271,7 @@
             var selectedrange;
             var headerarray;
             var tocitems;
+            var noofcomments = 0;
 
 
             document.addEventListener('DOMContentLoaded', function () {
@@ -920,8 +923,9 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log(`additional comments: ${JSON.stringify(data.comments)}`);
                     const ul = document.getElementById('commentlist');
+                    noofcomments = data.comments.length;
+                    noofcommentsDiv.innerText = `(${noofcomments})`
                     ul.innerHTML = '';
                     data.comments.forEach((commentObj) => {
                         ul.appendChild(buildCommentEntry(commentObj));
@@ -951,8 +955,9 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log(`fetched comments: ${JSON.stringify(data.comments)}`);
                     const ul = document.getElementById('commentlist');
+                    noofcomments = data.comments.length;
+                    noofcommentsDiv.innerText = `(${noofcomments})`
                     data.comments.forEach((commentObj) => {
                         ul.appendChild(buildCommentEntry(commentObj));
                     });
@@ -964,7 +969,6 @@
             }
 
             function deleteComment(commentid) {
-                console.log('comment to delete: ', commentid);
                 const commentObj = {
                     blogid: blogid,
                     commentid: commentid
@@ -984,8 +988,9 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log(`remaining comments: ${data.comments}`);
                     const ul = document.getElementById('commentlist');
+                    noofcomments = data.comments.length;
+                    noofcommentsDiv.innerText = `(${noofcomments})`
                     ul.innerHTML = '';
                     data.comments.forEach((commentObj) => {
                         ul.appendChild(buildCommentEntry(commentObj));
