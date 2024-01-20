@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const commentSchema = new mongoose.Schema({
+    commentedbyuserid: String,
     displayname: String,
     comment: String,
     timestamp: String

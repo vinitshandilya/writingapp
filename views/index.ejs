@@ -170,7 +170,7 @@
                     <br>
 
                     <div style="padding: 20px;">
-                        <button class="like-button mr-4" type="button" onclick="yourFunction()">
+                        <button class="like-button mr-4" type="button" onclick="myFunction('not defined yet')">
                             <i class="fa-regular fa-thumbs-up like-button-icon mr-2"></i>Like
                         </button>
                         <button class="like-button mr-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
@@ -903,7 +903,8 @@
             function saveComment(comment) {
                 const commentObj = {
                     blogid: blogid,
-                    comment: comment
+                    comment: comment,
+                    commentedbyuserid: loggedinuserid
                 };
                 fetch('/homepage/index/addcomment', {
                     method: 'POST',
@@ -919,13 +920,12 @@
                     return response.json();
                 })
                 .then(data => {
+                    console.log(`additional comments: ${JSON.stringify(data.comments)}`);
                     const ul = document.getElementById('commentlist');
-                    const li = buildCommentEntry(data.commentObj.displayname, data.commentObj.timestamp, data.commentObj.comment);
-                    if (ul.firstChild) {
-                        ul.insertBefore(li, ul.firstChild);
-                    } else {
-                        ul.appendChild(li);
-                    }
+                    ul.innerHTML = '';
+                    data.comments.forEach((commentObj) => {
+                        ul.appendChild(buildCommentEntry(commentObj));
+                    });
                 })
 
                 .catch(error => {
@@ -951,9 +951,10 @@
                     return response.json();
                 })
                 .then(data => {
+                    console.log(`fetched comments: ${JSON.stringify(data.comments)}`);
                     const ul = document.getElementById('commentlist');
                     data.comments.forEach((commentObj) => {
-                        ul.appendChild(buildCommentEntry(commentObj.displayname, commentObj.timestamp, commentObj.comment));
+                        ul.appendChild(buildCommentEntry(commentObj));
                     });
                 })
                 .catch(error => {
@@ -962,30 +963,99 @@
                 
             }
 
-            function buildCommentEntry(displayname, timestamp, comment) {
+            function deleteComment(commentid) {
+                console.log('comment to delete: ', commentid);
+                const commentObj = {
+                    blogid: blogid,
+                    commentid: commentid
+                }
+
+                fetch('/homepage/index/deletecomment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ commentObj }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(`remaining comments: ${data.comments}`);
+                    const ul = document.getElementById('commentlist');
+                    ul.innerHTML = '';
+                    data.comments.forEach((commentObj) => {
+                        ul.appendChild(buildCommentEntry(commentObj));
+                    });
+                })
+                .catch(error => {
+                    console.error('Error deleting comment:', error.message);
+                });
+            }
+
+            function checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid) {
+                if(bloguserid === loggedinuserid) {
+                    return true;
+                } else {
+                    if(commentedbyuserid === loggedinuserid) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+
+            function buildCommentEntry(commentObject) {
                 const li = document.createElement('li');
                 li.classList.add('list-group-item');
                 li.classList.add('flex-column');
                 li.classList.add('align-items-start');
                 li.style.borderBottom = '0.4px solid grey';
-                var timesince = calculateElapsedTime(timestamp);
-                const imgtxt = displayname.charAt(0).toUpperCase();
+                var timesince = calculateElapsedTime(commentObject.timestamp);
+                const commentedbyuserid = commentObject.commentedbyuserid;
+                const imgtxt = commentObject.displayname.charAt(0).toUpperCase();
                 const colors = ['red', 'blue', 'green', 'purple', 'orange', 'olive'];
                 var bg = colors[Math.floor(Math.random() * 6)];
+                const showMenuOptions = checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid);
 
                 li.innerHTML = `
                         <div class="row">
-
                             <div class="col-md-2" style="flex: 0; padding-top: 5px;">
                                 <div class="comment-author-thumbnail" style="background-color: ${bg};">
                                     <span class="initial" style="line-height: 1;">${imgtxt}</span>
                                 </div>
                             </div>
 
-                            <div class="col-md-10 d-flex flex-column align-items-start">
-                                <div class="fw-bold">${displayname}</div>
+                            <div class="col-md-10" style="display: flex; flex-direction: column;">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="fw-bold">${commentObject.displayname}</div>
+                                    </div>
+                                    ${showMenuOptions ? `
+                                        <div class="col-6 text-end">
+                                            <div class="btn-group">
+                                                <button type="button" class="btn comment-menu-button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                                </button>
+                                                <ul class="dropdown-menu dropdown-menu-lg-end">
+                                                    <li><button class="dropdown-item" type="button" onclick="deleteComment('${commentObject._id}')">Delete</button></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                
                                 <span style="font-size: smaller;">${timesince}</span>
-                                <span style="font-size: smaller;">${comment}</span>
+                                <span style="font-size: smaller; margin-top: 10px;">${commentObject.comment}</span>
+
+                                <div class="btn-group comment-btn-group" role="group" aria-label="Basic example">
+                                    <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
+                                    <button class="comment-btn-group-icons me-4" onclick="addThread()"><i class="fa-regular fa-comment"></i></button>
+                                </div>
+
                             </div>
 
                         </div>  
@@ -1007,7 +1077,7 @@
                 } else if (daysDifference < 7) {
                     return daysDifference + ' days ago';
                 } else {
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, });
                 }
             }
 

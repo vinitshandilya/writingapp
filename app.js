@@ -241,6 +241,9 @@ app.post('/index/saveblog', isLoggedIn, async (req, res) => {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true, // Use 12-hour clock with AM/PM
     };
     const formattedDate = today.toLocaleDateString('en-US', options);
 
@@ -345,7 +348,10 @@ app.post('/index/blogs/:id/edit', isLoggedIn, async (req, res) => {
         month: 'short',
         day: 'numeric',
         year: 'numeric',
-        };
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: true, // Use 12-hour clock with AM/PM
+    };
     const newhtmlstring = req.body.body;
     var oldhtmlstring = ''
     const formattedDate = today.toLocaleDateString('en-US', options);
@@ -1129,6 +1135,7 @@ app.post('/homepage/index/addcomment', isLoggedIn, async (req, res) => {
     const loggedinuserid = req.session.user._id;
     const blogid = req.body.commentObj.blogid;
     const comment = req.body.commentObj.comment;
+    const commentedbyuserid = req.body.commentObj.commentedbyuserid;
     console.log(JSON.stringify(req.body.commentObj));
 
     try {
@@ -1136,31 +1143,31 @@ app.post('/homepage/index/addcomment', isLoggedIn, async (req, res) => {
         if(!user) {
             return res.status(404).json('user not found');
         }
-
         const options = {
             month: 'short',
             day: 'numeric',
             year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: true, // Use 12-hour clock with AM/PM
         };
-
         const formattedDate = (new Date()).toLocaleDateString('en-US', options);
-
         const commentObj = {
+            commentedbyuserid: commentedbyuserid,
             displayname: user.firstname ? `${user.firstname} ${user.lastname}` : user.username,
             comment: comment,
             timestamp: formattedDate.toUpperCase()
         }
-
         try {
             const blog = await Blog.findById(blogid);
-
             if(!blog) {
                 return res.status(404).json('blog not found');
             }
-
             blog.comments.push(commentObj);
             await blog.save();
-            return res.status(200).json( { commentObj: commentObj });
+            blog.comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            return res.status(200).json( { comments: blog.comments });
 
         } catch (error) {
             return res.status(500).json({ message: 'Error saving comment' });
@@ -1172,6 +1179,56 @@ app.post('/homepage/index/addcomment', isLoggedIn, async (req, res) => {
 
 });
 
+app.post('/homepage/index/deletecomment', isLoggedIn, async (req, res) => {
+    console.log(JSON.stringify(req.body.commentObj));
+    const loggedinuserid = req.session.user._id;
+    const blogid = req.body.commentObj.blogid;
+    const commentid = req.body.commentObj.commentid;
+
+    try {
+        const blog = await Blog.findById(blogid);
+
+        if(!blog) {
+            return res.status(404).json('blog not found');
+        } else {
+            const bloguserid = blog.userid;
+            const commentIndex = blog.comments.findIndex(comment => comment._id == commentid);
+
+            if (commentIndex === -1) {
+                return res.status(404).json('comment not found');
+            } else {
+                // Retrieve 'commentedbyuserid' from the found comment
+                const commentedbyuserid = blog.comments[commentIndex].commentedbyuserid;
+                if(checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid)) {
+                    // Remove the comment from the comments array
+                    blog.comments.splice(commentIndex, 1)[0]; // [0] to get the deleted comment
+                    await blog.save();
+                    blog.comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    return res.status(200).json({ comments: blog.comments }); // return remaining comments.
+                } else {
+                    return res.status(500).json({ message: 'permission denied' });
+                }
+            }
+        }
+    } catch (error) {
+        return res.status(500).json({ message: 'Error saving comment' });
+    }
+
+});
+
+function checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid) {
+    if(bloguserid === loggedinuserid) {
+        return true;
+    } else {
+        if(commentedbyuserid === loggedinuserid) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+
 app.post('/homepage/index/getcomments', isLoggedIn, async (req, res) => {
     const blogid = req.body.queryparams.blogid;
     console.log(`request body for get comments: ${JSON.stringify(req.body)}`);
@@ -1182,12 +1239,12 @@ app.post('/homepage/index/getcomments', isLoggedIn, async (req, res) => {
         if(!blog) {
             return res.status(404).json('blog not found');
         }
-        
+
         blog.comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         return res.status(200).json({ comments: blog.comments });
 
     } catch (error) {
-        return res.status(500).json({ message: 'blog not found' });
+        return res.status(500).json({ message: 'Unexpected error. Blog not found' });
     }
 
 });
