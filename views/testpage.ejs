@@ -1,59 +1,111 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment Thread</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        #post {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
 
-    <title>Hello, world!</title>
-  </head>
-  <body>
+        #comments {
+            list-style-type: none;
+            padding: 0;
+        }
 
-    <div class="row" style="height: 100px;">
-      <div class="col-md-1" style="background-color: aliceblue;">
-        <!-- profile pic -->
-      </div>
-      
-      <div class="col-md-8" style="background-color: antiquewhite; display: flex; flex-direction: column; justify-content: center;">
-        <h3>Anvit Shandilya</h3>
-        <small>2 days ago.</small>
-      </div>
+        .comment {
+            border: 1px solid #eee;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+
+        .reply-form {
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="post">
+        <h1>Post Title</h1>
+        <p>Post content goes here.</p>
     </div>
 
-    <div class="row" style="height: 100px;">
-      <div class="col-md-9" style="background-color: burlywood; display: flex; flex-direction: column; justify-content: center;">
-        <p>This is a sample comment from 2 days back.</p>
-      </div>
+    <ul id="comments"></ul>
+
+    <div id="commentForm">
+        <h2>Add a Comment</h2>
+        <form id="addCommentForm">
+            <label for="commentAuthor">Name:</label>
+            <input type="text" id="commentAuthor" required>
+
+            <label for="commentContent">Comment:</label>
+            <textarea id="commentContent" rows="4" required></textarea>
+
+            <button type="submit">Add Comment</button>
+        </form>
     </div>
 
-    <ul class="list-group">
-      <li class="list-group-item d-flex justify-content-between align-items-start">
-        <div class="ms-2 me-auto">
-          <div class="fw-bold">Subheading</div>
-          Content for list item
-        </div>
-        <span class="badge bg-primary rounded-pill">14</span>
-      </li>
-      <li class="list-group-item d-flex justify-content-between align-items-start">
-        <div class="ms-2 me-auto">
-          <div class="fw-bold">Subheading</div>
-          Content for list item
-        </div>
-        <span class="badge bg-primary rounded-pill">14</span>
-      </li>
-      <li class="list-group-item d-flex justify-content-between align-items-start">
-        <div class="ms-2 me-auto">
-          <div class="fw-bold">Subheading</div>
-          Content for list item
-        </div>
-        <span class="badge bg-primary rounded-pill">14</span>
-      </li>
-    </ul>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const commentForm = document.getElementById("addCommentForm");
+            const commentsList = document.getElementById("comments");
 
+            commentForm.addEventListener("submit", function(event) {
+                event.preventDefault();
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-  </body>
+                const authorInput = document.getElementById("commentAuthor");
+                const contentInput = document.getElementById("commentContent");
+
+                const author = authorInput.value;
+                const content = contentInput.value;
+
+                if (author && content) {
+                    addComment(author, content);
+                    authorInput.value = "";
+                    contentInput.value = "";
+                }
+            });
+
+            function addComment(author, content) {
+                const comment = document.createElement("li");
+                comment.className = "comment";
+
+                const commentContent = `<strong>${author}:</strong> ${content}`;
+                comment.innerHTML = commentContent;
+
+                const replyForm = document.createElement("div");
+                replyForm.className = "reply-form";
+                replyForm.innerHTML = `
+                    <label for="replyContent">Reply:</label>
+                    <textarea id="replyContent" rows="3"></textarea>
+                    <button onclick="addReply(this)">Add Reply</button>
+                `;
+
+                comment.appendChild(replyForm);
+                commentsList.appendChild(comment);
+            }
+
+            window.addReply = function(button) {
+                const replyContentInput = button.parentNode.querySelector("#replyContent");
+                const replyContent = replyContentInput.value;
+
+                if (replyContent) {
+                    const reply = document.createElement("p");
+                    reply.innerHTML = `<strong>Replier:</strong> ${replyContent}`;
+                    button.parentNode.parentNode.appendChild(reply);
+                    replyContentInput.value = "";
+                }
+            };
+        });
+    </script>
+</body>
 </html>

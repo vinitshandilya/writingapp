@@ -228,7 +228,6 @@
             </div>
         </div>
 
-
         <!-- JavaScripts and JQuery -->
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
@@ -903,6 +902,24 @@
                 }
             }
 
+            function calculateElapsedTime(formattedDate) {
+                var currentDate = new Date();
+                var date = new Date(formattedDate);
+
+                var timeDifference = currentDate - date;
+                var daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+
+                if (daysDifference === 0) {
+                    return 'today';
+                } else if (daysDifference === 1) {
+                    return 'yesterday';
+                } else if (daysDifference < 7) {
+                    return daysDifference + ' days ago';
+                } else {
+                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, });
+                }
+            }
+
             function saveComment(comment) {
                 const commentObj = {
                     blogid: blogid,
@@ -1013,6 +1030,7 @@
                 }
             }
 
+
             function buildCommentEntry(commentObject) {
                 const li = document.createElement('li');
                 li.classList.add('list-group-item');
@@ -1034,7 +1052,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-10" style="display: flex; flex-direction: column;">
+                            <div class="col-md-10 comment-body" style="display: flex; flex-direction: column;">
                                 <div class="row">
                                     <div class="col-6">
                                         <div class="fw-bold">${commentObject.displayname}</div>
@@ -1056,9 +1074,9 @@
                                 <span style="font-size: smaller;">${timesince}</span>
                                 <span style="font-size: smaller; margin-top: 10px;">${commentObject.comment}</span>
 
-                                <div class="btn-group comment-btn-group" role="group" aria-label="Basic example">
+                                <div class="btn-group comment-btn-group" role="group" aria-label="Basic">
                                     <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
-                                    <button class="comment-btn-group-icons me-4" onclick="addThread()"><i class="fa-regular fa-comment"></i></button>
+                                    <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode)"><i class="fa-regular fa-comment"></i></button>
                                 </div>
 
                             </div>
@@ -1068,22 +1086,40 @@
                 return li;
             }
 
-            function calculateElapsedTime(formattedDate) {
-                var currentDate = new Date();
-                var date = new Date(formattedDate);
 
-                var timeDifference = currentDate - date;
-                var daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
-
-                if (daysDifference === 0) {
-                    return 'today';
-                } else if (daysDifference === 1) {
-                    return 'yesterday';
-                } else if (daysDifference < 7) {
-                    return daysDifference + ' days ago';
+            function toggleReplyBox(clickedCommentBody) {
+                if(clickedCommentBody.querySelector('#replyDivContainer') !== null) {
+                    removeReplyBox(clickedCommentBody);
                 } else {
-                    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true, });
+                    var newHTML = `
+                            <div class="container mt-4" id="replyDiv">
+                                <div style="display: flex; flex-direction: column; align-items: end;">
+                                    <textarea class="form-control comment-input-box" id="comment-box" rows="3" placeholder="Reply"></textarea>
+                                    <div style="display: flex; align-items: end; padding-top: 10px;">
+                                        <button type="button" class="btn btn-secondary me-2" onclick="removeReplyBox(this.parentNode.parentNode.parentNode.parentNode.parentNode)">Cancel</button>
+                                        <button type="button" class="btn btn-success" onclick="postReply()">Reply</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                    var replyDivContainer = document.createElement('div');
+                    replyDivContainer.id = 'replyDivContainer';
+                    replyDivContainer.innerHTML = newHTML;
+                    clickedCommentBody.appendChild(replyDivContainer);
+                    clickedCommentBody.style.display = 'block';
                 }
+            }
+            
+
+            function postReply() {
+
+            }
+
+
+            function removeReplyBox(clickedCommentBody) {
+                var replyDivContainer = clickedCommentBody.querySelector('#replyDivContainer');
+                clickedCommentBody.removeChild(replyDivContainer);
             }
 
 
