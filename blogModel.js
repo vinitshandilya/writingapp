@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const reply2ReplyScheam = new mongoose.Schema({
+const reply2ReplySchema = new mongoose.Schema({
     commentedbyuserid: String,
     displayname: String,
     comment: String,
@@ -12,7 +12,7 @@ const replySchema = new mongoose.Schema({
     displayname: String,
     comment: String,
     timestamp: String,
-    reply2Replies: [reply2ReplyScheam]
+    reply2Replies: [reply2ReplySchema]
 });
 
 const commentSchema = new mongoose.Schema({

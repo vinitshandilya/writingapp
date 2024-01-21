@@ -1017,7 +1017,7 @@
                 });
             }
 
-            
+
             function checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid) {
                 if(bloguserid === loggedinuserid) {
                     return true;
@@ -1031,13 +1031,14 @@
             }
             
 
-            function addReply(replyboxParent, commentid, clickedCommentBody) {
+            function addReply(replyboxParent, parentcommentid, grandparentid, clickedCommentBody) {
                 const replyBox = replyboxParent.querySelector('#reply-box');
 
                 if(replyBox.value && replyBox.value.trim() !== '') {
                     const replyObj = {
                         blogid: blogid,
-                        parentcommentid: commentid,
+                        grandparentid: grandparentid,
+                        parentcommentid: parentcommentid,
                         replystring: replyBox.value,
                         repliedbyuserid: loggedinuserid
                     };
@@ -1129,7 +1130,7 @@
 
                                         <div class="btn-group comment-btn-group" role="group" aria-label="Basic">
                                             <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
-                                            <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${commentObject._id}')"><i class="fa-regular fa-comment"></i></button>
+                                            <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${commentObject._id}', '${parentid}')"><i class="fa-regular fa-comment"></i></button>
                                         </div>
 
                                         ${replyHtmlString !== '' ? `<div>${replyHtmlString}</div>` : ''}
@@ -1152,7 +1153,7 @@
             }
 
 
-            function toggleReplyBox(clickedCommentBody, commentid) {
+            function toggleReplyBox(clickedCommentBody, parentcommentid, grandparentid) {
                 if(clickedCommentBody.querySelector('#replyDivContainer') !== null) {
                     removeReplyBox(clickedCommentBody);
                 } else {
@@ -1162,7 +1163,7 @@
                                     <textarea class="form-control" id="reply-box" rows="3" placeholder="Reply"></textarea>
                                     <div style="display: flex; align-items: end; padding-top: 10px;">
                                         <button type="button" class="btn btn-secondary me-2" onclick="removeReplyBox(this.parentNode.parentNode.parentNode.parentNode.parentNode)">Cancel</button>
-                                        <button type="button" class="btn btn-success" onclick="addReply(this.parentNode.parentNode, '${commentid}', this.parentNode.parentNode.parentNode.parentNode.parentNode)">Reply</button>
+                                        <button type="button" class="btn btn-success" onclick="addReply(this.parentNode.parentNode, '${parentcommentid}', '${grandparentid}', this.parentNode.parentNode.parentNode.parentNode.parentNode)">Reply</button>
                                     </div>
                                 </div>
                             </div>

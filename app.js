@@ -1304,26 +1304,57 @@ app.post('/homepage/index/addreply', isLoggedIn, async (req, res) => {
         if(!blog) {
             return res.status(404).json('blog not found');
         }
-        // find target comment
-        const commentIndex = blog.comments.findIndex(comment => comment._id == req.body.replyObj.parentcommentid);
-        if (commentIndex === -1) {
-            return res.status(404).json('comment not found');
-        } else {
-            var targetcomment = blog.comments[commentIndex];
-            // save reply to targetcomment's replies array. reply is of type replySchema
-            var replyObj = {
+
+        if(req.body.replyObj.grandparentid.toString() !== 'null') { // reply on a reply
+            console.log('request to add reply on a reply')
+            // get target comment
+            const commentIndex = blog.comments.findIndex(comment => comment._id == req.body.replyObj.grandparentid);
+            if (commentIndex === -1) {
+                return res.status(404).json('comment not found');
+            }
+            // find target reply
+            const replyIndex = blog.comments[commentIndex].replies.findIndex(reply => reply._id == req.body.replyObj.parentcommentid);
+            if (replyIndex === -1) {
+                return res.status(404).json('reply not found to comment on');
+            }
+            var targetReply = blog.comments[commentIndex].replies[replyIndex];
+
+            var reply2RepliesObj = {
                 commentedbyuserid: loggedinuserid,
                 displayname: user.firstname ? `${user.firstname} ${user.lastname}` : user.username,
                 comment: replystring,
                 timestamp: formattedDate.toUpperCase()
             }
-            targetcomment.replies.push(replyObj);
-            targetcomment.replies.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            targetReply.reply2Replies.push(reply2RepliesObj);
+            targetReply.reply2Replies.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            blog.comments[commentIndex].replies.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             blog.comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             await blog.save();
             return res.status(200).json( { comments: blog.comments });
 
+        } else { // reply on a comment
+            // find target comment
+            const commentIndex = blog.comments.findIndex(comment => comment._id == req.body.replyObj.parentcommentid);
+            if (commentIndex === -1) {
+                return res.status(404).json('comment not found');
+            } else {
+                var targetcomment = blog.comments[commentIndex];
+                // save reply to targetcomment's replies array. reply is of type replySchema
+                var replyObj = {
+                    commentedbyuserid: loggedinuserid,
+                    displayname: user.firstname ? `${user.firstname} ${user.lastname}` : user.username,
+                    comment: replystring,
+                    timestamp: formattedDate.toUpperCase()
+                }
+                targetcomment.replies.push(replyObj);
+                targetcomment.replies.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                blog.comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                await blog.save();
+                return res.status(200).json( { comments: blog.comments });
+
+            }
         }
+
 
     } catch (error) {
         return res.status(500).json({ message: 'Unexpected error while saving reply.' });
