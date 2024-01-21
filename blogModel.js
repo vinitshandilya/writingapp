@@ -4,7 +4,8 @@ const commentSchema = new mongoose.Schema({
     commentedbyuserid: String,
     displayname: String,
     comment: String,
-    timestamp: String
+    timestamp: String,
+    thread: [this]
 });
 
 const blogSchema = new mongoose.Schema({

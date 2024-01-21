@@ -1135,7 +1135,7 @@ app.post('/homepage/index/addcomment', isLoggedIn, async (req, res) => {
     const loggedinuserid = req.session.user._id;
     const blogid = req.body.commentObj.blogid;
     const comment = req.body.commentObj.comment;
-    const commentedbyuserid = req.body.commentObj.commentedbyuserid;
+    const commentedbyuserid = req.body.commentObj.commentedbyuserid; // TODO: No need for this! Use loggedinuserid instead
     console.log(JSON.stringify(req.body.commentObj));
 
     try {
@@ -1165,8 +1165,8 @@ app.post('/homepage/index/addcomment', isLoggedIn, async (req, res) => {
                 return res.status(404).json('blog not found');
             }
             blog.comments.push(commentObj);
-            await blog.save();
             blog.comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            await blog.save();
             return res.status(200).json( { comments: blog.comments });
 
         } catch (error) {
@@ -1202,8 +1202,8 @@ app.post('/homepage/index/deletecomment', isLoggedIn, async (req, res) => {
                 if(checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid)) {
                     // Remove the comment from the comments array
                     blog.comments.splice(commentIndex, 1)[0]; // [0] to get the deleted comment
-                    await blog.save();
                     blog.comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    await blog.save();
                     return res.status(200).json({ comments: blog.comments }); // return remaining comments.
                 } else {
                     return res.status(500).json({ message: 'permission denied' });
@@ -1248,6 +1248,57 @@ app.post('/homepage/index/getcomments', isLoggedIn, async (req, res) => {
     }
 
 });
+
+
+app.post('/homepage/index/addreply', isLoggedIn, async (req, res) => {
+    console.log(req.body.replyObj);
+    const loggedinuserid = req.session.user._id;
+    const blogid = req.body.replyObj.blogid;
+    const replystring = req.body.replyObj.replystring;
+    try {
+        const user = await User.findById(loggedinuserid);
+        if(!user) {
+            return res.status(404).json('user not found');
+        }
+        const options = {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            second: 'numeric',
+            hour12: true, // Use 12-hour clock with AM/PM
+        };
+        const formattedDate = (new Date()).toLocaleDateString('en-US', options);
+        const blog = await Blog.findById(blogid);
+        if(!blog) {
+            return res.status(404).json('blog not found');
+        }
+        // find comment
+        const commentIndex = blog.comments.findIndex(comment => comment._id == req.body.replyObj.parentcommentid);
+        if (commentIndex === -1) {
+            return res.status(404).json('comment not found');
+        } else {
+            var targetcomment = blog.comments[commentIndex];
+            // save reply thread to targetcomment's thread array. thread is of type comment
+            var threadObj = {
+                commentedbyuserid: loggedinuserid,
+                displayname: user.firstname ? `${user.firstname} ${user.lastname}` : user.username,
+                comment: replystring,
+                timestamp: formattedDate.toUpperCase()
+            }
+            targetcomment.thread.push(threadObj);
+            targetcomment.thread.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            blog.comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            await blog.save();
+            return res.status(200).json( { comments: blog.comments });
+
+        }
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Unexpected error while saving reply.' });
+    }
+})
 
 
 app.listen(port, () => {

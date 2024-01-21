@@ -894,14 +894,6 @@
                 }
             });
 
-            function addComment() {
-                const usercomment = document.getElementById('comment-box');
-                if(usercomment.value && usercomment.value.trim() !== '') {
-                    saveComment(usercomment.value); // save to server
-                    usercomment.value = '';
-                }
-            }
-
             function calculateElapsedTime(formattedDate) {
                 var currentDate = new Date();
                 var date = new Date(formattedDate);
@@ -920,40 +912,7 @@
                 }
             }
 
-            function saveComment(comment) {
-                const commentObj = {
-                    blogid: blogid,
-                    comment: comment,
-                    commentedbyuserid: loggedinuserid
-                };
-                fetch('/homepage/index/addcomment', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ commentObj }),
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const ul = document.getElementById('commentlist');
-                    noofcomments = data.comments.length;
-                    noofcommentsDiv.innerText = `(${noofcomments})`
-                    ul.innerHTML = '';
-                    data.comments.forEach((commentObj) => {
-                        ul.appendChild(buildCommentEntry(commentObj));
-                    });
-                })
-
-                .catch(error => {
-                    console.error('Error saving comment:', error.message);
-                });
-
-            }
+            ////////////////////////////////////////////////////////////////////
 
             function fetchAndfillComments() {
                 const queryparams = { blogid };
@@ -972,18 +931,51 @@
                     return response.json();
                 })
                 .then(data => {
-                    const ul = document.getElementById('commentlist');
                     noofcomments = data.comments.length;
                     noofcommentsDiv.innerText = `(${noofcomments})`
-                    data.comments.forEach((commentObj) => {
-                        ul.appendChild(buildCommentEntry(commentObj));
-                    });
+                    renderCommentsAndThreads(data.comments);
                 })
                 .catch(error => {
                     console.error('Error fetching comments from server', error.message);
                 });
                 
             }
+
+            function addComment() { // Main comment on offcanvas.
+                const usercomment = document.getElementById('comment-box');
+                if(usercomment.value && usercomment.value.trim() !== '') {
+                    const comment = usercomment.value;
+                    const commentObj = {
+                        blogid: blogid,
+                        comment: comment,
+                        commentedbyuserid: loggedinuserid
+                    };
+                    fetch('/homepage/index/addcomment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ commentObj }),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        noofcomments = data.comments.length;
+                        noofcommentsDiv.innerText = `(${noofcomments})`
+                        renderCommentsAndThreads(data.comments);
+                    })
+
+                    .catch(error => {
+                        console.error('Error saving comment:', error.message);
+                    });
+                    usercomment.value = '';
+                }
+            }
+
 
             function deleteComment(commentid) {
                 const commentObj = {
@@ -1005,13 +997,9 @@
                     return response.json();
                 })
                 .then(data => {
-                    const ul = document.getElementById('commentlist');
                     noofcomments = data.comments.length;
                     noofcommentsDiv.innerText = `(${noofcomments})`
-                    ul.innerHTML = '';
-                    data.comments.forEach((commentObj) => {
-                        ul.appendChild(buildCommentEntry(commentObj));
-                    });
+                    renderCommentsAndThreads(data.comments);
                 })
                 .catch(error => {
                     console.error('Error deleting comment:', error.message);
@@ -1030,74 +1018,17 @@
                 }
             }
 
-
-            function buildCommentEntry(commentObject) {
-                const li = document.createElement('li');
-                li.classList.add('list-group-item');
-                li.classList.add('flex-column');
-                li.classList.add('align-items-start');
-                li.style.borderBottom = '0.4px solid grey';
-                var timesince = calculateElapsedTime(commentObject.timestamp);
-                const commentedbyuserid = commentObject.commentedbyuserid;
-                const imgtxt = commentObject.displayname.charAt(0).toUpperCase();
-                const colors = ['red', 'blue', 'green', 'purple', 'orange', 'olive'];
-                var bg = colors[Math.floor(Math.random() * 6)];
-                const showMenuOptions = checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid);
-
-                li.innerHTML = `
-                        <div class="row">
-                            <div class="col-md-2" style="flex: 0; padding-top: 5px;">
-                                <div class="comment-author-thumbnail" style="background-color: ${bg};">
-                                    <span class="initial" style="line-height: 1;">${imgtxt}</span>
-                                </div>
-                            </div>
-
-                            <div class="col-md-10 comment-body" style="display: flex; flex-direction: column;">
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="fw-bold">${commentObject.displayname}</div>
-                                    </div>
-                                    ${showMenuOptions ? `
-                                        <div class="col-6 text-end">
-                                            <div class="btn-group">
-                                                <button type="button" class="btn comment-menu-button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                                                </button>
-                                                <ul class="dropdown-menu dropdown-menu-lg-end">
-                                                    <li><button class="dropdown-item" type="button" onclick="deleteComment('${commentObject._id}')">Delete</button></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    ` : ''}
-                                </div>
-                                
-                                <span style="font-size: smaller;">${timesince}</span>
-                                <span style="font-size: smaller; margin-top: 10px;">${commentObject.comment}</span>
-
-                                <div class="btn-group comment-btn-group" role="group" aria-label="Basic">
-                                    <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
-                                    <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode)"><i class="fa-regular fa-comment"></i></button>
-                                </div>
-
-                            </div>
-
-                        </div>  
-                `;
-                return li;
-            }
-
-
-            function toggleReplyBox(clickedCommentBody) {
+            function toggleReplyBox(clickedCommentBody, commentid) {
                 if(clickedCommentBody.querySelector('#replyDivContainer') !== null) {
                     removeReplyBox(clickedCommentBody);
                 } else {
                     var newHTML = `
                             <div class="container mt-4" id="replyDiv">
                                 <div style="display: flex; flex-direction: column; align-items: end;">
-                                    <textarea class="form-control comment-input-box" id="comment-box" rows="3" placeholder="Reply"></textarea>
+                                    <textarea class="form-control" id="reply-box" rows="3" placeholder="Reply"></textarea>
                                     <div style="display: flex; align-items: end; padding-top: 10px;">
                                         <button type="button" class="btn btn-secondary me-2" onclick="removeReplyBox(this.parentNode.parentNode.parentNode.parentNode.parentNode)">Cancel</button>
-                                        <button type="button" class="btn btn-success" onclick="postReply()">Reply</button>
+                                        <button type="button" class="btn btn-success" onclick="postReply(this.parentNode.parentNode, '${commentid}', this.parentNode.parentNode.parentNode.parentNode.parentNode)">Reply</button>
                                     </div>
                                 </div>
                             </div>
@@ -1112,7 +1043,43 @@
             }
             
 
-            function postReply() {
+            function postReply(replyboxParent, commentid, clickedCommentBody) {
+                console.log('from post reply method:');
+                console.log(replyboxParent);
+                const replyBox = replyboxParent.querySelector('#reply-box');
+                console.log(replyBox.value);
+                console.log(commentid);
+
+                const replyObj = {
+                    blogid: blogid,
+                    parentcommentid: commentid,
+                    replystring: replyBox.value,
+                    repliedbyuserid: loggedinuserid
+                };
+                
+                fetch('/homepage/index/addreply', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ replyObj }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    removeReplyBox(clickedCommentBody);
+                    renderCommentsAndThreads(data.comments);
+
+                })
+
+                .catch(error => {
+                    console.error('Error adding reply:', error.message);
+                });
 
             }
 
@@ -1120,6 +1087,132 @@
             function removeReplyBox(clickedCommentBody) {
                 var replyDivContainer = clickedCommentBody.querySelector('#replyDivContainer');
                 clickedCommentBody.removeChild(replyDivContainer);
+            }
+
+
+            function renderCommentsAndThreads(comments) {
+                const commentlist = document.getElementById('commentlist');
+                commentlist.innerHTML = ``;
+
+                comments.forEach((commentObject) => {
+                    const commentEntry = document.createElement('li');
+                    commentEntry.classList.add('list-group-item');
+                    commentEntry.classList.add('flex-column');
+                    commentEntry.classList.add('align-items-start');
+                    commentEntry.style.borderBottom = '0.4px solid grey';
+                    var timesince = calculateElapsedTime(commentObject.timestamp);
+                    const commentedbyuserid = commentObject.commentedbyuserid;
+                    const imgtxt = commentObject.displayname.charAt(0).toUpperCase();
+                    const colors = ['red', 'blue', 'green', 'purple', 'orange', 'olive'];
+                    var bg = colors[Math.floor(Math.random() * 6)];
+                    const showCommentMenuOptions = checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid);
+
+                    const replyHtmlList = [];
+
+                    console.log(commentObject.comment);
+                    commentObject.thread.forEach((reply) => {
+                        console.log(`--- ${reply.comment}`);
+                        replyHtmlList.push(getReplyItemHtml(reply));
+                    });
+                    const replyHtmlString = replyHtmlList.join('');
+
+                    console.log('-----------------------------------');
+
+                    commentEntry.innerHTML = `
+                            <div class="row">
+                                <div class="col-md-2" style="flex: 0; padding-top: 5px;">
+                                    <div class="comment-author-thumbnail" style="background-color: ${bg};">
+                                        <span class="initial" style="line-height: 1;">${imgtxt}</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-10 comment-body" style="display: flex; flex-direction: column;">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="fw-bold">${commentObject.displayname}</div>
+                                        </div>
+                                        ${showCommentMenuOptions ? `
+                                            <div class="col-6 text-end">
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn comment-menu-button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-lg-end">
+                                                        <li><button class="dropdown-item" type="button" onclick="deleteComment('${commentObject._id}')">Delete</button></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    
+                                    <span style="font-size: smaller;">${timesince}</span>
+                                    <span style="font-size: smaller; margin-top: 10px;">${commentObject.comment}</span>
+
+                                    <div class="btn-group comment-btn-group" role="group" aria-label="Basic">
+                                        <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
+                                        <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${commentObject._id}')"><i class="fa-regular fa-comment"></i></button>
+                                    </div>
+
+                                    ${replyHtmlString !== '' ? `<div>${replyHtmlString}</div>` : ''}
+
+                                    
+
+                                </div>
+
+                            </div>  
+                    `;
+
+                    commentlist.appendChild(commentEntry);
+                });
+            }
+
+            function getReplyItemHtml(reply) {
+                const imgtxt = reply.displayname.charAt(0).toUpperCase();
+                var timesince = calculateElapsedTime(reply.timestamp);
+                const replieddbyuserid = reply.commentedbyuserid;
+                const colors = ['red', 'blue', 'green', 'purple', 'orange', 'olive'];
+                var bg = colors[Math.floor(Math.random() * 6)];
+                const showReplyMenuOptions = checkDeleteAccess(bloguserid, loggedinuserid, replieddbyuserid);
+                const htmlString = `
+                            <div class="row">
+                                <div class="col-md-2" style="flex: 0; padding-top: 5px;">
+                                    <div class="comment-author-thumbnail" style="background-color: ${bg};">
+                                        <span class="initial" style="line-height: 1;">${imgtxt}</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-10 comment-body" style="display: flex; flex-direction: column;">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="fw-bold">${reply.displayname}</div>
+                                        </div>
+                                        ${showReplyMenuOptions ? `
+                                        <div class="col-6 text-end">
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn comment-menu-button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu dropdown-menu-lg-end">
+                                                        <li><button class="dropdown-item" type="button" onclick="deleteComment('${reply._id}')">Delete</button></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                    
+                                    <span style="font-size: smaller;">${timesince}</span>
+                                    <span style="font-size: smaller; margin-top: 10px;">${reply.comment}</span>
+
+                                    <div class="btn-group comment-btn-group" role="group" aria-label="Basic">
+                                        <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
+                                        <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${reply._id}')"><i class="fa-regular fa-comment"></i></button>
+                                    </div>
+                                </div>
+
+                            </div>  
+                `;
+                return htmlString;
+
             }
 
 
