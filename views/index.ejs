@@ -1033,11 +1033,12 @@
 
             function addReply(replyboxParent, parentcommentid, grandparentid, clickedCommentBody) {
                 const replyBox = replyboxParent.querySelector('#reply-box');
+                console.log('grandparentid: ', grandparentid);
 
                 if(replyBox.value && replyBox.value.trim() !== '') {
                     const replyObj = {
                         blogid: blogid,
-                        grandparentid: grandparentid,
+                        grandparentid: grandparentid === '' ? 'null' : grandparentid,
                         parentcommentid: parentcommentid,
                         replystring: replyBox.value,
                         repliedbyuserid: loggedinuserid
