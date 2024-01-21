@@ -987,7 +987,7 @@
                 console.log(`item to delete: ${commentid}, parentid: ${parentid}`)
                 const commentObj = {
                     blogid: blogid,
-                    parentid: parentid,
+                    parentid: parentid === '' ? 'null' : parentid,
                     commentid: commentid
                 }
 
@@ -1080,10 +1080,20 @@
                 if(comments && comments.length > 0) {
                     const commentList = [];
                     comments.forEach((commentObject) => {
-                        
+                        var thirdLevelRepliesHtmlString;
                         console.log(`Root comment id: ${commentObject._id}`);
                         if(commentObject.replies && commentObject.replies.length > 0) {
-                            commentObject.replies.forEach((reply) => { console.log(`.... ${reply._id}`)});
+                            commentObject.replies.forEach((reply) => {
+                                console.log(`.... ${reply.comment}`);
+                                if(reply.reply2Replies.length > 0) {
+                                    
+                                    reply.reply2Replies.forEach((thirdLevelReply) => {
+                                        console.log(`........ ${thirdLevelReply.comment}`);
+                                        thirdLevelRepliesHtmlString = getFormattedCommentAndThread(reply.reply2Replies, reply._id);
+                                    })
+
+                                }
+                            });
                         }
                         console.log('__________________');
 
@@ -1094,8 +1104,6 @@
                         const colors = ['red', 'blue', 'green', 'purple', 'orange', 'olive', 'black'];
                         var bg = colors[Math.floor(Math.random() * 7)];
                         const showCommentMenuOptions = checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid);
-
-                        const replyHtmlList = [];
 
                         const replyHtmlString = getFormattedCommentAndThread(commentObject.replies, commentObject._id);
 
@@ -1135,6 +1143,9 @@
                                         </div>
 
                                         ${replyHtmlString !== '' ? `<div>${replyHtmlString}</div>` : ''}
+                                        ${(thirdLevelRepliesHtmlString && thirdLevelRepliesHtmlString !== '') ? `<div style="padding-left: 30%;">${thirdLevelRepliesHtmlString}</div>` : ''}
+
+                                        
 
                                     </div>
 

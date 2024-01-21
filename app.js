@@ -1180,6 +1180,7 @@ app.post('/homepage/index/addcomment', isLoggedIn, async (req, res) => {
 });
 
 app.post('/homepage/index/deletecomment', isLoggedIn, async (req, res) => {
+    console.log('/homepage/index/deletecomment');
     console.log(JSON.stringify(req.body.commentObj));
     const loggedinuserid = req.session.user._id;
     const blogid = req.body.commentObj.blogid;
@@ -1194,7 +1195,7 @@ app.post('/homepage/index/deletecomment', isLoggedIn, async (req, res) => {
         } else {
             const bloguserid = blog.userid;
 
-            if(parentid.toString() !== '') { // target reply inside comment inside blog
+            if(parentid.toString() !== 'null') { // target reply inside comment inside blog
                 // parentid is the id of the parent comment.
                 // identify the comment first:
                 console.log('reply inside a comment found')
@@ -1223,10 +1224,12 @@ app.post('/homepage/index/deletecomment', isLoggedIn, async (req, res) => {
 
             } else {
                 const commentIndex = blog.comments.findIndex(comment => comment._id == commentid);
+                console.log(commentIndex);
                 if (commentIndex === -1) {
                     return res.status(404).json('comment not found');
                 } else {
-                    // Retrieve 'commentedbyuserid' from the found comment
+                    console.log('comment to delete:');
+                    console.log(blog.comments[commentIndex]);
                     const commentedbyuserid = blog.comments[commentIndex].commentedbyuserid;
                     if(checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid)) {
                         // Remove the comment from the comments array
