@@ -936,7 +936,7 @@
                     // renderCommentsAndThreads(data.comments);
                     const commentlist = document.getElementById('commentlist');
                     commentlist.innerHTML = ``;
-                    commentlist.innerHTML = getFormattedCommentAndThread(data.comments);
+                    commentlist.innerHTML = getFormattedCommentAndThread(data.comments, null);
                 })
                 .catch(error => {
                     console.error('Error fetching comments from server', error.message);
@@ -972,7 +972,7 @@
                         // renderCommentsAndThreads(data.comments);
                         const commentlist = document.getElementById('commentlist');
                         commentlist.innerHTML = ``;
-                        commentlist.innerHTML = getFormattedCommentAndThread(data.comments);
+                        commentlist.innerHTML = getFormattedCommentAndThread(data.comments, null);
                     })
 
                     .catch(error => {
@@ -982,10 +982,12 @@
                 }
             }
 
-
-            function deleteComment(commentid) {
+            // This will delete comment as well as reply to a comment.
+            function deleteComment(commentid, parentid) {
+                console.log(`item to delete: ${commentid}, parentid: ${parentid}`)
                 const commentObj = {
                     blogid: blogid,
+                    parentid: parentid,
                     commentid: commentid
                 }
 
@@ -1008,13 +1010,14 @@
                     // renderCommentsAndThreads(data.comments);
                     const commentlist = document.getElementById('commentlist');
                     commentlist.innerHTML = ``;
-                    commentlist.innerHTML = getFormattedCommentAndThread(data.comments);
+                    commentlist.innerHTML = getFormattedCommentAndThread(data.comments, '');
                 })
                 .catch(error => {
                     console.error('Error deleting comment:', error.message);
                 });
             }
 
+            
             function checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid) {
                 if(bloguserid === loggedinuserid) {
                     return true;
@@ -1026,97 +1029,73 @@
                     }
                 }
             }
-
-            function toggleReplyBox(clickedCommentBody, commentid) {
-                if(clickedCommentBody.querySelector('#replyDivContainer') !== null) {
-                    removeReplyBox(clickedCommentBody);
-                } else {
-                    var newHTML = `
-                            <div class="container mt-4" id="replyDiv">
-                                <div style="display: flex; flex-direction: column; align-items: end;">
-                                    <textarea class="form-control" id="reply-box" rows="3" placeholder="Reply"></textarea>
-                                    <div style="display: flex; align-items: end; padding-top: 10px;">
-                                        <button type="button" class="btn btn-secondary me-2" onclick="removeReplyBox(this.parentNode.parentNode.parentNode.parentNode.parentNode)">Cancel</button>
-                                        <button type="button" class="btn btn-success" onclick="postReply(this.parentNode.parentNode, '${commentid}', this.parentNode.parentNode.parentNode.parentNode.parentNode)">Reply</button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-
-                    var replyDivContainer = document.createElement('div');
-                    replyDivContainer.id = 'replyDivContainer';
-                    replyDivContainer.innerHTML = newHTML;
-                    clickedCommentBody.appendChild(replyDivContainer);
-                    clickedCommentBody.style.display = 'block';
-                }
-            }
             
 
-            function postReply(replyboxParent, commentid, clickedCommentBody) {
-                console.log('from post reply method:');
-                console.log(replyboxParent);
+            function addReply(replyboxParent, commentid, clickedCommentBody) {
                 const replyBox = replyboxParent.querySelector('#reply-box');
-                console.log(replyBox.value);
-                console.log(commentid);
 
-                const replyObj = {
-                    blogid: blogid,
-                    parentcommentid: commentid,
-                    replystring: replyBox.value,
-                    repliedbyuserid: loggedinuserid
-                };
-                
-                fetch('/homepage/index/addreply', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ replyObj }),
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(data);
-                    removeReplyBox(clickedCommentBody);
-                    // renderCommentsAndThreads(data.comments);
-                    const commentlist = document.getElementById('commentlist');
-                    commentlist.innerHTML = ``;
-                    commentlist.innerHTML = getFormattedCommentAndThread(data.comments);
+                if(replyBox.value && replyBox.value.trim() !== '') {
+                    const replyObj = {
+                        blogid: blogid,
+                        parentcommentid: commentid,
+                        replystring: replyBox.value,
+                        repliedbyuserid: loggedinuserid
+                    };
+                    
+                    fetch('/homepage/index/addreply', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ replyObj }),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        removeReplyBox(clickedCommentBody);
+                        // renderCommentsAndThreads(data.comments);
+                        const commentlist = document.getElementById('commentlist');
+                        commentlist.innerHTML = ``;
+                        commentlist.innerHTML = getFormattedCommentAndThread(data.comments, null);
 
-                })
+                    })
 
-                .catch(error => {
-                    console.error('Error adding reply:', error.message);
-                });
+                    .catch(error => {
+                        console.error('Error adding reply:', error.message);
+                    });
+
+                }
 
             }
 
 
-            function removeReplyBox(clickedCommentBody) {
-                var replyDivContainer = clickedCommentBody.querySelector('#replyDivContainer');
-                clickedCommentBody.removeChild(replyDivContainer);
-            }
+            function getFormattedCommentAndThread(comments, parentid) {
 
-
-            function getFormattedCommentAndThread(comment) {
-
-                if(comment && comment.length > 0) {
+                if(comments && comments.length > 0) {
                     const commentList = [];
-                    comment.forEach((commentObject) => {
+                    comments.forEach((commentObject) => {
+                        
+                        console.log(`Root comment id: ${commentObject._id}`);
+                        if(commentObject.replies && commentObject.replies.length > 0) {
+                            commentObject.replies.forEach((reply) => { console.log(`.... ${reply._id}`)});
+                        }
+                        console.log('__________________');
+
+
                         var timesince = calculateElapsedTime(commentObject.timestamp);
                         const commentedbyuserid = commentObject.commentedbyuserid;
                         const imgtxt = commentObject.displayname.charAt(0).toUpperCase();
-                        const colors = ['red', 'blue', 'green', 'purple', 'orange', 'olive'];
-                        var bg = colors[Math.floor(Math.random() * 6)];
+                        const colors = ['red', 'blue', 'green', 'purple', 'orange', 'olive', 'black'];
+                        var bg = colors[Math.floor(Math.random() * 7)];
                         const showCommentMenuOptions = checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid);
 
                         const replyHtmlList = [];
 
-                        const replyHtmlString = getFormattedCommentAndThread(commentObject.thread);
+                        const replyHtmlString = getFormattedCommentAndThread(commentObject.replies, commentObject._id);
 
                         commentList.push(`
                                 <div class="row">
@@ -1138,7 +1117,7 @@
                                                             <i class="fa-solid fa-ellipsis-vertical"></i>
                                                         </button>
                                                         <ul class="dropdown-menu dropdown-menu-lg-end">
-                                                            <li><button class="dropdown-item" type="button" onclick="deleteComment('${commentObject._id}')">Delete</button></li>
+                                                            <li><button class="dropdown-item" type="button" onclick="deleteComment('${commentObject._id}', '${parentid}')">Delete</button></li>
                                                         </ul>
                                                     </div>
                                                 </div>
@@ -1155,8 +1134,6 @@
 
                                         ${replyHtmlString !== '' ? `<div>${replyHtmlString}</div>` : ''}
 
-                                        
-
                                     </div>
 
                                 </div>  
@@ -1172,6 +1149,37 @@
                 } else {
                     return '';
                 }
+            }
+
+
+            function toggleReplyBox(clickedCommentBody, commentid) {
+                if(clickedCommentBody.querySelector('#replyDivContainer') !== null) {
+                    removeReplyBox(clickedCommentBody);
+                } else {
+                    var newHTML = `
+                            <div class="container mt-4" id="replyDiv">
+                                <div style="display: flex; flex-direction: column; align-items: end;">
+                                    <textarea class="form-control" id="reply-box" rows="3" placeholder="Reply"></textarea>
+                                    <div style="display: flex; align-items: end; padding-top: 10px;">
+                                        <button type="button" class="btn btn-secondary me-2" onclick="removeReplyBox(this.parentNode.parentNode.parentNode.parentNode.parentNode)">Cancel</button>
+                                        <button type="button" class="btn btn-success" onclick="addReply(this.parentNode.parentNode, '${commentid}', this.parentNode.parentNode.parentNode.parentNode.parentNode)">Reply</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+
+                    var replyDivContainer = document.createElement('div');
+                    replyDivContainer.id = 'replyDivContainer';
+                    replyDivContainer.innerHTML = newHTML;
+                    clickedCommentBody.appendChild(replyDivContainer);
+                    clickedCommentBody.style.display = 'block';
+                }
+            }
+
+
+            function removeReplyBox(clickedCommentBody) {
+                var replyDivContainer = clickedCommentBody.querySelector('#replyDivContainer');
+                clickedCommentBody.removeChild(replyDivContainer);
             }
 
 

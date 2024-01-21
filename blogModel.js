@@ -1,11 +1,26 @@
 const mongoose = require('mongoose');
 
+const reply2ReplyScheam = new mongoose.Schema({
+    commentedbyuserid: String,
+    displayname: String,
+    comment: String,
+    timestamp: String,
+});
+
+const replySchema = new mongoose.Schema({
+    commentedbyuserid: String,
+    displayname: String,
+    comment: String,
+    timestamp: String,
+    reply2Replies: [reply2ReplyScheam]
+});
+
 const commentSchema = new mongoose.Schema({
     commentedbyuserid: String,
     displayname: String,
     comment: String,
     timestamp: String,
-    thread: [this]
+    replies: [replySchema]
 });
 
 const blogSchema = new mongoose.Schema({
