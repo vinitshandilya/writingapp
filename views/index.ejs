@@ -933,7 +933,10 @@
                 .then(data => {
                     noofcomments = data.comments.length;
                     noofcommentsDiv.innerText = `(${noofcomments})`
-                    renderCommentsAndThreads(data.comments);
+                    // renderCommentsAndThreads(data.comments);
+                    const commentlist = document.getElementById('commentlist');
+                    commentlist.innerHTML = ``;
+                    commentlist.innerHTML = getFormattedCommentAndThread(data.comments);
                 })
                 .catch(error => {
                     console.error('Error fetching comments from server', error.message);
@@ -966,7 +969,10 @@
                     .then(data => {
                         noofcomments = data.comments.length;
                         noofcommentsDiv.innerText = `(${noofcomments})`
-                        renderCommentsAndThreads(data.comments);
+                        // renderCommentsAndThreads(data.comments);
+                        const commentlist = document.getElementById('commentlist');
+                        commentlist.innerHTML = ``;
+                        commentlist.innerHTML = getFormattedCommentAndThread(data.comments);
                     })
 
                     .catch(error => {
@@ -999,7 +1005,10 @@
                 .then(data => {
                     noofcomments = data.comments.length;
                     noofcommentsDiv.innerText = `(${noofcomments})`
-                    renderCommentsAndThreads(data.comments);
+                    // renderCommentsAndThreads(data.comments);
+                    const commentlist = document.getElementById('commentlist');
+                    commentlist.innerHTML = ``;
+                    commentlist.innerHTML = getFormattedCommentAndThread(data.comments);
                 })
                 .catch(error => {
                     console.error('Error deleting comment:', error.message);
@@ -1073,7 +1082,10 @@
                 .then(data => {
                     console.log(data);
                     removeReplyBox(clickedCommentBody);
-                    renderCommentsAndThreads(data.comments);
+                    // renderCommentsAndThreads(data.comments);
+                    const commentlist = document.getElementById('commentlist');
+                    commentlist.innerHTML = ``;
+                    commentlist.innerHTML = getFormattedCommentAndThread(data.comments);
 
                 })
 
@@ -1090,129 +1102,76 @@
             }
 
 
-            function renderCommentsAndThreads(comments) {
-                const commentlist = document.getElementById('commentlist');
-                commentlist.innerHTML = ``;
+            function getFormattedCommentAndThread(comment) {
 
-                comments.forEach((commentObject) => {
-                    const commentEntry = document.createElement('li');
-                    commentEntry.classList.add('list-group-item');
-                    commentEntry.classList.add('flex-column');
-                    commentEntry.classList.add('align-items-start');
-                    commentEntry.style.borderBottom = '0.4px solid grey';
-                    var timesince = calculateElapsedTime(commentObject.timestamp);
-                    const commentedbyuserid = commentObject.commentedbyuserid;
-                    const imgtxt = commentObject.displayname.charAt(0).toUpperCase();
-                    const colors = ['red', 'blue', 'green', 'purple', 'orange', 'olive'];
-                    var bg = colors[Math.floor(Math.random() * 6)];
-                    const showCommentMenuOptions = checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid);
+                if(comment && comment.length > 0) {
+                    const commentList = [];
+                    comment.forEach((commentObject) => {
+                        var timesince = calculateElapsedTime(commentObject.timestamp);
+                        const commentedbyuserid = commentObject.commentedbyuserid;
+                        const imgtxt = commentObject.displayname.charAt(0).toUpperCase();
+                        const colors = ['red', 'blue', 'green', 'purple', 'orange', 'olive'];
+                        var bg = colors[Math.floor(Math.random() * 6)];
+                        const showCommentMenuOptions = checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid);
 
-                    const replyHtmlList = [];
+                        const replyHtmlList = [];
 
-                    console.log(commentObject.comment);
-                    commentObject.thread.forEach((reply) => {
-                        console.log(`--- ${reply.comment}`);
-                        replyHtmlList.push(getReplyItemHtml(reply));
+                        const replyHtmlString = getFormattedCommentAndThread(commentObject.thread);
+
+                        commentList.push(`
+                                <div class="row">
+                                    <div class="col-md-2" style="flex: 0; padding-top: 5px;">
+                                        <div class="comment-author-thumbnail" style="background-color: ${bg};">
+                                            <span class="initial" style="line-height: 1;">${imgtxt}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-10 comment-body" style="display: flex; flex-direction: column;">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <div class="fw-bold">${commentObject.displayname}</div>
+                                            </div>
+                                            ${showCommentMenuOptions ? `
+                                                <div class="col-6 text-end">
+                                                    <div class="btn-group">
+                                                        <button type="button" class="btn comment-menu-button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                                        </button>
+                                                        <ul class="dropdown-menu dropdown-menu-lg-end">
+                                                            <li><button class="dropdown-item" type="button" onclick="deleteComment('${commentObject._id}')">Delete</button></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            ` : ''}
+                                        </div>
+                                        
+                                        <span style="font-size: smaller;">${timesince}</span>
+                                        <span style="font-size: smaller; margin-top: 10px;">${commentObject.comment}</span>
+
+                                        <div class="btn-group comment-btn-group" role="group" aria-label="Basic">
+                                            <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
+                                            <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${commentObject._id}')"><i class="fa-regular fa-comment"></i></button>
+                                        </div>
+
+                                        ${replyHtmlString !== '' ? `<div>${replyHtmlString}</div>` : ''}
+
+                                        
+
+                                    </div>
+
+                                </div>  
+                        `);
+
                     });
-                    const replyHtmlString = replyHtmlList.join('');
 
-                    console.log('-----------------------------------');
-
-                    commentEntry.innerHTML = `
-                            <div class="row">
-                                <div class="col-md-2" style="flex: 0; padding-top: 5px;">
-                                    <div class="comment-author-thumbnail" style="background-color: ${bg};">
-                                        <span class="initial" style="line-height: 1;">${imgtxt}</span>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-10 comment-body" style="display: flex; flex-direction: column;">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <div class="fw-bold">${commentObject.displayname}</div>
-                                        </div>
-                                        ${showCommentMenuOptions ? `
-                                            <div class="col-6 text-end">
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn comment-menu-button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu dropdown-menu-lg-end">
-                                                        <li><button class="dropdown-item" type="button" onclick="deleteComment('${commentObject._id}')">Delete</button></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                    
-                                    <span style="font-size: smaller;">${timesince}</span>
-                                    <span style="font-size: smaller; margin-top: 10px;">${commentObject.comment}</span>
-
-                                    <div class="btn-group comment-btn-group" role="group" aria-label="Basic">
-                                        <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
-                                        <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${commentObject._id}')"><i class="fa-regular fa-comment"></i></button>
-                                    </div>
-
-                                    ${replyHtmlString !== '' ? `<div>${replyHtmlString}</div>` : ''}
-
-                                    
-
-                                </div>
-
-                            </div>  
-                    `;
-
-                    commentlist.appendChild(commentEntry);
-                });
-            }
-
-            function getReplyItemHtml(reply) {
-                const imgtxt = reply.displayname.charAt(0).toUpperCase();
-                var timesince = calculateElapsedTime(reply.timestamp);
-                const replieddbyuserid = reply.commentedbyuserid;
-                const colors = ['red', 'blue', 'green', 'purple', 'orange', 'olive'];
-                var bg = colors[Math.floor(Math.random() * 6)];
-                const showReplyMenuOptions = checkDeleteAccess(bloguserid, loggedinuserid, replieddbyuserid);
-                const htmlString = `
-                            <div class="row">
-                                <div class="col-md-2" style="flex: 0; padding-top: 5px;">
-                                    <div class="comment-author-thumbnail" style="background-color: ${bg};">
-                                        <span class="initial" style="line-height: 1;">${imgtxt}</span>
-                                    </div>
-                                </div>
-
-                                <div class="col-md-10 comment-body" style="display: flex; flex-direction: column;">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <div class="fw-bold">${reply.displayname}</div>
-                                        </div>
-                                        ${showReplyMenuOptions ? `
-                                        <div class="col-6 text-end">
-                                                <div class="btn-group">
-                                                    <button type="button" class="btn comment-menu-button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                                        <i class="fa-solid fa-ellipsis-vertical"></i>
-                                                    </button>
-                                                    <ul class="dropdown-menu dropdown-menu-lg-end">
-                                                        <li><button class="dropdown-item" type="button" onclick="deleteComment('${reply._id}')">Delete</button></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                    
-                                    <span style="font-size: smaller;">${timesince}</span>
-                                    <span style="font-size: smaller; margin-top: 10px;">${reply.comment}</span>
-
-                                    <div class="btn-group comment-btn-group" role="group" aria-label="Basic">
-                                        <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
-                                        <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${reply._id}')"><i class="fa-regular fa-comment"></i></button>
-                                    </div>
-                                </div>
-
-                            </div>  
-                `;
-                return htmlString;
-
+                    var myUl = document.createElement('ul');
+                    myUl.innerHTML = commentList;
+                    var htmlstr = myUl.innerHTML;
+                    return htmlstr;
+                
+                } else {
+                    return '';
+                }
             }
 
 
