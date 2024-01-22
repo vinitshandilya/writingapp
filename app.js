@@ -1180,12 +1180,12 @@ app.post('/homepage/index/addcomment', isLoggedIn, async (req, res) => {
 });
 
 app.post('/homepage/index/deletecomment', isLoggedIn, async (req, res) => {
-    console.log('/homepage/index/deletecomment');
     console.log(JSON.stringify(req.body.commentObj));
     const loggedinuserid = req.session.user._id;
     const blogid = req.body.commentObj.blogid;
     const commentid = req.body.commentObj.commentid;
     const parentid = req.body.commentObj.parentid;
+    const grandparentid = req.body.commentObj.grandparentid;
 
     try {
         const blog = await Blog.findById(blogid);
@@ -1195,19 +1195,43 @@ app.post('/homepage/index/deletecomment', isLoggedIn, async (req, res) => {
         } else {
             const bloguserid = blog.userid;
 
-            if(parentid.toString() !== 'null') { // target reply inside comment inside blog
+            if(grandparentid.toString() !== 'null') {
+                console.log('reply inside a reply found');
+                // identify the grandfather comment first
+                const commentIndex = blog.comments.findIndex(comment => comment._id == grandparentid);
+                if (commentIndex === -1) {
+                    return res.status(404).json('root comment not found');
+                }
+                // identify the parent reply next
+                const replyIndex = blog.comments[commentIndex].replies.findIndex(reply => reply._id == parentid);
+                if (replyIndex === -1) {
+                    return res.status(404).json('parent reply not found');
+                }
+                // identify the final reply to be deleted
+                const reply2ReplyIndex = blog.comments[commentIndex].replies[replyIndex].reply2Replies.findIndex(reply2Reply => reply2Reply._id == commentid);
+                if(reply2ReplyIndex === -1) {
+                    return res.status(404).json('reply2Reply not found');
+                }
+                console.log(blog.comments[commentIndex].replies[replyIndex].reply2Replies[reply2ReplyIndex]);
+
+                const commentedbyuserid = blog.comments[commentIndex].replies[replyIndex].reply2Replies[reply2ReplyIndex].commentedbyuserid;
+                if(checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid)) {
+                    blog.comments[commentIndex].replies[replyIndex].reply2Replies.splice(reply2ReplyIndex, 1)[0];
+                    blog.comments[commentIndex].replies[replyIndex].reply2Replies.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    blog.comments[commentIndex].replies.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    await blog.save();
+                    return res.status(200).json({ comments: blog.comments }); // return remaining comments.
+                }
+                
+            } else if(parentid.toString() !== 'null') { // target reply inside comment inside blog
                 // parentid is the id of the parent comment.
                 // identify the comment first:
                 console.log('reply inside a comment found')
                 const commentIndex = blog.comments.findIndex(comment => comment._id == parentid);
-                console.log('comment found');
-                console.log(blog.comments[commentIndex]);
                 if (commentIndex === -1) {
                     return res.status(404).json('comment not found');
                 }
                 const replyIndex = blog.comments[commentIndex].replies.findIndex(reply => reply._id == commentid);
-                console.log('reply found');
-                console.log(blog.comments[commentIndex].replies[replyIndex]);
                 if (replyIndex === -1) {
                     return res.status(404).json('reply not found');
                 }
