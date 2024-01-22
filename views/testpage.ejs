@@ -2,110 +2,116 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comment Thread</title>
+    <title>JSON to HTML</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-
-        #post {
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-bottom: 20px;
-        }
-
-        #comments {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .comment {
-            border: 1px solid #eee;
-            margin-bottom: 10px;
-            padding: 10px;
-        }
-
-        .reply-form {
-            margin-top: 10px;
-            display: none;
-        }
+        /* Add your styling here */
     </style>
 </head>
 <body>
-    <div id="post">
-        <h1>Post Title</h1>
-        <p>Post content goes here.</p>
-    </div>
-
-    <ul id="comments"></ul>
-
-    <div id="commentForm">
-        <h2>Add a Comment</h2>
-        <form id="addCommentForm">
-            <label for="commentAuthor">Name:</label>
-            <input type="text" id="commentAuthor" required>
-
-            <label for="commentContent">Comment:</label>
-            <textarea id="commentContent" rows="4" required></textarea>
-
-            <button type="submit">Add Comment</button>
-        </form>
-    </div>
-
+    <div id="comments-container"></div>
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const commentForm = document.getElementById("addCommentForm");
-            const commentsList = document.getElementById("comments");
-
-            commentForm.addEventListener("submit", function(event) {
-                event.preventDefault();
-
-                const authorInput = document.getElementById("commentAuthor");
-                const contentInput = document.getElementById("commentContent");
-
-                const author = authorInput.value;
-                const content = contentInput.value;
-
-                if (author && content) {
-                    addComment(author, content);
-                    authorInput.value = "";
-                    contentInput.value = "";
-                }
-            });
-
-            function addComment(author, content) {
-                const comment = document.createElement("li");
-                comment.className = "comment";
-
-                const commentContent = `<strong>${author}:</strong> ${content}`;
-                comment.innerHTML = commentContent;
-
-                const replyForm = document.createElement("div");
-                replyForm.className = "reply-form";
-                replyForm.innerHTML = `
-                    <label for="replyContent">Reply:</label>
-                    <textarea id="replyContent" rows="3"></textarea>
-                    <button onclick="addReply(this)">Add Reply</button>
-                `;
-
-                comment.appendChild(replyForm);
-                commentsList.appendChild(comment);
+        const jsonData = [
+    {
+        "commentedbyuserid": "6579593f148562d1b3f798ae",
+        "displayname": "Anvit Shandilya",
+        "comment": "Chuck, what his friends called him, had a taste for red wine, the rich scent of women, and wrangling with the powerful. When he wasn’t writing and shit got heavy he was known to shoulder a 50-pound pack and venture off on foot across 110-degree deserts with a jug of water and a notepad.",
+        "timestamp": "JAN 22, 2024, 11:13:45 AM",
+        "_id": "65ae00910dca5f406d2cf1b8",
+        "replies": [
+            {
+                "commentedbyuserid": "6579593f148562d1b3f798ae",
+                "displayname": "Anvit Shandilya",
+                "comment": "Another reply to a comment",
+                "timestamp": "JAN 22, 2024, 2:51:09 PM",
+                "_id": "65ae33855b78730d55cea351",
+                "reply2Replies": [
+                    {
+                        "commentedbyuserid": "6579593f148562d1b3f798ae",
+                        "displayname": "Anvit Shandilya",
+                        "comment": "test reply to a reply",
+                        "timestamp": "JAN 22, 2024, 2:52:29 PM",
+                        "_id": "65ae33d55b78730d55cea48e"
+                    },
+                    {
+                        "commentedbyuserid": "6579593f148562d1b3f798ae",
+                        "displayname": "Anvit Shandilya",
+                        "comment": "test",
+                        "timestamp": "JAN 22, 2024, 2:51:27 PM",
+                        "_id": "65ae33975b78730d55cea381"
+                    }
+                ]
+            },
+            {
+                "commentedbyuserid": "6579593f148562d1b3f798ae",
+                "displayname": "Anvit Shandilya",
+                "comment": "This is a reply to a comment",
+                "timestamp": "JAN 22, 2024, 2:38:40 PM",
+                "_id": "65ae30985b78730d55cea107",
+                "reply2Replies": [
+                    {
+                        "commentedbyuserid": "6579593f148562d1b3f798ae",
+                        "displayname": "Anvit Shandilya",
+                        "comment": "This is another reply to a reply to a comment.",
+                        "timestamp": "JAN 22, 2024, 2:44:24 PM",
+                        "_id": "65ae31f05b78730d55cea24e"
+                    },
+                    {
+                        "commentedbyuserid": "6579593f148562d1b3f798ae",
+                        "displayname": "Anvit Shandilya",
+                        "comment": "This is a reply to a reply to a comment.",
+                        "timestamp": "JAN 22, 2024, 2:39:15 PM",
+                        "_id": "65ae30bb5b78730d55cea135"
+                    }
+                ]
+            },
+            {
+                "commentedbyuserid": "6579593f148562d1b3f798ae",
+                "displayname": "Anvit Shandilya",
+                "comment": "Charles Bowden was a tall, intimidating man who preferred the hot dry wastelands of the West to any inkling of a seaside paradise. He was a drinker and a smoker who wasn’t too keen on the insatiable appetites and the apathetic sensibilities of much of the modern world. And he wrote about it. Brilliantly.",
+                "timestamp": "JAN 22, 2024, 2:16:18 PM",
+                "_id": "65ae2b5a5b78730d55ce9c3e",
+                "reply2Replies": [
+                    {
+                        "commentedbyuserid": "6579593f148562d1b3f798ae",
+                        "displayname": "Anvit Shandilya",
+                        "comment": "Bowden cherished the flora and fauna of the natural world and wrote poetically about it. But he was no nature writer. He never did feel comfortable with that prosaic term.",
+                        "timestamp": "JAN 22, 2024, 2:16:46 PM",
+                        "_id": "65ae2b765b78730d55ce9c69"
+                    }
+                ]
             }
+        ]
+    }
+]
 
-            window.addReply = function(button) {
-                const replyContentInput = button.parentNode.querySelector("#replyContent");
-                const replyContent = replyContentInput.value;
+        function parseAndDisplayComments(comments, container) {
+            for (const comment of comments) {
+                const commentElement = document.createElement('div');
+                commentElement.innerHTML = `
+                    <p>${comment.displayname} (${comment.timestamp}): ${comment.comment}</p>
+                `;
+                container.appendChild(commentElement);
 
-                if (replyContent) {
-                    const reply = document.createElement("p");
-                    reply.innerHTML = `<strong>Replier:</strong> ${replyContent}`;
-                    button.parentNode.parentNode.appendChild(reply);
-                    replyContentInput.value = "";
+                if (comment.replies && comment.replies.length > 0) {
+                    const repliesContainer = document.createElement('div');
+                    repliesContainer.style.marginLeft = '20px';
+                    commentElement.appendChild(repliesContainer);
+                    parseAndDisplayComments(comment.replies, repliesContainer);
                 }
-            };
-        });
+
+                if (comment.reply2Replies && comment.reply2Replies.length > 0) {
+                    const reply2RepliesContainer = document.createElement('div');
+                    reply2RepliesContainer.style.marginLeft = '40px';
+                    commentElement.appendChild(reply2RepliesContainer);
+                    parseAndDisplayComments(comment.reply2Replies, reply2RepliesContainer);
+                }
+            }
+        }
+
+        const commentsContainer = document.getElementById('comments-container');
+        parseAndDisplayComments(jsonData, commentsContainer);
     </script>
 </body>
 </html>

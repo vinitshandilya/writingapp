@@ -223,7 +223,7 @@
                 <!-- Comments from other users, filled with api -->
                 <div>
                     <h5 style="margin-top: 10px; margin-bottom: 10px;">Latest</h5>
-                    <ul class="list-group commentlist" id="commentlist"></ul>
+                    <div class="commentlist" id="commentlist"></div>
                 </div>
             </div>
         </div>
@@ -1076,95 +1076,90 @@
 
 
             function getFormattedCommentAndThread(comments, parentid, grandparentid) {
-
+                var domArray = [];
                 if(comments && comments.length > 0) {
-                    const commentList = [];
-                    comments.forEach((commentObject) => {
-                        var thirdLevelRepliesHtmlString;
-                        console.log(`Root comment id: ${commentObject._id}`);
-                        if(commentObject.replies && commentObject.replies.length > 0) {
-                            commentObject.replies.forEach((reply) => {
-                                console.log(`.... ${reply.comment}`);
-                                if(reply.reply2Replies.length > 0) {
-                                    
-                                    reply.reply2Replies.forEach((thirdLevelReply) => {
-                                        console.log(`........ ${thirdLevelReply.comment}`);
-                                        thirdLevelRepliesHtmlString = getFormattedCommentAndThread(reply.reply2Replies, reply._id, commentObject._id);
-                                    })
-
+                    comments.forEach((comment) => {
+                        domArray.push(buildeListItem(comment, null, null));
+                        if(comment.replies && comment.replies.length > 0) {
+                            comment.replies.forEach((reply) => {
+                                domArray.push(buildeListItem(reply, comment._id, null));
+                                if(reply.reply2Replies && reply.reply2Replies.length > 0) {
+                                    reply.reply2Replies.forEach((reply2reply) => {
+                                        domArray.push(buildeListItem(reply2reply, reply._id, comment._id));
+                                    });
                                 }
                             });
                         }
-                        console.log('__________________');
-
-
-                        var timesince = calculateElapsedTime(commentObject.timestamp);
-                        const commentedbyuserid = commentObject.commentedbyuserid;
-                        const imgtxt = commentObject.displayname.charAt(0).toUpperCase();
-                        const colors = ['red', 'blue', 'green', 'purple', 'orange', 'olive', 'black'];
-                        var bg = colors[Math.floor(Math.random() * 7)];
-                        const showCommentMenuOptions = checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid);
-
-                        const replyHtmlString = getFormattedCommentAndThread(commentObject.replies, commentObject._id, null);
-
-                        commentList.push(`
-                                <div class="row">
-                                    <div class="col-md-2" style="flex: 0; padding-top: 5px;">
-                                        <div class="comment-author-thumbnail" style="background-color: ${bg};">
-                                            <span style="line-height: 1;">${imgtxt}</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-10 comment-body" style="display: flex; flex-direction: column;">
-                                        <div class="row">
-                                            <div class="col-6">
-                                                <div class="fw-bold" style="white-space: nowrap;">${commentObject.displayname}</div>
-                                            </div>
-                                            ${showCommentMenuOptions ? `
-                                                <div class="col-6 text-end">
-                                                    <div class="btn-group">
-                                                        <button type="button" class="btn comment-menu-button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                                            <i class="fa-solid fa-ellipsis-vertical"></i>
-                                                        </button>
-                                                        <ul class="dropdown-menu dropdown-menu-lg-end">
-                                                            <li><button class="dropdown-item" type="button" onclick="deleteComment('${commentObject._id}', '${parentid}', '${grandparentid}')">Delete</button></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            ` : ''}
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-12" style="display: flex; flex-direction: column;">
-                                                <span style="font-size: smaller;">${timesince}</span>
-                                                <span style="font-size: smaller; margin-top: 10px;">${commentObject.comment}</span>
-                                            </div>
-                                        </div>
-
-                                        <div class="btn-group comment-btn-group mb-2" role="group" aria-label="Basic">
-                                            <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
-                                            <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${commentObject._id}', '${parentid}')">${grandparentid === null ? `<i class="fa-regular fa-comment"></i>` : ''}</button>
-                                        </div>
-                                        
-
-                                        ${replyHtmlString !== '' ? `<div>${replyHtmlString}</div>` : ''}
-                                        ${(thirdLevelRepliesHtmlString && thirdLevelRepliesHtmlString !== '') ? `<div style="margin-left: 20%;">${thirdLevelRepliesHtmlString}</div>` : ''}
-
-                                    </div>
-
-                                </div>  
-                        `);
-
                     });
-
-                    var myUl = document.createElement('ul');
-                    myUl.innerHTML = commentList;
-                    var htmlstr = myUl.innerHTML;
-                    return htmlstr;
-                
-                } else {
-                    return '';
                 }
+                return domArray.join('');
+            }
+
+
+            function buildeListItem(rowObj, parentid, grandparentid) {
+                var margin = 0;
+                var bordercolor = 'transparent';
+                if(parentid !== null && grandparentid === null) {
+                    margin=20;
+                    bordercolor = '#a3a8a8';
+                }
+                if(parentid !== null && grandparentid !== null) {
+                    margin=40;
+                    bordercolor = '#a3a8a8'
+                }
+
+                var timesince = calculateElapsedTime(rowObj.timestamp);
+                const commentedbyuserid = rowObj.commentedbyuserid;
+                const imgtxt = rowObj.displayname.charAt(0).toUpperCase();
+                const colors = ['red', 'blue', 'green', 'purple', 'orange', 'olive', 'black'];
+                var bg = colors[Math.floor(Math.random() * 7)];
+                const showCommentMenuOptions = checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid);
+
+                const htmlString = `
+                <div class="row" style="padding-left: ${margin}%;">
+                    <div class="col-md-2" style="flex: 0; padding-top: 5px; border-left: 0.5px solid ${bordercolor}">
+                        <div class="comment-author-thumbnail" style="background-color: ${bg};">
+                            <span style="line-height: 1;">${imgtxt}</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-10 comment-body" style="display: flex; flex-direction: column;">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="fw-bold" style="white-space: nowrap;">${rowObj.displayname}</div>
+                            </div>
+                            ${showCommentMenuOptions ? `
+                                <div class="col-6 text-end">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn comment-menu-button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-lg-end">
+                                            <li><button class="dropdown-item" type="button" onclick="deleteComment('${rowObj._id}', '${parentid}', '${grandparentid}')">Delete</button></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            ` : ''}
+                        </div>
+
+                        <div class="row">
+                            <div class="col-12" style="display: flex; flex-direction: column;">
+                                <span style="font-size: smaller; color: #bec4c4;">${timesince}</span>
+                                <span style="font-size: smaller; margin-top: 10px;">${rowObj.comment}</span>
+                            </div>
+                        </div>
+
+                        <div class="btn-group comment-btn-group mb-2" role="group" aria-label="Basic">
+                            <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
+                            <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${rowObj._id}', '${parentid}')">${grandparentid === null ? `<i class="fa-regular fa-comment"></i>` : ''}</button>
+                        </div>
+
+                    </div>
+
+                </div>`;
+
+                return htmlString;
+
             }
 
 

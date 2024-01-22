@@ -1222,7 +1222,7 @@ app.post('/homepage/index/deletecomment', isLoggedIn, async (req, res) => {
                     await blog.save();
                     return res.status(200).json({ comments: blog.comments }); // return remaining comments.
                 }
-                
+
             } else if(parentid.toString() !== 'null') { // target reply inside comment inside blog
                 // parentid is the id of the parent comment.
                 // identify the comment first:
@@ -1354,8 +1354,6 @@ app.post('/homepage/index/addreply', isLoggedIn, async (req, res) => {
             }
             targetReply.reply2Replies.push(reply2RepliesObj);
             targetReply.reply2Replies.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            blog.comments[commentIndex].replies.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-            blog.comments.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             await blog.save();
             return res.status(200).json( { comments: blog.comments });
 
