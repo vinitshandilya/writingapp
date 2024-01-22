@@ -1111,14 +1111,14 @@
                                 <div class="row">
                                     <div class="col-md-2" style="flex: 0; padding-top: 5px;">
                                         <div class="comment-author-thumbnail" style="background-color: ${bg};">
-                                            <span class="initial" style="line-height: 1;">${imgtxt}</span>
+                                            <span style="line-height: 1;">${imgtxt}</span>
                                         </div>
                                     </div>
 
                                     <div class="col-md-10 comment-body" style="display: flex; flex-direction: column;">
                                         <div class="row">
                                             <div class="col-6">
-                                                <div class="fw-bold">${commentObject.displayname}</div>
+                                                <div class="fw-bold" style="white-space: nowrap;">${commentObject.displayname}</div>
                                             </div>
                                             ${showCommentMenuOptions ? `
                                                 <div class="col-6 text-end">
@@ -1133,19 +1133,22 @@
                                                 </div>
                                             ` : ''}
                                         </div>
-                                        
-                                        <span style="font-size: smaller;">${timesince}</span>
-                                        <span style="font-size: smaller; margin-top: 10px;">${commentObject.comment}</span>
 
-                                        <div class="btn-group comment-btn-group" role="group" aria-label="Basic">
-                                            <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
-                                            <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${commentObject._id}', '${parentid}')"><i class="fa-regular fa-comment"></i></button>
+                                        <div class="row">
+                                            <div class="col-12" style="display: flex; flex-direction: column;">
+                                                <span style="font-size: smaller;">${timesince}</span>
+                                                <span style="font-size: smaller; margin-top: 10px;">${commentObject.comment}</span>
+                                            </div>
                                         </div>
 
-                                        ${replyHtmlString !== '' ? `<div>${replyHtmlString}</div>` : ''}
-                                        ${(thirdLevelRepliesHtmlString && thirdLevelRepliesHtmlString !== '') ? `<div style="padding-left: 30%;">${thirdLevelRepliesHtmlString}</div>` : ''}
-
+                                        <div class="btn-group comment-btn-group mb-2" role="group" aria-label="Basic">
+                                            <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
+                                            <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${commentObject._id}', '${parentid}')">${grandparentid === null ? `<i class="fa-regular fa-comment"></i>` : ''}</button>
+                                        </div>
                                         
+
+                                        ${replyHtmlString !== '' ? `<div>${replyHtmlString}</div>` : ''}
+                                        ${(thirdLevelRepliesHtmlString && thirdLevelRepliesHtmlString !== '') ? `<div style="margin-left: 20%;">${thirdLevelRepliesHtmlString}</div>` : ''}
 
                                     </div>
 
