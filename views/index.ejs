@@ -216,8 +216,8 @@
                 <div style="display: flex; flex-direction: column; align-items: end;">
                     <textarea class="form-control comment-input-box" id="comment-box" rows="3" placeholder="Add your comment"></textarea>
                     <div style="display: flex; align-items: end; padding-top: 10px;">
-                        <button type="button" class="btn btn-secondary me-2">Cancel</button>
-                        <button type="button" class="btn btn-success" onclick="addComment()">Add</button>
+                        <button type="button" class="comment-input-button-cancel me-2">Cancel</button>
+                        <button type="button" class="comment-input-button-reply" onclick="addComment()">Add</button>
                     </div>
                 </div>
                 <!-- Comments from other users, filled with api -->
@@ -1099,11 +1099,11 @@
             function buildeListItem(rowObj, parentid, grandparentid) {
                 var margin = 0;
                 var bordercolor = 'transparent';
-                if(parentid !== null && grandparentid === null) {
+                if(parentid !== null && grandparentid === null) { // top level comment
                     margin=20;
                     bordercolor = '#a3a8a8';
                 }
-                if(parentid !== null && grandparentid !== null) {
+                if(parentid !== null && grandparentid !== null) { // 3rd level comment
                     margin=40;
                     bordercolor = '#a3a8a8'
                 }
@@ -1117,7 +1117,7 @@
 
                 const htmlString = `
                 <div class="row" style="padding-left: ${margin}%;">
-                    <div class="col-md-2" style="flex: 0; padding-top: 5px; border-left: 0.5px solid ${bordercolor}">
+                    <div class="col-md-2" style="flex: 0; padding-top: 5px; border-left: 0.4px solid ${bordercolor}">
                         <div class="comment-author-thumbnail" style="background-color: ${bg};">
                             <span style="line-height: 1;">${imgtxt}</span>
                         </div>
@@ -1168,12 +1168,12 @@
                     removeReplyBox(clickedCommentBody);
                 } else {
                     var newHTML = `
-                            <div class="container mt-4" id="replyDiv">
+                            <div class="container" id="replyDiv" style="padding: 0px !important;">
                                 <div style="display: flex; flex-direction: column; align-items: end;">
-                                    <textarea class="form-control" id="reply-box" rows="3" placeholder="Reply"></textarea>
+                                    <textarea class="form-control comment-input-box" id="reply-box" rows="1" placeholder="Reply"></textarea>
                                     <div style="display: flex; align-items: end; padding-top: 10px;">
-                                        <button type="button" class="btn btn-secondary me-2" onclick="removeReplyBox(this.parentNode.parentNode.parentNode.parentNode.parentNode)">Cancel</button>
-                                        <button type="button" class="btn btn-success" onclick="addReply(this.parentNode.parentNode, '${parentcommentid}', '${grandparentid}', this.parentNode.parentNode.parentNode.parentNode.parentNode)">Reply</button>
+                                        <button type="button" class="comment-input-button-cancel me-2" onclick="removeReplyBox(this.parentNode.parentNode.parentNode.parentNode.parentNode)">Cancel</button>
+                                        <button type="button" class="comment-input-button-reply" onclick="addReply(this.parentNode.parentNode, '${parentcommentid}', '${grandparentid}', this.parentNode.parentNode.parentNode.parentNode.parentNode)">Reply</button>
                                     </div>
                                 </div>
                             </div>
