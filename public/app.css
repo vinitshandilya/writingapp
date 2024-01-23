@@ -1190,3 +1190,22 @@ div#toc-container, div#article-container {
     box-shadow: none;
     background-color: transparent;
 }
+
+.comment-btn-group-icons-small {
+    color: var(--color-titletext);
+    border: none;
+    box-shadow: none;
+    background-color: transparent;
+    font-size: small;
+}
+
+.author-label {
+    font-size: smaller;
+    background-color: #0F9D58;
+    color: white;
+    padding: 2px;
+    border: 0.4px solid #35e85a;
+    border-radius: 5px;
+    font-weight: lighter;
+
+}

@@ -206,7 +206,7 @@
         </div>
 
         <!-- Sidebar panel for comments -->
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="background-color: #f5f6f7;">
             <div class="offcanvas-header">
                 <h5 id="offcanvasRightLabel">Comments</h5>
                 <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -214,9 +214,9 @@
             <div class="offcanvas-body">
                 <!-- Comment input box -->
                 <div style="display: flex; flex-direction: column; align-items: end;">
-                    <textarea class="form-control comment-input-box" id="comment-box" rows="3" placeholder="Add your comment"></textarea>
+                    <textarea class="form-control comment-input-box" id="comment-box" rows="1" placeholder="Share your thoughts..."></textarea>
                     <div style="display: flex; align-items: end; padding-top: 10px;">
-                        <button type="button" class="comment-input-button-cancel me-2">Cancel</button>
+                        <button type="button" class="comment-input-button-cancel me-2" data-bs-dismiss="offcanvas">Cancel</button>
                         <button type="button" class="comment-input-button-reply" onclick="addComment()">Add</button>
                     </div>
                 </div>
@@ -1098,14 +1098,11 @@
 
             function buildeListItem(rowObj, parentid, grandparentid) {
                 var margin = 0;
-                var bordercolor = 'transparent';
                 if(parentid !== null && grandparentid === null) { // top level comment
                     margin=20;
-                    bordercolor = '#a3a8a8';
                 }
                 if(parentid !== null && grandparentid !== null) { // 3rd level comment
                     margin=40;
-                    bordercolor = '#a3a8a8'
                 }
 
                 var timesince = calculateElapsedTime(rowObj.timestamp);
@@ -1117,21 +1114,24 @@
 
                 const htmlString = `
                 <div class="row" style="padding-left: ${margin}%;">
-                    <div class="col-md-2" style="flex: 0; padding-top: 5px; border-left: 0.4px solid ${bordercolor}">
+                    
+                    <div class="col-md-2" style="flex: 0; padding-top: 5px;">
                         <div class="comment-author-thumbnail" style="background-color: ${bg};">
                             <span style="line-height: 1;">${imgtxt}</span>
                         </div>
                     </div>
 
                     <div class="col-md-10 comment-body" style="display: flex; flex-direction: column;">
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="fw-bold" style="white-space: nowrap;">${rowObj.displayname}</div>
+                        <div class="row d-flex justify-content-between">
+                            
+                            <div class="col d-flex justify-content-start" style="font-size: small;">
+                                <div class="fw-bold" style="white-space: nowrap;">${rowObj.displayname} ${rowObj.commentedbyuserid === bloguserid ? `<span class="author-label"> Author</span>` : ''} </div>
                             </div>
+
                             ${showCommentMenuOptions ? `
-                                <div class="col-6 text-end">
+                                <div class="col d-flex justify-content-end">
                                     <div class="btn-group">
-                                        <button type="button" class="btn comment-menu-button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
+                                        <button type="button" style="font-size: smaller;" class="btn comment-menu-button" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                                             <i class="fa-solid fa-ellipsis-vertical"></i>
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-lg-end">
@@ -1140,18 +1140,19 @@
                                     </div>
                                 </div>
                             ` : ''}
+
                         </div>
 
                         <div class="row">
                             <div class="col-12" style="display: flex; flex-direction: column;">
-                                <span style="font-size: smaller; color: #bec4c4;">${timesince}</span>
-                                <span style="font-size: smaller; margin-top: 10px;">${rowObj.comment}</span>
+                                <span style="font-size: smaller; color: #a1a09d;">${timesince}</span>
+                                <span style="font-size: smaller;">${rowObj.comment}</span>
                             </div>
                         </div>
 
                         <div class="btn-group comment-btn-group mb-2" role="group" aria-label="Basic">
-                            <button class="comment-btn-group-icons me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up"></i></button>
-                            <button class="comment-btn-group-icons me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${rowObj._id}', '${parentid}')">${grandparentid === null ? `<i class="fa-regular fa-comment"></i>` : ''}</button>
+                            <button class="comment-btn-group-icons-small me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up like-button-icon mr-2"></i>Like</button>
+                            <button class="comment-btn-group-icons-small me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${rowObj._id}', '${parentid}')">${grandparentid === null ? `<i class="fa-regular fa-comment like-button-icon mr-2"></i>Reply` : ''}</button>
                         </div>
 
                     </div>
@@ -1168,7 +1169,7 @@
                     removeReplyBox(clickedCommentBody);
                 } else {
                     var newHTML = `
-                            <div class="container" id="replyDiv" style="padding: 0px !important;">
+                            <div class="container" id="replyDiv" style="padding: 0px !important; margin-bottom: 15px;">
                                 <div style="display: flex; flex-direction: column; align-items: end;">
                                     <textarea class="form-control comment-input-box" id="reply-box" rows="1" placeholder="Reply"></textarea>
                                     <div style="display: flex; align-items: end; padding-top: 10px;">
