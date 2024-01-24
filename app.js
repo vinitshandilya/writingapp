@@ -1386,6 +1386,59 @@ app.post('/homepage/index/addreply', isLoggedIn, async (req, res) => {
     }
 })
 
+// add like
+app.post('/homepage/index/togglelike', isLoggedIn, async (req, res) => {
+    console.log(req.body);
+    const loggedinuserid = req.session.user._id;
+    const blogid = req.body.blogid;
+
+    try {
+        const blog = await Blog.findById(blogid);
+        if(!blog) {
+            return res.status(404).json('blog not found');
+        }
+
+        const userindex = blog.likedby.indexOf(loggedinuserid);
+
+        if(userindex === -1) {
+            console.log('user does not like this post, adding like');
+            blog.likedby.push(loggedinuserid);
+            await blog.save();
+            return res.status(200).json('liked');
+        } else {
+            console.log('user likes this post, removing like');
+            blog.likedby.splice(userindex, 1);
+            await blog.save();
+            return res.status(200).json('unliked');
+        }
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Error while adding / removing like' });
+    }
+});
+
+
+app.post('/homepage/index/getlikestatus', isLoggedIn, async (req, res) => {
+    const loggedinuserid = req.session.user._id;
+    const blogid = req.body.blogid;
+
+    try {
+        const blog = await Blog.findById(blogid);
+        if(!blogid) {
+            return res.status(404).json('blog not found');
+        }
+        if(blog.likedby.includes(loggedinuserid)) {
+            return res.status(200).json('liked'); 
+        } else {
+            return res.status(200).json('unliked');
+        }
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Error fetching like status' });
+    }
+
+});
+
 
 app.listen(port, () => {
     console.log(`Server is running on port: ${port}`);

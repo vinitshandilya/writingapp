@@ -36,6 +36,7 @@ const blogSchema = new mongoose.Schema({
     tags: [String],
     paywall: Boolean,
     comments: [commentSchema],
+    likedby: [String],
 });
 
 const Blog = mongoose.model('Blog', blogSchema);

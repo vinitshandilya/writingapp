@@ -170,7 +170,7 @@
                     <br>
 
                     <div style="padding: 20px;">
-                        <button class="like-button mr-4" type="button" onclick="myFunction('not defined yet')">
+                        <button class="like-button mr-4" id="like-btn-container" type="button" onclick="toggleLike(this)">
                             <i class="fa-regular fa-thumbs-up like-button-icon mr-2"></i>Like
                         </button>
                         <button class="like-button mr-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
@@ -319,6 +319,7 @@
                 const formatString = { month: 'short', day: 'numeric', year: 'numeric' };
                 const formattedTime = dateObj.toLocaleString("en-US", formatString).toUpperCase();
 
+
                 var author = '';
                 if (blogDetails.blog.userid === loggedinuserid) {
                     author = 'YOU';
@@ -345,11 +346,12 @@
                             </div>
                         </div>
                     </div>
-`;
+                `;
 
                 quillpreview.clipboard.dangerouslyPasteHTML(editorContent);
 
                 generateTableOfContents(editorContent);
+                getLikeStatus();
                 fetchAndfillComments();
 
                 headerarray = previewDiv.querySelectorAll('h1, h2, h3');
@@ -399,6 +401,7 @@
 
                 getPaywallStatus();
                 applySavedBookmarks(blogid);
+
             }
 
 
@@ -1193,6 +1196,66 @@
                 var replyDivContainer = clickedCommentBody.querySelector('#replyDivContainer');
                 clickedCommentBody.removeChild(replyDivContainer);
             }
+
+            
+            function toggleLike(btnContainer) {
+
+                fetch('/homepage/index/togglelike', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ blogid }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                    if(data === 'liked') {
+                        btnContainer.innerHTML = `<i class="fa-solid fa-thumbs-up like-button-icon mr-2"></i>Unlike`;
+                    } else if(data === 'unliked') {
+                        btnContainer.innerHTML = `<i class="fa-regular fa-thumbs-up like-button-icon mr-2"></i>Like`;
+                    }
+                    
+                })
+                .catch(error => {
+                    console.error('Error sending data to server:', error.message);
+                });
+            }
+
+            function getLikeStatus() {
+                var btnContainer = document.getElementById('like-btn-container');
+                fetch('/homepage/index/getlikestatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ blogid }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(`like status: ${data}`);
+                    if(data === 'liked') {
+                        btnContainer.innerHTML = `<i class="fa-solid fa-thumbs-up like-button-icon mr-2"></i>Unlike`;
+                    } else if(data === 'unliked') {
+                        btnContainer.innerHTML = `<i class="fa-regular fa-thumbs-up like-button-icon mr-2"></i>Like`;
+                    }
+                    
+                })
+                .catch(error => {
+                    console.error('Error fetching like status:', error.message);
+                });
+            }
+
 
 
         </script>
