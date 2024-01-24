@@ -5,6 +5,7 @@ const reply2ReplySchema = new mongoose.Schema({
     displayname: String,
     comment: String,
     timestamp: String,
+    likedby: [String],
 });
 
 const replySchema = new mongoose.Schema({
@@ -12,7 +13,8 @@ const replySchema = new mongoose.Schema({
     displayname: String,
     comment: String,
     timestamp: String,
-    reply2Replies: [reply2ReplySchema]
+    reply2Replies: [reply2ReplySchema],
+    likedby: [String],
 });
 
 const commentSchema = new mongoose.Schema({
@@ -20,7 +22,8 @@ const commentSchema = new mongoose.Schema({
     displayname: String,
     comment: String,
     timestamp: String,
-    replies: [replySchema]
+    replies: [replySchema],
+    likedby: [String],
 });
 
 const blogSchema = new mongoose.Schema({

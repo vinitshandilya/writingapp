@@ -170,7 +170,7 @@
                     <br>
 
                     <div style="padding: 20px;">
-                        <button class="like-button mr-4" id="like-btn-container" type="button" onclick="toggleLike(this)">
+                        <button class="like-button mr-4" id="like-btn-container" type="button" onclick="toggleBlogLike(this)">
                             <i class="fa-regular fa-thumbs-up like-button-icon mr-2"></i>Like
                         </button>
                         <button class="like-button mr-4" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">
@@ -351,7 +351,8 @@
                 quillpreview.clipboard.dangerouslyPasteHTML(editorContent);
 
                 generateTableOfContents(editorContent);
-                getLikeStatus();
+                getBlogLikeStatus();
+                getCommentLikeStatuses();
                 fetchAndfillComments();
 
                 headerarray = previewDiv.querySelectorAll('h1, h2, h3');
@@ -401,6 +402,7 @@
 
                 getPaywallStatus();
                 applySavedBookmarks(blogid);
+                getCommentLikeStatuses();
 
             }
 
@@ -1082,13 +1084,13 @@
                 var domArray = [];
                 if(comments && comments.length > 0) {
                     comments.forEach((comment) => {
-                        domArray.push(buildeListItem(comment, null, null));
+                        domArray.push(buildListItem(comment, null, null));
                         if(comment.replies && comment.replies.length > 0) {
                             comment.replies.forEach((reply) => {
-                                domArray.push(buildeListItem(reply, comment._id, null));
+                                domArray.push(buildListItem(reply, comment._id, null));
                                 if(reply.reply2Replies && reply.reply2Replies.length > 0) {
                                     reply.reply2Replies.forEach((reply2reply) => {
-                                        domArray.push(buildeListItem(reply2reply, reply._id, comment._id));
+                                        domArray.push(buildListItem(reply2reply, reply._id, comment._id));
                                     });
                                 }
                             });
@@ -1099,7 +1101,7 @@
             }
 
 
-            function buildeListItem(rowObj, parentid, grandparentid) {
+            function buildListItem(rowObj, parentid, grandparentid) {
                 var margin = 0;
                 if(parentid !== null && grandparentid === null) { // top level comment
                     margin=20;
@@ -1154,7 +1156,7 @@
                         </div>
 
                         <div class="btn-group comment-btn-group mb-2" role="group" aria-label="Basic">
-                            <button class="comment-btn-group-icons-small me-4" onclick="addLike()"><i class="fa-regular fa-thumbs-up like-button-icon mr-2"></i>Like</button>
+                            <button class="comment-btn-group-icons-small me-4" onclick="toggleCommentLike(this, '${rowObj._id}', '${parentid}', '${grandparentid}')"><i class="fa-regular fa-thumbs-up like-button-icon mr-2"></i>Like</button>
                             <button class="comment-btn-group-icons-small me-4" onclick="toggleReplyBox(this.parentNode.parentNode, '${rowObj._id}', '${parentid}')">${grandparentid === null ? `<i class="fa-regular fa-comment like-button-icon mr-2"></i>Reply` : ''}</button>
                         </div>
 
@@ -1198,7 +1200,7 @@
             }
 
             
-            function toggleLike(btnContainer) {
+            function toggleBlogLike(btnContainer) {
 
                 fetch('/homepage/index/togglelike', {
                     method: 'POST',
@@ -1214,7 +1216,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log(data);
                     if(data === 'liked') {
                         btnContainer.innerHTML = `<i class="fa-solid fa-thumbs-up like-button-icon mr-2"></i>Unlike`;
                     } else if(data === 'unliked') {
@@ -1227,7 +1228,35 @@
                 });
             }
 
-            function getLikeStatus() {
+            function toggleCommentLike(btnContainer, commentid, parentid, grandparentid) {
+
+                fetch('/homepage/index/togglecommentlike', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ blogid, commentid, parentid, grandparentid }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if(data === 'liked') {
+                        btnContainer.innerHTML = `<i class="fa-solid fa-thumbs-up like-button-icon mr-2"></i>Unlike`;
+                    } else if(data === 'unliked') {
+                        btnContainer.innerHTML = `<i class="fa-regular fa-thumbs-up like-button-icon mr-2"></i>Like`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending data to server:', error.message);
+                });
+            }
+
+
+            function getBlogLikeStatus() {
                 var btnContainer = document.getElementById('like-btn-container');
                 fetch('/homepage/index/getlikestatus', {
                     method: 'POST',
@@ -1243,7 +1272,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    console.log(`like status: ${data}`);
                     if(data === 'liked') {
                         btnContainer.innerHTML = `<i class="fa-solid fa-thumbs-up like-button-icon mr-2"></i>Unlike`;
                     } else if(data === 'unliked') {
@@ -1254,6 +1282,45 @@
                 .catch(error => {
                     console.error('Error fetching like status:', error.message);
                 });
+            }
+
+            function getCommentLikeStatuses() {
+
+                fetch('/homepage/index/getcommentlikestatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ blogid }),
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+
+                    data.forEach((like) => {
+                        const commentid = like.commentid;
+                        const parentid = like.parentid;
+                        const grandparentid = like.grandparentid;
+
+                        const onclickAttributeValue = "toggleCommentLike(this, \'" + commentid + "\', \'" + parentid + "\', \'" + grandparentid + "\')";
+                        const targetElement = document.querySelector(`button[onclick*="${onclickAttributeValue}"]`);
+
+                        if (targetElement) {
+                            targetElement.innerHTML = `<i class="fa-solid fa-thumbs-up like-button-icon mr-2" aria-hidden="true"></i>Unlike`;
+                        } else {
+                            targetElement.innerHTML = `<i class="fa-regular fa-thumbs-up like-button-icon mr-2" aria-hidden="true"></i>Like`;
+                        }
+                    });
+                    
+                })
+                .catch(error => {
+                    console.error('Error fetching like status:', error.message);
+                });
+
             }
 
 

@@ -1386,7 +1386,7 @@ app.post('/homepage/index/addreply', isLoggedIn, async (req, res) => {
     }
 })
 
-// add like
+// toggle like on blog
 app.post('/homepage/index/togglelike', isLoggedIn, async (req, res) => {
     console.log(req.body);
     const loggedinuserid = req.session.user._id;
@@ -1417,6 +1417,96 @@ app.post('/homepage/index/togglelike', isLoggedIn, async (req, res) => {
     }
 });
 
+// toggle likes on comment
+app.post('/homepage/index/togglecommentlike', isLoggedIn, async (req, res) => {
+    console.log(req.body);
+    const blogid = req.body.blogid;
+    const loggedinuserid = req.session.user._id;
+    const commentid = req.body.commentid;
+    const parentid = req.body.parentid;
+    const grandparentid = req.body.grandparentid;
+
+    try {
+        const blog = await Blog.findById(blogid);
+        if(!blog) {
+            return res.status(404).json('blog not found'); 
+        }
+        if(commentid.toString() !== 'null' && parentid.toString() === 'null' && grandparentid.toString() === 'null') {
+            console.log('toggle like on a root comment');
+            // find the root comment on blog
+            const commentIndex = blog.comments.findIndex(comment => comment._id == commentid);
+            const targetcomment = blog.comments[commentIndex];
+
+            // find if loggedinuserid already likes the targetcomment
+            const userindex = targetcomment.likedby.indexOf(loggedinuserid);
+            if(userindex === -1) {
+                console.log('user does not like this resource, adding like');
+                targetcomment.likedby.push(loggedinuserid);
+                await blog.save();
+                return res.status(200).json('liked');
+            } else {
+                console.log('user likes this resource, removing like');
+                targetcomment.likedby.splice(userindex, 1);
+                await blog.save();
+                return res.status(200).json('unliked');
+            }
+        }
+
+        if(commentid.toString() !== 'null' && parentid.toString() !== 'null' && grandparentid.toString() === 'null') {
+            console.log('toggle like on a root comment reply');
+            // find the root comment on blog
+            const commentIndex = blog.comments.findIndex(comment => comment._id == parentid);
+            // find the reply on root comment
+            const replyIndex = blog.comments[commentIndex].replies.findIndex(reply => reply._id == commentid);
+            const targetReply = blog.comments[commentIndex].replies[replyIndex];
+
+            // find if loggedinuserid already likes the targetReply
+            const userindex = targetReply.likedby.indexOf(loggedinuserid);
+            if(userindex === -1) {
+                console.log('user does not like this resource, adding like');
+                targetReply.likedby.push(loggedinuserid);
+                await blog.save();
+                return res.status(200).json('liked');
+            } else {
+                console.log('user likes this resource, removing like');
+                targetReply.likedby.splice(userindex, 1);
+                await blog.save();
+                return res.status(200).json('unliked');
+            }
+        }
+        
+        if(commentid.toString() !== 'null' && parentid.toString() !== 'null' && grandparentid.toString() !== 'null') {
+            console.log('toggle like on a third level reply');
+            // find the root comment on blog
+            const commentIndex = blog.comments.findIndex(comment => comment._id == grandparentid);
+            // find the reply on root comment
+            const replyIndex = blog.comments[commentIndex].replies.findIndex(reply => reply._id == parentid);
+            // find the reply on the reply to the root comment
+            const reply2replyIndex = blog.comments[commentIndex].replies[replyIndex].reply2Replies.findIndex(reply2reply => reply2reply._id == commentid);
+            const targetReply2Reply = blog.comments[commentIndex].replies[replyIndex].reply2Replies[reply2replyIndex];
+
+            // find if loggedinuserid already likes the targetReply2Reply
+            const userindex = targetReply2Reply.likedby.indexOf(loggedinuserid);
+            if(userindex === -1) {
+                console.log('user does not like this resource, adding like');
+                targetReply2Reply.likedby.push(loggedinuserid);
+                await blog.save();
+                return res.status(200).json('liked');
+            } else {
+                console.log('user likes this resource, removing like');
+                targetReply2Reply.likedby.splice(userindex, 1);
+                await blog.save();
+                return res.status(200).json('unliked');
+            }
+
+        }
+
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Error while adding / removing like' });
+    }
+});
+
 
 app.post('/homepage/index/getlikestatus', isLoggedIn, async (req, res) => {
     const loggedinuserid = req.session.user._id;
@@ -1437,6 +1527,42 @@ app.post('/homepage/index/getlikestatus', isLoggedIn, async (req, res) => {
         return res.status(500).json({ message: 'Error fetching like status' });
     }
 
+});
+
+
+app.post('/homepage/index/getcommentlikestatus', isLoggedIn, async (req, res) => {
+    console.log(req.body);
+    const loggedinuserid = req.session.user._id;
+    const blogid = req.body.blogid;
+
+    try {
+        const blog = await Blog.findById(blogid);
+        if(!blogid) {
+            return res.status(404).json('blog not found');
+        }
+        const likes = []
+        blog.comments.forEach((comment) => {
+            if(comment.likedby.includes(loggedinuserid)) {
+                console.log('yes loggedinuserid likes root comment');
+                likes.push({ commentid: comment._id.toString(), parentid: 'null', grandparentid: 'null' });
+            }
+            comment.replies.forEach((reply) => {
+                if(reply.likedby.includes(loggedinuserid)) {
+                    likes.push({ commentid: reply._id.toString(), parentid: comment._id.toString(), grandparentid: 'null' });
+                }
+                reply.reply2Replies.forEach((reply2reply) => {
+                    if(reply2reply.likedby.includes(loggedinuserid)) {
+                        likes.push({ commentid: reply2reply._id.toString(), parentid: reply._id.toString(), grandparentid: comment._id.toString() }); 
+                    }
+                });
+            });
+        });
+        console.log('collected likes');
+        console.log(likes);
+        return res.status(200).json(likes);
+    } catch (error) {
+        return res.status(500).json({ message: 'Error fetching like status' });
+    }
 });
 
 
