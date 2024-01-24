@@ -1209,3 +1209,13 @@ div#toc-container, div#article-container {
     font-weight: lighter;
 
 }
+
+.seemore-btn {
+    background-color: transparent;
+    border: none;
+    font-size: small;
+    color: var(--color-titletext);
+    box-shadow: none;
+    padding: 0px;
+    margin-left: 5px;
+}
