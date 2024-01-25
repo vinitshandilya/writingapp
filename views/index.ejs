@@ -1150,9 +1150,9 @@
                         <div class="row">
                             <div class="col-12" style="display: flex; flex-direction: column;">
                                 <span style="font-size: smaller; color: #a1a09d;">${timesince}</span>
-                                <span id="shorttext" style="font-size: smaller; display: none;">${rowObj.comment.slice(0, 200)}... <button class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'expand')">see more</button></span>
-                                <span id="fulltext" style="font-size: smaller; display: none;">${rowObj.comment}<button class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'collapse')">see less</button></span>
-                                ${rowObj.comment.length > 200 ? `<span id="defaulttext" style="font-size: smaller;">${rowObj.comment.slice(0, 200)}... <button class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'expand')">see more</button>` : `<span id="defaulttext" style="font-size: smaller;">${rowObj.comment}</span>` }
+                                <span id="shorttext" style="font-size: smaller; display: none;">${rowObj.comment.slice(0, 200)}... <span class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'expand')">see more</span></span>
+                                <span id="fulltext" style="font-size: smaller; display: none;">${rowObj.comment}<span class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'collapse')">see less</span></span>
+                                ${rowObj.comment.length > 200 ? `<span id="defaulttext" style="font-size: smaller;">${rowObj.comment.slice(0, 200)}... <span class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'expand')">see more</span>` : `<span id="defaulttext" style="font-size: smaller;">${rowObj.comment}</span>` }
                             </div>
                         </div>
 

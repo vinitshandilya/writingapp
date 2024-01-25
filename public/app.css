@@ -1217,5 +1217,7 @@ div#toc-container, div#article-container {
     color: var(--color-titletext);
     box-shadow: none;
     padding: 0px;
+    line-height: normal;
     margin-left: 5px;
+    cursor: pointer;
 }
