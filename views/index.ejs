@@ -1150,7 +1150,9 @@
                         <div class="row">
                             <div class="col-12" style="display: flex; flex-direction: column;">
                                 <span style="font-size: smaller; color: #a1a09d;">${timesince}</span>
-                                ${rowObj.comment.length > 200 ? `<span style="font-size: smaller;">${rowObj.comment.slice(0, 200)}...<button class="seemore-btn" onclick="expandText(this.parentNode, this, '${rowObj.comment.replace(/\n/g, '<br>')}', 'expand')"> see more</button></span>` : `<span style="font-size: smaller;">${rowObj.comment}</span>`}
+                                <span id="shorttext" style="font-size: smaller; display: none;">${rowObj.comment.slice(0, 200)}... <button class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'expand')">see more</button></span>
+                                <span id="fulltext" style="font-size: smaller; display: none;">${rowObj.comment}<button class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'collapse')">see less</button></span>
+                                ${rowObj.comment.length > 200 ? `<span id="defaulttext" style="font-size: smaller;">${rowObj.comment.slice(0, 200)}... <button class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'expand')">see more</button>` : `<span id="defaulttext" style="font-size: smaller;">${rowObj.comment}</span>` }
                             </div>
                         </div>
 
@@ -1328,13 +1330,18 @@
             }
 
 
-            function expandText(commentContainer, button, fullcomment, flag) {
-                console.log(fullcomment);
-                const formattedComment = fullcomment.replace(/\n/g, '<br>');
+            function expandText(commentContainer, flag) {
+                const shortTextDiv = commentContainer.querySelector('#shorttext');
+                const fullTextDiv = commentContainer.querySelector('#fulltext');
+                const defaultTextDiv = commentContainer.querySelector('#defaulttext');
+                defaultTextDiv.style.display = 'none';
+                
                 if(flag === 'expand') {
-                    commentContainer.innerHTML = `${fullcomment}<button class="seemore-btn" onclick="expandText(this.parentNode, this, '${formattedComment}', 'collapse')"> see less</button>`;  
+                    shortTextDiv.style.display = 'none';
+                    fullTextDiv.style.display = 'block';
                 } else {
-                    commentContainer.innerHTML = `${fullcomment.slice(0, 200)}... <button class="seemore-btn" onclick="expandText(this.parentNode, this, '${formattedComment}', 'expand')"> see more</button>`;  
+                    shortTextDiv.style.display = 'block';
+                    fullTextDiv.style.display = 'none';
                 }
                            
             }
