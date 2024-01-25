@@ -1159,7 +1159,6 @@ div#toc-container, div#article-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 15px;
     color: var(--color-card);
     font-size: 10px;
     font-weight: bold;

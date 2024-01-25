@@ -1102,11 +1102,21 @@
 
             function buildListItem(rowObj, parentid, grandparentid) {
                 var margin = 0;
-                if(parentid !== null && grandparentid === null) { // top level comment
-                    margin=20;
+                var topborder = '';
+                var leftborder = '';
+                var gap = '';
+                if(parentid === null && grandparentid === null) { // top level comment
+                    topborder = '0.4px solid #bbbfbb';
+                }
+                if(parentid !== null && grandparentid === null) { // top level comment's reply
+                    margin=30;
+                    leftborder = '4px solid #cdd1cd;'
+                    gap = '10px;';
                 }
                 if(parentid !== null && grandparentid !== null) { // 3rd level comment
-                    margin=40;
+                    margin=60;
+                    leftborder = '4px solid #cdd1cd;'
+                    gap = '10px;';
                 }
 
                 var timesince = calculateElapsedTime(rowObj.timestamp);
@@ -1117,19 +1127,21 @@
                 const showCommentMenuOptions = checkDeleteAccess(bloguserid, loggedinuserid, commentedbyuserid);
 
                 const htmlString = `
-                <div class="row" style="padding-left: ${margin}%;">
-                    
-                    <div class="col-md-2" style="flex: 0; padding-top: 5px;">
-                        <div class="comment-author-thumbnail" style="background-color: ${bg};">
-                            <span style="line-height: 1;">${imgtxt}</span>
-                        </div>
-                    </div>
+                <div class="row pt-2" style="padding-left: ${margin}px; border-top: ${topborder}">
 
-                    <div class="col-md-10 comment-body" style="display: flex; flex-direction: column;">
-                        <div class="row d-flex justify-content-between">
+                    <div class="col-md-12 comment-body" style="display: flex; flex-direction: column;">
+                        
+                        <div class="row d-flex align-items-center" style="--bs-gutter-x: 10px;">
+
+                            <div class="col-auto d-flex justify-content-start">
+                                <div class="comment-author-thumbnail" style="background-color: ${bg};">
+                                    <span style="line-height: 1;">${imgtxt}</span>
+                                </div>
+                            </div>
                             
-                            <div class="col d-flex justify-content-start" style="font-size: small;">
+                            <div class="col d-flex justify-content-start" style="font-size: small; flex-direction: column;">
                                 <div class="fw-bold" style="white-space: nowrap;">${rowObj.displayname} ${rowObj.commentedbyuserid === bloguserid ? `<span class="author-label"> Author</span>` : ''} </div>
+                                <span style="font-size: smaller; color: #a1a09d;">${timesince}</span>
                             </div>
 
                             ${showCommentMenuOptions ? `
@@ -1149,10 +1161,9 @@
 
                         <div class="row">
                             <div class="col-12" style="display: flex; flex-direction: column;">
-                                <span style="font-size: smaller; color: #a1a09d;">${timesince}</span>
-                                <span id="shorttext" style="font-size: smaller; display: none;">${rowObj.comment.slice(0, 200)}... <span class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'expand')">see more</span></span>
-                                <span id="fulltext" style="font-size: smaller; display: none;">${rowObj.comment}<span class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'collapse')">see less</span></span>
-                                ${rowObj.comment.length > 200 ? `<span id="defaulttext" style="font-size: smaller;">${rowObj.comment.slice(0, 200)}... <span class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'expand')">see more</span>` : `<span id="defaulttext" style="font-size: smaller;">${rowObj.comment}</span>` }
+                                <span id="shorttext" style="font-size: smaller; display: none; border-left: ${leftborder} padding-left: ${gap}">${rowObj.comment.slice(0, 200)}... <span class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'expand')">see more</span></span>
+                                <span id="fulltext" style="font-size: smaller; display: none; border-left: ${leftborder} padding-left: ${gap}">${rowObj.comment}<span class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'collapse')">see less</span></span>
+                                ${rowObj.comment.length > 200 ? `<span id="defaulttext" style="font-size: smaller; border-left: ${leftborder} padding-left: ${gap}">${rowObj.comment.slice(0, 200)}... <span class="seemore-btn" onclick="expandText(this.parentNode.parentNode, 'expand')">see more</span>` : `<span id="defaulttext" style="font-size: smaller; border-left: ${leftborder} padding-left: ${gap}">${rowObj.comment}</span>` }
                             </div>
                         </div>
 
